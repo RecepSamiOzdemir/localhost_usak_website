@@ -1,0 +1,31 @@
+-- Varsayılan Etkinlik Türleri
+INSERT OR IGNORE INTO event_types (id, label, icon, color_modern, color_pixel, is_default, sort_order) VALUES
+('cowork', 'Cowork', '☕', '#FF6600', '#EE6C19', 1, 1),
+('workshop', 'Workshop', '🛠️', '#00E5FF', '#3A86FF', 1, 2),
+('talk', 'Talk', '🎤', '#8B5CF6', '#7C3AED', 1, 3);
+
+-- Başlangıç Etkinlikleri
+INSERT OR IGNORE INTO events (id, title, description, type_id, status, date_start, date_end, location, map_url, capacity, attendees, image_url, whatsapp_link, tags) VALUES
+(1, 'Buluşma #3: Kahve, Kod ve Gelecek Projeler', 'Uşak''ta teknolojiyle ilgilenen herkesin bir araya geldiği, projelerini anlattığı, takıldığı noktalarda birbirine destek olduğu ve keyifli bir kahve eşliğinde networking yaptığı 3. buluşmamız!', 'cowork', 'upcoming', '2026-09-28T14:00:00.000Z', '2026-09-28T17:00:00.000Z', 'Coff The Story / Treehouse Cafe, Uşak', 'https://maps.google.com/?q=Uşak+Coff+The+Story', 25, 18, '/assets/images/WhatsApp Image 2026-09-09 at 11.21.23.jpeg', 'https://chat.whatsapp.com/dummy-coworking', '["#WebDev","#AI_Agents","#UI_UX","#CoffeeAndCode","#Coworking"]'),
+(2, 'Workshop #1: Modern Web ve AI Agents ile Fullstack Uygulama', 'Cursor, Claude 3.7 ve React kullanarak 2 saatte uçtan uca çalışan bir yapay zeka web uygulamasını birlikte kodluyoruz.', 'workshop', 'upcoming', '2026-10-12T13:30:00.000Z', '2026-10-12T16:30:00.000Z', 'Uşak Teknopark Konferans Salonu', 'https://maps.google.com/?q=Uşak+Teknopark', 20, 14, '/assets/images/01-localhostusak-3963536971235621522_1-20260814_153443.jpg', 'https://chat.whatsapp.com/dummy-coworking', '["#Workshop","#AIAgents","#React","#HandsOn"]'),
+(3, 'Talk #1: Silikon Vadisi''nden Uşak''a Remote Çalışma Kültürü', 'Global şirketlerde remote çalışan Uşaklı mühendislerle panel.', 'talk', 'upcoming', '2026-10-25T15:00:00.000Z', '2026-10-25T17:00:00.000Z', 'Treehouse Cafe Teras, Uşak', 'https://maps.google.com/?q=Treehouse+Cafe+Uşak', 35, 22, '/assets/images/02-localhostusak-3963536972520323330_2-20260814_153443.jpg', 'https://chat.whatsapp.com/dummy-coworking', '["#TechTalk","#RemoteWork","#GlobalCareer"]'),
+(4, 'Buluşma #2: Kod, Sohbet & Tasarım Masası', 'İkinci yüz yüze buluşmamızda 20''den fazla geliştirici ve tasarımcı masayı paylaştı.', 'cowork', 'completed', '2026-08-15T14:00:00.000Z', '2026-08-15T17:30:00.000Z', 'Coff The Story, Uşak', NULL, 20, 21, '/assets/images/03-localhostusak-3963536972989931689_3-20260814_153443.jpg', 'https://chat.whatsapp.com/dummy-coworking', '["#Coworking","#Community"]'),
+(5, 'Buluşma #1: Merhaba Dünya (Genesis)', 'localhostusak''ın temellerinin atıldığı ilk buluşma!', 'cowork', 'completed', '2026-07-14T14:00:00.000Z', '2026-07-14T17:00:00.000Z', 'Treehouse Cafe, Uşak', NULL, 15, 16, '/assets/images/04-localhostusak-3963536974466346212_4-20260814_153443.jpg', 'https://chat.whatsapp.com/dummy-coworking', '["#Genesis","#FirstMeetup"]');
+
+-- Başlangıç Kariyer İlanları
+INSERT OR IGNORE INTO careers (id, title, company, type, work_mode, schedule, description, technologies, apply_url, contact, posted_by) VALUES
+(1, 'Senior Frontend Developer (React / Next.js)', 'Nexus Global Tech', 'job', 'remote', 'fulltime', 'B2B SaaS platformumuzun tasarım sistemini ve kullanıcı arayüzünü geliştirecek, TypeScript ve React ekosisteminde deneyimli kıdemli frontend mühendisi arıyoruz.', '["React","TypeScript","Next.js","TailwindCSS","GraphQL"]', 'https://example.com/apply/senior-frontend', 'careers@nexusglobal.io', '@ahmet_dev'),
+(2, 'Yazılım & AI Geliştirme Stajyeri', 'Uşak Teknopark / CloudLab', 'internship', 'hybrid', 'parttime', 'Üniversite öğrencileri için yapay zeka entegrasyonları ve web servisleri üzerine uygulamalı staj programı.', '["Python","FastAPI","PostgreSQL","Docker","Git"]', 'https://example.com/apply/internship', 'staj@cloudlab.com.tr', '@zeynep_tech'),
+(3, 'Mobil Uygulama Arayüz Yenileme (Flutter / Figma)', 'Local Commerce Startup', 'freelance', 'remote', 'project', 'Mevcut Flutter e-ticaret uygulamamızın Figma tasarımlarına uygun olarak kodlanması.', '["Flutter","Dart","Figma","REST API"]', 'https://example.com/apply/flutter-freelance', '+90 555 000 0000', '@can_creative'),
+(4, 'Junior Web Geliştiriciler İçin Kariyer & Kod İnceleme Mentörlüğü', 'localhostusak Topluluk Mentörlüğü', 'mentorship', 'remote', 'parttime', 'Sektöre ilk adımını atmak isteyen arkadaşlara haftada 1 saat birebir mentorluk.', '["JavaScript","React","Git / GitHub"]', 'https://chat.whatsapp.com/dummy-kariyer', 'Topluluk WhatsApp Grubu', '@selim_mentor');
+
+-- Başlangıç Projeleri
+INSERT OR IGNORE INTO projects (id, name, description, type, technologies, owner, team_size, team_max, roles_needed, github_url, demo_url, likes) VALUES
+(1, 'localhostusak Web Platformu', 'Topluluğumuzun açık kaynak, çift temalı resmi web sitesi ve buluşma yönetim platformu.', 'opensource', '["React","TypeScript","Vite","Vanilla CSS","Node.js","SQLite"]', '@localhostusak Topluluğu', 4, 10, '["Frontend Katkıcıları","Pixel Art İllüstratör"]', 'https://github.com/localhostusak/localhostusak-web', 'https://localhostusak.com', 42),
+(2, 'Uşak Akıllı Ulaşım & Hat Rehberi', 'Uşak şehir içi halk otobüsleri ve dolmuş hatlarının canlı saatlerini harita üzerinde gösteren topluluk projesi.', 'seeking_team', '["Flutter","Dart","Leaflet Maps","Node.js"]', '@emre_dev & @kaan_ux', 2, 5, '["Backend Dev (Node.js/Go)","Harita Veri Girişi"]', 'https://github.com/localhostusak/usak-ulasim', 'https://usak-ulasim-demo.netlify.app', 28),
+(3, 'AI Destekli Yerel Esnaf Menü Asistanı', 'Uşak''taki kafe ve restoranların basılı menülerini interaktif dijital menülere dönüştüren yapay zeka projesi.', 'showcase', '["Next.js","Python","FastAPI","Claude API"]', '@deniz_ai', 1, 3, '["UI/UX Tasarımcı"]', 'https://github.com/deniz/menu-ai-assistant', 'https://menu-assistant.example.com', 35),
+(4, 'Uşak Tech Hub CLI Aracı', 'Terminalden ayrılmadan localhostusak etkinliklerini listeleme ve takvime ekleme CLI aracı.', 'opensource', '["TypeScript","Node.js","Commander.js"]', '@mert_terminal', 1, 1, '[]', 'https://github.com/localhostusak/cli-hub', 'https://www.npmjs.com/package/@localhostusak/cli', 19);
+
+-- Varsayılan Admin Kullanıcısı (admin / admin123)
+INSERT OR IGNORE INTO admins (id, username, password_hash) VALUES
+(1, 'admin', 'admin123');

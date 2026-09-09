@@ -1,0 +1,166 @@
+/* ==========================================================================
+   localhostusak — Design Tokens & Dual Theme System
+   Cyber-Local Dark HUD & Cozy 8-Bit Pixel Art
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Outfit:wght@400;500;600;700;800;900&family=Pixelify+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root,
+[data-theme="modern"] {
+  /* Surface & Background */
+  --bg-primary: #080A0D;
+  --bg-secondary: #0F1318;
+  --bg-card: rgba(15, 19, 24, 0.82);
+  --bg-card-hover: rgba(23, 28, 36, 0.9);
+  --bg-glass: rgba(15, 19, 24, 0.72);
+  --bg-tag: rgba(255, 102, 0, 0.12);
+  --surface-elevated: #171C24;
+
+  /* Accent Colors */
+  --accent-primary: #FF6600;
+  --accent-orange: #FF6600;
+  --accent-orange-glow: rgba(255, 102, 0, 0.16);
+  --accent-glow: rgba(255, 102, 0, 0.16);
+  --accent-amber: #FFA133;
+  --accent-secondary: #00E5FF;
+  --accent-blue: #00E5FF;
+  --accent-blue-glow: rgba(0, 229, 255, 0.16);
+  --accent-success: #10B981;
+
+  /* Typography Colors */
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-code: #FFA133;
+  --text-inverse: #080A0D;
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.16);
+  --border-active: #FF6600;
+  --border-circuit: rgba(255, 102, 0, 0.35);
+  --border-laser: rgba(0, 229, 255, 0.4);
+
+  /* Typography Fonts */
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-pixel: 'Pixelify Sans', cursive;
+
+  /* Geometry & Radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* Shadows & Elevation (Modern, Non-Neon) */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 12px 32px -4px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--border-subtle);
+  --shadow-glow: 0 4px 18px rgba(255, 102, 0, 0.22);
+  --shadow-glow-blue: 0 4px 18px rgba(0, 229, 255, 0.2);
+
+  /* Transitions */
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.15s var(--ease-smooth);
+  --transition-normal: 0.25s var(--ease-smooth);
+  --transition-slow: 0.4s var(--ease-smooth);
+
+  /* Layout & Spacing */
+  --nav-height: 72px;
+  --max-width: 1200px;
+  --container-max: 1200px;
+  --container-padding: 2rem;
+  --section-spacing: 5.5rem;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4.5rem;
+  --pixel-border-width: 0px;
+}
+
+/* ==========================================================================
+   Cozy Pixel Art / 8-Bit Kafe Theme (Light Mode)
+   ========================================================================== */
+[data-theme="pixel"] {
+  /* Surface & Background */
+  --bg-primary: #FFF7EC;
+  --bg-secondary: #F5EBDC;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FFFDF9;
+  --bg-glass: #FFFFFF;
+  --bg-tag: #FFF0DB;
+  --surface-elevated: #FFF0DB;
+
+  /* Accent Colors */
+  --accent-primary: #EE6C19;
+  --accent-orange: #EE6C19;
+  --pixel-orange: #EE6C19;
+  --pixel-black: #1E1B18;
+  --accent-orange-glow: rgba(238, 108, 25, 0.25);
+  --accent-glow: rgba(238, 108, 25, 0.3);
+  --accent-amber: #FFA559;
+  --accent-secondary: #FFC043;
+  --accent-blue: #3A86FF;
+  --accent-blue-glow: rgba(58, 134, 255, 0.25);
+  --accent-success: #4F772D;
+  --coffee-brown: #5C3D2E;
+
+  /* Typography Colors */
+  --text-primary: #1E1B18;
+  --text-secondary: #5C3D2E;
+  --text-muted: #8B7355;
+  --text-code: #EE6C19;
+  --text-inverse: #FFFFFF;
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(30, 27, 24, 0.15);
+  --border-medium: #1E1B18;
+  --border-active: #1E1B18;
+  --border-circuit: #1E1B18;
+  --border-laser: #3A86FF;
+
+  /* Typography Fonts */
+  --font-heading: 'Pixelify Sans', cursive;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'Pixelify Sans', cursive;
+  --font-pixel: 'Pixelify Sans', cursive;
+
+  /* Geometry & Radii */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-full: 0px;
+
+  /* Shadows (Arcade / 8-Bit) */
+  --shadow-sm: 2px 2px 0px #1E1B18;
+  --shadow-card: 4px 4px 0px #1E1B18;
+  --shadow-glow: 4px 4px 0px #1E1B18;
+  --shadow-glow-blue: 4px 4px 0px #3A86FF;
+
+  /* Transitions (Snappy Retro) */
+  --transition-fast: 0.08s steps(2);
+  --transition-normal: 0.12s steps(3);
+  --transition-slow: 0.2s steps(4);
+
+  /* Layout & Spacing */
+  --nav-height: 72px;
+  --max-width: 1200px;
+  --container-max: 1200px;
+  --container-padding: 2rem;
+  --section-spacing: 5rem;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4.5rem;
+  --pixel-border-width: 3px;
+  --pixel-card-bg: #FFFFFF;
+}
+

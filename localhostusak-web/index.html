@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Early System Theme Detection -->
+  <script>
+    (function() {
+      try {
+        localStorage.removeItem('localhostusak_theme');
+        localStorage.removeItem('localhostusak_theme_manual');
+        var manual = sessionStorage.getItem('localhostusak_theme_manual');
+        var saved = sessionStorage.getItem('localhostusak_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = (manual === 'true' && saved) ? saved : (prefersDark ? 'modern' : 'pixel');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+  
+  <!-- Primary Meta Tags -->
+  <title>localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu</title>
+  <meta name="title" content="localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu">
+  <meta name="description" content="Uşak'taki yazılımcılar, tasarımcılar, remote çalışanlar ve öğrenciler için açık, samimi ve üretken teknoloji topluluğu. Kahveni al, laptopunu getir!">
+  <meta name="keywords" content="Uşak yazılım, Uşak teknoloji, localhostusak, developer community, UI UX Uşak, Uşak meetup, remote çalışma, coworking">
+  <meta name="author" content="localhostusak Topluluğu">
+  <meta name="theme-color" content="#FF6600">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://localhostusak.com/">
+  <meta property="og:title" content="localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu">
+  <meta property="og:description" content="CONNECT • CODE • CREATE • COMMUNITY — Uşak'ta teknoloji ve tasarımı birlikte üretiyoruz.">
+  <meta property="og:image" content="/assets/images/WhatsApp%20Image%202026-09-09%20at%2011.21.23.jpeg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23080A0D'/><text y='68' x='50' font-size='60' text-anchor='middle' fill='%23FF6600' font-family='monospace' font-weight='bold'>&gt;_</text></svg>">
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

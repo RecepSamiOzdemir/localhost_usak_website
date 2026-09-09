@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="modern">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
+  <title>localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu</title>
+  <meta name="title" content="localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu">
+  <meta name="description" content="Uşak'taki yazılımcılar, tasarımcılar, remote çalışanlar ve öğrenciler için açık, samimi ve üretken teknoloji topluluğu. Kahveni al, laptopunu getir!">
+  <meta name="keywords" content="Uşak yazılım, Uşak teknoloji, localhostusak, developer community, UI UX Uşak, Uşak meetup, remote çalışma">
+  <meta name="author" content="localhostusak Topluluğu">
+  <meta name="theme-color" content="#FF6600">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://localhostusak.com/">
+  <meta property="og:title" content="localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu">
+  <meta property="og:description" content="CONNECT • CODE • CREATE • COMMUNITY — Uşak'ta teknoloji ve tasarımı birlikte üretiyoruz.">
+  <meta property="og:image" content="assets/images/WhatsApp%20Image%202026-09-09%20at%2011.21.23.jpeg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23080A0D'/><text y='68' x='50' font-size='60' text-anchor='middle' fill='%23FF6600' font-family='monospace' font-weight='bold'>&gt;_</text></svg>">
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/modern-theme.css">
+  <link rel="stylesheet" href="css/pixel-theme.css">
+  <link rel="stylesheet" href="css/animations.css">
+
+  <style>
+    /* Inline specific layout enhancements for seamless aesthetic */
+    .navbar-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all var(--transition-normal);
+    }
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-height);
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .brand-logo .brand-highlight {
+      color: var(--accent-primary);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      transition: color var(--transition-fast);
+      position: relative;
+    }
+    .nav-links a:hover {
+      color: var(--accent-primary);
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .hero-canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #hero-canvas {
+      width: 100%;
+      height: 100%;
+      pointer-events: auto;
+    }
+    .spotlight-inner {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .spotlight-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+    .meetup-meta-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin: 1.5rem 0;
+    }
+    .meetup-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+    }
+    .meetup-meta-item .meta-icon {
+      font-size: 1.25rem;
+      color: var(--accent-primary);
+    }
+    .agenda-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+    .agenda-tag {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-code);
+      background: var(--bg-tag);
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-xs);
+      border: 1px solid var(--border-subtle);
+    }
+    .bento-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .bento-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .footer-wrapper {
+      background-color: var(--bg-secondary);
+      border-top: 1px solid var(--border-subtle);
+      padding: 4.5rem 0 2.5rem 0;
+    }
+    [data-theme="pixel"] .footer-wrapper {
+      border-top: 3px solid var(--pixel-black);
+      background-color: #F5EBDC;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3.5rem;
+    }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    [data-theme="pixel"] .footer-bottom {
+      border-top: 2px dashed var(--pixel-black);
+      color: var(--coffee-brown);
+    }
+
+    @media (max-width: 900px) {
+      .spotlight-inner {
+        grid-template-columns: 1fr;
+      }
+      .nav-links {
+        display: none;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Level Unlocked Toast (Pixel Breach Celebration) -->
+  <aside id="level-unlocked-toast" class="level-unlocked-toast" aria-live="polite">
+    <span>✨</span>
+    <div>
+      <strong>LEVEL UNLOCKED: COZY RETRO MODE! ☕🕹️</strong>
+      <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 2px;">Uşak kafe masasına hoş geldin!</div>
+    </div>
+  </aside>
+
+  <!-- Breach Flash Screen Overlay -->
+  <div id="breach-flash" class="breach-flash" aria-hidden="true"></div>
+
+  <!-- ========================================================================
+       SECTION 1: NAVBAR
+       ======================================================================== -->
+  <header class="navbar-wrapper" id="main-nav">
+    <div class="container nav-container">
+      <!-- Brand Logo -->
+      <a href="#" class="brand-logo" id="nav-brand-logo" aria-label="localhostusak Ana Sayfa">
+        <span>&gt;_</span>
+        <span>localhost<span class="brand-highlight">[uşak]</span></span>
+      </a>
+
+      <!-- Menu Navigation -->
+      <nav class="nav-links" aria-label="Ana Menü">
+        <a href="#about" id="nav-link-about">// nedir?</a>
+        <a href="#events" id="nav-link-events">// buluşma</a>
+        <a href="#personas" id="nav-link-personas">// kimler?</a>
+        <a href="#flow" id="nav-link-flow">// akış</a>
+        <a href="#values" id="nav-link-values">// neden?</a>
+        <a href="#stats" id="nav-link-stats">// skor</a>
+      </nav>
+
+      <!-- Action Buttons & Status -->
+      <div class="nav-actions">
+        <!-- Next Meetup Pill -->
+        <span class="badge badge-live" id="nav-status-pill" title="Yaklaşan Etkinlik">
+          BULUŞMA #3 YAKINDA
+        </span>
+
+        <!-- Reality Fracture Easter Egg Trigger -->
+        <button class="reality-breach-trigger breach-status-badge" id="breach-status" title="Tıkla ve gerçeklik çatlağını tetikle!" aria-label="Boyut Çatlağı">
+          ⚡ Reality Fracture: 100%
+        </button>
+
+        <!-- Direct Theme Switcher Button -->
+        <button class="theme-toggle-btn" data-action="toggle-theme" id="btn-theme-toggle" aria-label="Temayı Değiştir">
+          <span id="theme-icon">⚡</span>
+          <span id="theme-label">Cyber HUD</span>
+        </button>
+
+        <!-- System Restore (Visible only in Pixel Mode) -->
+        <button class="btn btn-sm btn-secondary" data-action="system-restore" id="btn-system-restore" style="display: none;" title="Modern HUD moduna geri dön">
+          💾 SYSTEM RESTORE
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ========================================================================
+         SECTION 2: HERO SECTION
+         ======================================================================== -->
+    <section class="section hero-section" id="hero">
+      <!-- Interactive Constellation / Circuit Background Canvas -->
+      <div class="hero-canvas-container" aria-hidden="true">
+        <canvas id="hero-canvas"></canvas>
+      </div>
+
+      <!-- Glowing Ambient Background Orbs (Modern Mode) -->
+      <div class="hero-glow-orb" aria-hidden="true"></div>
+      <div class="hero-glow-orb-secondary" aria-hidden="true"></div>
+      <div class="scanline-effect" aria-hidden="true"></div>
+
+      <div class="container hero-content">
+        <div style="max-width: 860px; margin: 0 auto; text-align: center;">
+          <!-- Location Pill -->
+          <div class="reveal" style="margin-bottom: 1.5rem;">
+            <div class="location-pill">
+              <span>📍 U Ş A K</span>
+              <span style="opacity: 0.4;">|</span>
+              <span style="font-size: 0.8rem; color: var(--accent-primary);">38.6823° N, 29.4082° E</span>
+            </div>
+          </div>
+
+          <!-- Main Headline -->
+          <h1 class="reveal reveal-delay-1" style="font-size: clamp(2.5rem, 5.5vw, 4.4rem); font-weight: 900; margin-bottom: 1.25rem; letter-spacing: -0.03em;">
+            Uşak'ın Teknoloji ve <br>
+            <span class="gradient-text">Tasarım Topluluğu</span>
+          </h1>
+
+          <!-- Terminal Prompt Subtitle -->
+          <div class="reveal reveal-delay-2" style="font-family: var(--font-mono); font-size: clamp(0.95rem, 2vw, 1.2rem); color: var(--text-code); margin-bottom: 1.5rem;">
+            <span>&gt;_ connect • build • collaborate • grow</span>
+            <span class="terminal-cursor"></span>
+          </div>
+
+          <!-- Hero Description Quote -->
+          <p class="reveal reveal-delay-3" style="font-size: clamp(1.05rem, 2vw, 1.25rem); color: var(--text-secondary); max-width: 680px; margin: 0 auto 2.5rem auto; line-height: 1.7;">
+            Kahveni al, laptopunu getir, aramıza katıl. Deneyimli olmak şart değil;
+            <strong>merakın ve öğrenme isteğin varsa masada sana da yer var.</strong>
+          </p>
+
+          <!-- Primary Hero Actions -->
+          <div class="reveal reveal-delay-4" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem; margin-bottom: 3.5rem;">
+            <a href="https://chat.whatsapp.com/" target="_blank" rel="noopener" class="btn btn-lg btn-whatsapp" id="hero-btn-whatsapp">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.159.57 4.185 1.564 5.938l-1.564 5.719 5.873-1.541c1.707.95 3.666 1.484 5.727 1.484 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              <span>WhatsApp Topluluğuna Katıl</span>
+            </a>
+
+            <a href="#events" class="btn btn-lg btn-primary" id="hero-btn-events">
+              <span>Sıradaki Buluşma</span>
+              <span>📅</span>
+            </a>
+
+            <a href="https://instagram.com/localhostusak" target="_blank" rel="noopener" class="btn btn-lg btn-secondary" id="hero-btn-instagram">
+              <span>📷 @localhostusak</span>
+            </a>
+          </div>
+
+          <!-- Reference Posters Carousel / Gallery Pill Preview -->
+          <div class="reveal reveal-delay-4">
+            <div class="card card-glass circuit-border" style="padding: 1.25rem 1.75rem; display: inline-flex; align-items: center; gap: 1.5rem; max-width: 600px;">
+              <span class="circuit-node"></span>
+              <div style="text-align: left; font-size: 0.9rem;">
+                <div style="font-family: var(--font-mono); color: var(--accent-primary); font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">// TOPLULUK MOTOSU</div>
+                <div style="color: var(--text-primary); font-weight: 600;">"Resmiyetten uzak, samimi bir masa. Good Code, Better People."</div>
+              </div>
+              <span class="circuit-node node-blue"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         SECTION 3: EVENT SPOTLIGHT (SIRADAKİ BULUŞMA & GERİ SAYIM)
+         ======================================================================== -->
+    <section class="section" id="events" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// BULUŞMA TAKVİMİ</span>
+          <h2 class="section-title">Sıradaki Buluşma: Buluşma #3</h2>
+          <p class="section-desc">Laptopunu hazırla, kahveni seç. Uşak'taki diğer geliştirici ve tasarımcılarla aynı masadayız.</p>
+        </div>
+
+        <div class="spotlight-card card circuit-border reveal" style="padding: 3rem 2.5rem; position: relative;">
+          <!-- Corner HUD Markers (Modern) -->
+          <span class="hud-corner-tl" aria-hidden="true"></span>
+          <span class="hud-corner-tr" aria-hidden="true"></span>
+          <span class="hud-corner-bl" aria-hidden="true"></span>
+          <span class="hud-corner-br" aria-hidden="true"></span>
+
+          <div class="spotlight-inner">
+            <!-- Left Info Block -->
+            <div>
+              <div class="spotlight-badges">
+                <span class="badge badge-orange">#03. BULUŞMA</span>
+                <span class="badge badge-blue">YÜZ YÜZE</span>
+                <span class="badge badge-live">KATILIM ÜCRETSİZ</span>
+              </div>
+
+              <h3 style="font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 0.75rem;">
+                Kahve, Kod ve Gelecek Projeler
+              </h3>
+
+              <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.5rem;">
+                Uşak'ta teknolojiyle ilgilenen herkesin bir araya geldiği, projelerini anlattığı, takıldığı noktalarda birbirine destek olduğu ve keyifli bir kahve eşliğinde networking yaptığı 3. buluşmamız!
+              </p>
+
+              <!-- Meetup Metadata List -->
+              <div class="meetup-meta-list">
+                <div class="meetup-meta-item">
+                  <span class="meta-icon">📅</span>
+                  <div>
+                    <strong>Tarih:</strong> 28 Eylül 2026 Pazar, 14:00 - 17:00
+                  </div>
+                </div>
+                <div class="meetup-meta-item">
+                  <span class="meta-icon">📍</span>
+                  <div>
+                    <strong>Mekan:</strong> Coff The Story / Treehouse Cafe, Uşak
+                    <a href="https://maps.google.com/?q=Uşak+Coff+The+Story" target="_blank" rel="noopener" style="color: var(--accent-secondary); font-size: 0.85rem; margin-left: 0.5rem; text-decoration: underline;">
+                      (Haritada Gör ↗)
+                    </a>
+                  </div>
+                </div>
+                <div class="meetup-meta-item">
+                  <span class="meta-icon">☕</span>
+                  <div>
+                    <strong>Format:</strong> Serbest Çalışma, Proje Paylaşımı, Tanışma & Sohbet
+                  </div>
+                </div>
+              </div>
+
+              <!-- Agenda Tags -->
+              <div class="agenda-tags">
+                <span class="agenda-tag">#WebDev</span>
+                <span class="agenda-tag">#AI_Agents</span>
+                <span class="agenda-tag">#UI_UX</span>
+                <span class="agenda-tag">#MobileDev</span>
+                <span class="agenda-tag">#Freelance</span>
+                <span class="agenda-tag">#CoffeeAndCode</span>
+              </div>
+            </div>
+
+            <!-- Right Countdown & Action Card -->
+            <div style="background: var(--surface-elevated); padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border-circuit); text-align: center;">
+              <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-primary); font-weight: 700; margin-bottom: 1rem; text-transform: uppercase;">
+                ⏳ BULUŞMAYA KALAN SÜRE
+              </div>
+
+              <!-- Live Countdown Grid -->
+              <div class="countdown-grid" id="countdown-timer">
+                <div class="countdown-box">
+                  <div class="countdown-num" id="cd-days">04</div>
+                  <div class="countdown-label">GÜN</div>
+                </div>
+                <div class="countdown-box">
+                  <div class="countdown-num" id="cd-hours">18</div>
+                  <div class="countdown-label">SAAT</div>
+                </div>
+                <div class="countdown-box">
+                  <div class="countdown-num" id="cd-minutes">42</div>
+                  <div class="countdown-label">DAKİKA</div>
+                </div>
+                <div class="countdown-box">
+                  <div class="countdown-num" id="cd-seconds">15</div>
+                  <div class="countdown-label">SANİYE</div>
+                </div>
+              </div>
+
+              <div style="margin-top: 1.75rem; display: flex; flex-direction: column; gap: 0.85rem;">
+                <button class="btn btn-primary btn-full" id="btn-add-calendar">
+                  <span>Takvime Ekle (.ICS)</span>
+                  <span>📥</span>
+                </button>
+                <button class="btn btn-secondary btn-full" id="btn-google-calendar">
+                  <span>Google Takvim'e Kaydet</span>
+                  <span>📅</span>
+                </button>
+                <a href="https://chat.whatsapp.com/" target="_blank" rel="noopener" class="btn btn-whatsapp btn-full">
+                  <span>WhatsApp Grubuna Katıl</span>
+                  <span>💬</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         SECTION 4: WHAT IS LOCALHOSTUSAK? (NEDİR & NEDEN KURULDU?)
+         ======================================================================== -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="grid-2" style="align-items: center; gap: 3.5rem;">
+          <!-- Left Terminal Code Window -->
+          <div class="terminal-window reveal">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <span class="terminal-dot dot-red"></span>
+                <span class="terminal-dot dot-yellow"></span>
+                <span class="terminal-dot dot-green"></span>
+              </div>
+              <div class="terminal-title">localhostusak-manifesto.ts</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">UTF-8</div>
+            </div>
+            <div class="terminal-body">
+              <p><span class="terminal-comment">// Birlikte daha güçlüyüz, birlikte kodluyoruz.</span></p>
+              <p><span class="terminal-prompt">&gt;</span> <span class="terminal-highlight">const</span> community = {</p>
+              <p style="padding-left: 1.5rem;">name: <span style="color: #A5D6FF;">"localhost[uşak]"</span>,</p>
+              <p style="padding-left: 1.5rem;">location: <span style="color: #A5D6FF;">"Uşak, Türkiye"</span>,</p>
+              <p style="padding-left: 1.5rem;">purpose: <span style="color: #A5D6FF;">"Yerel Güç, Evrensel Teknoloji"</span>,</p>
+              <p style="padding-left: 1.5rem;">entryFee: <span style="color: #7EE787;">0</span>, <span class="terminal-comment">// Daima ücretsiz</span></p>
+              <p style="padding-left: 1.5rem;">hierarchy: <span style="color: #FF7B72;">false</span>, <span class="terminal-comment">// Eşit, hiyerarşisiz</span></p>
+              <p style="padding-left: 1.5rem;">stack: [<span style="color: #FFA133;">"Code"</span>, <span style="color: #FFA133;">"Design"</span>, <span style="color: #FFA133;">"Coffee"</span>, <span style="color: #FFA133;">"AI"</span>],</p>
+              <p style="padding-left: 1.5rem;">motto: <span style="color: #A5D6FF;">"Good Code, Better People"</span></p>
+              <p>};</p>
+              <br>
+              <p><span class="terminal-prompt">&gt;</span> <span class="terminal-highlight">function</span> joinTable(developer) {</p>
+              <p style="padding-left: 1.5rem;"><span class="terminal-highlight">return</span> developer.bring(<span style="color: #A5D6FF;">"laptop"</span>).add(<span style="color: #A5D6FF;">"curiosity"</span>);</p>
+              <p>}</p>
+              <br>
+              <p><span class="terminal-prompt">&gt;</span> joinTable(<span style="color: #7EE787;">"SİZ"</span>); <span class="terminal-cursor"></span></p>
+            </div>
+          </div>
+
+          <!-- Right Text & Vision -->
+          <div class="reveal reveal-delay-2">
+            <span class="section-tag">// MİSYON & VİZYON</span>
+            <h2 class="section-title">Şehirdeki Yalnız Çalışmayı Kırıyoruz</h2>
+            <div class="pixel-bubble" style="display: none;">
+              <strong>Kahveni al, masaya otur!</strong> Resmiyetten uzak, sıcak bir topluluk masası.
+            </div>
+            <p style="font-size: 1.15rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+              Büyük şehirlerdeki teknoloji ekosistemi Uşak'ta neden olmasın? 
+              <strong>localhostusak</strong>, evden veya ofisten tek başına çalışan yazılımcıları, tasarımcıları ve genç yetenekleri fiziksel bir masada buluşturan bağımsız bir yerel topluluktur.
+            </p>
+            <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 2rem;">
+              Burada sıkıcı seminerler, resmi unvanlar veya satış sunumları yok. Kahvemizi alıyoruz, laptoplarımızı açıyoruz; hem kendi projelerimizi kodluyor hem de birbirimize ilham veriyoruz.
+            </p>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+              <div class="badge badge-orange">✓ Sıfır Hiyerarşi</div>
+              <div class="badge badge-blue">✓ Tamamen Ücretsiz</div>
+              <div class="badge badge-orange">✓ Açık Kaynak Ruhu</div>
+              <div class="badge badge-blue">✓ Yerel Dayanışma</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         SECTION 5: WHO CAN JOIN? (KİMLER KATILABİLİR? - 4 PERSONA KARTI)
+         ======================================================================== -->
+    <section class="section" id="personas" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// MASADA KİMLER VAR?</span>
+          <h2 class="section-title">Kimler Katılabilir?</h2>
+          <p class="section-desc">Teknolojiye merakı olan herkese kapımız açık. Masadaki yerini seç!</p>
+        </div>
+
+        <div class="grid-4">
+          <!-- Persona 1: Developers -->
+          <article class="card card-interactive persona-card reveal">
+            <div class="persona-icon-box" aria-hidden="true">&lt;/&gt;</div>
+            <h3 class="persona-title">Yazılım Geliştiriciler</h3>
+            <p class="persona-desc">Frontend, Backend, Mobil, DevOps veya AI mühendisleri. Kod yazarken takıldığın noktaları konuş, mimari tartış veya sadece yan yana kodla.</p>
+            <div class="persona-tags">
+              <span class="persona-tag">React</span>
+              <span class="persona-tag">Node.js</span>
+              <span class="persona-tag">Python</span>
+              <span class="persona-tag">Flutter</span>
+              <span class="persona-tag">AI</span>
+            </div>
+          </article>
+
+          <!-- Persona 2: Designers -->
+          <article class="card card-interactive persona-card reveal reveal-delay-1">
+            <div class="persona-icon-box" aria-hidden="true">🎨</div>
+            <h3 class="persona-title">Tasarımcılar</h3>
+            <p class="persona-desc">UI/UX tasarımcıları, grafik illüstratörler, 3D artistler ve ürün yöneticileri. Piksel mükemmelliğini ve kullanıcı deneyimini masada tartış.</p>
+            <div class="persona-tags">
+              <span class="persona-tag">Figma</span>
+              <span class="persona-tag">UI/UX</span>
+              <span class="persona-tag">Design Systems</span>
+              <span class="persona-tag">3D</span>
+            </div>
+          </article>
+
+          <!-- Persona 3: Remote Workers -->
+          <article class="card card-interactive persona-card reveal reveal-delay-2">
+            <div class="persona-icon-box" aria-hidden="true">🌍</div>
+            <h3 class="persona-title">Remote & Freelance</h3>
+            <p class="persona-desc">Uşak'ta yaşayıp globale ya da büyük şehirlere uzaktan çalışanlar. Evdeki dört duvar arasından çıkıp kahve kokulu bir coworking ortamı yakala.</p>
+            <div class="persona-tags">
+              <span class="persona-tag">Coworking</span>
+              <span class="persona-tag">Global</span>
+              <span class="persona-tag">Freelance</span>
+              <span class="persona-tag">Networking</span>
+            </div>
+          </article>
+
+          <!-- Persona 4: Students -->
+          <article class="card card-interactive persona-card reveal reveal-delay-3">
+            <div class="persona-icon-box" aria-hidden="true">🎓</div>
+            <h3 class="persona-title">Öğrenci & Meraklılar</h3>
+            <p class="persona-desc">Sektöre yeni girenler, üniversite öğrencileri ve kariyerini teknolojiye yönlendirmek isteyenler. Deneyimli kişilerden mentorluk al, staj veya proje arkadaşı bul.</p>
+            <div class="persona-tags">
+              <span class="persona-tag">Öğrenme</span>
+              <span class="persona-tag">Mentorluk</span>
+              <span class="persona-tag">Kariyer</span>
+              <span class="persona-tag">İlk Proje</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         SECTION 6: WHAT HAPPENS AT MEETUPS? (4 AŞAMALI AKIŞ)
+         ======================================================================== -->
+    <section class="section" id="flow">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// BULUŞMA FORMATI</span>
+          <h2 class="section-title">Buluşmada Neler Olur?</h2>
+          <p class="section-desc">İlk kez geleceksen endişelenme! 4 adımlı doğal ve rahat akışımız seni bekliyor.</p>
+        </div>
+
+        <div class="grid-2" style="gap: 1.5rem;">
+          <!-- Step 1 -->
+          <div class="flow-step reveal">
+            <div class="flow-number">01</div>
+            <div class="flow-content">
+              <h3>Tanışma & Sıcak Kahve</h3>
+              <p>Mekana gelip masaya oturuyoruz. Kahvemizi sipariş edip kısaca kim neyle uğraşıyor tanışıyoruz. Sıkıcı sunumlar yok, tamamen samimi bir sohbet.</p>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="flow-step reveal reveal-delay-1">
+            <div class="flow-number">02</div>
+            <div class="flow-content">
+              <h3>Proje Paylaşımı & Geri Bildirim</h3>
+              <p>Üzerinde çalıştığın bir side-project'i, yeni öğrendiğin bir kütüphaneyi masaya açıyorsun. Masadakilerden anında tarafsız ve yapıcı geri bildirim alıyorsun.</p>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="flow-step reveal reveal-delay-2">
+            <div class="flow-number">03</div>
+            <div class="flow-content">
+              <h3>Birlikte Çalışma & Problem Çözme</h3>
+              <p>Laptopları açıp çalışıyoruz. Takıldığın bir bug veya tasarım düğümü varsa masadaki herkes fikrini söylüyor, birlikte çözüyoruz.</p>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="flow-step reveal reveal-delay-3">
+            <div class="flow-number">04</div>
+            <div class="flow-content">
+              <h3>Serbest Muhabbet & Networking</h3>
+              <p>Topluluk projeleri, şehirdeki yeni girişimler ve gelecekteki buluşmalar üzerine konuşup yeni dostluklar kuruyoruz.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         SECTION 7: WHY SHOULD YOU COME? (BENTO DEĞERLERİ)
+         ======================================================================== -->
+    <section class="section" id="values" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// DEĞERLERİMİZ</span>
+          <h2 class="section-title">Neden Gelmelisin?</h2>
+          <p class="section-desc">Uşak'ta teknolojiyle ilgilenen herkes için güvenli, üretken ve samimi bir liman.</p>
+        </div>
+
+        <div class="bento-grid">
+          <!-- Card 1 (Span 8) -->
+          <div class="card bento-card bento-span-8 circuit-border reveal">
+            <div>
+              <div class="bento-icon" aria-hidden="true">🧡</div>
+              <h3 style="font-size: 1.6rem; margin-bottom: 0.75rem;">Resmiyetten Uzak, Samimi Bir Masa</h3>
+              <p style="color: var(--text-secondary); line-height: 1.7; font-size: 1.05rem;">
+                Buluşmalarımız kurumsal konferans formatında değil. Kimse kravat takmıyor, kimse unvan satmıyor. En tecrübeli yazılımcı da yeni başlayan öğrenci de aynı masada yan yana kahvesini yudumluyor.
+              </p>
+            </div>
+            <div style="margin-top: 2rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <span class="badge badge-orange">#Samimiyet</span>
+              <span class="badge badge-blue">#Eşitlik</span>
+              <span class="badge badge-orange">#Yardımlaşma</span>
+            </div>
+          </div>
+
+          <!-- Card 2 (Span 4) -->
+          <div class="card bento-card bento-span-4 reveal reveal-delay-1">
+            <div>
+              <div class="bento-icon" aria-hidden="true">🚀</div>
+              <h3 style="font-size: 1.35rem; margin-bottom: 0.75rem;">Yerel Güç, Evrensel Vizyon</h3>
+              <p style="color: var(--text-secondary); line-height: 1.6;">
+                Uşak'ta üretip dünyaya açılmak mümkün. Şehirdeki yetenekleri birbirine bağlayarak ortak projeler ve startup tohumları atıyoruz.
+              </p>
+            </div>
+            <div style="margin-top: 1.5rem; font-family: var(--font-mono); color: var(--accent-secondary); font-size: 0.85rem;">
+              &gt;_ Local Roots, Global Wings
+            </div>
+          </div>
+
+          <!-- Card 3 (Span 4) -->
+          <div class="card bento-card bento-span-4 reveal reveal-delay-2">
+            <div>
+              <div class="bento-icon" aria-hidden="true">☕</div>
+              <h3 style="font-size: 1.35rem; margin-bottom: 0.75rem;">Kahve Eşliğinde Coworking</h3>
+              <p style="color: var(--text-secondary); line-height: 1.6;">
+                Uşak'ın en keyifli kafelerinde toplanıp hem çalışıyor hem sosyalleşiyoruz. Odaklanma ve verimlilik masada artıyor.
+              </p>
+            </div>
+            <div style="margin-top: 1.5rem; font-family: var(--font-mono); color: var(--accent-primary); font-size: 0.85rem;">
+              &gt;_ Coffee: ∞ | Bugs: 0
+            </div>
+          </div>
+
+          <!-- Card 4 (Span 8) -->
+          <div class="card bento-card bento-span-8 circuit-border reveal reveal-delay-3">
+            <div>
+              <div class="bento-icon" aria-hidden="true">💡</div>
+              <h3 style="font-size: 1.6rem; margin-bottom: 0.75rem;">Yalnız Gelebilir miyim? Kesinlikle Evet!</h3>
+              <p style="color: var(--text-secondary); line-height: 1.7; font-size: 1.05rem;">
+                Katılımcılarımızın çoğu ilk buluşmaya tek başına geldi. Masaya oturduğun andan itibaren topluluğun sıcaklığı seni kucaklar. Çekinmene hiç gerek yok!
+              </p>
+            </div>
+            <div style="margin-top: 2rem;">
+              <a href="https://chat.whatsapp.com/" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
+                <span>İlk Adımı At: WhatsApp'a Katıl</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         SECTION 8: STATS & SCOREBOARD (RAKAMLARLA TOPLULUK)
+         ======================================================================== -->
+    <section class="section" id="stats">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// SCOREBOARD & STATS</span>
+          <h2 class="section-title">Rakamlarla Topluluk</h2>
+          <p class="section-desc">Her buluşmada büyüyen, birlikte üreten ve paylaşan Uşak ekosistemi.</p>
+        </div>
+
+        <div class="grid-4">
+          <div class="stat-card reveal">
+            <div class="stat-number" data-target="150" data-prefix="" data-suffix="+">0</div>
+            <div class="stat-label">Topluluk Üyesi</div>
+          </div>
+
+          <div class="stat-card reveal reveal-delay-1">
+            <div class="stat-number" data-target="2" data-prefix="#" data-suffix="">0</div>
+            <div class="stat-label">Başarılı Buluşma</div>
+          </div>
+
+          <div class="stat-card reveal reveal-delay-2">
+            <div class="stat-number" data-target="240" data-prefix="" data-suffix="+">0</div>
+            <div class="stat-label">İçilen Sıcak Kahve</div>
+          </div>
+
+          <div class="stat-card reveal reveal-delay-3">
+            <div class="stat-number" data-target="100" data-prefix="%" data-suffix="">0</div>
+            <div class="stat-label">Açık Kaynak & Bağımsız</div>
+          </div>
+        </div>
+
+        <!-- 8-Bit Pixel People Chain in Pixel Mode -->
+        <div class="pixel-people-line" aria-hidden="true" style="display: none;">
+          🧍‍♂️ 🧍‍♀️ ☕ 💻 🧍‍♂️ 🧡 🧍‍♀️ 🎮 🧍‍♂️
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         SECTION 9: BIG CTA (WHATSAPP & INSTAGRAM)
+         ======================================================================== -->
+    <section class="section" id="cta" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="card circuit-border reveal" style="padding: 4.5rem 3rem; text-align: center; max-width: 900px; margin: 0 auto;">
+          <span class="section-tag" style="margin-bottom: 1.5rem;">// HEMEN ARAMIZA KATIL</span>
+          <h2 style="font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; margin-bottom: 1.25rem;">
+            Bir Sonraki Kahveyi <br><span class="gradient-text-orange">Birlikte İçelim</span>
+          </h2>
+          <p style="color: var(--text-secondary); font-size: 1.15rem; max-width: 600px; margin: 0 auto 2.5rem auto; line-height: 1.7;">
+            Buluşma duyurularını kaçırmamak, masada yerini ayırtmak ve Uşak'taki diğer teknoloji tutkunlarıyla anında iletişim kurmak için WhatsApp grubumuza katıl.
+          </p>
+
+          <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem;">
+            <a href="https://chat.whatsapp.com/" target="_blank" rel="noopener" class="btn btn-lg btn-whatsapp" id="cta-btn-whatsapp">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.159.57 4.185 1.564 5.938l-1.564 5.719 5.873-1.541c1.707.95 3.666 1.484 5.727 1.484 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              <span>WhatsApp Topluluğuna Katıl</span>
+            </a>
+
+            <a href="https://instagram.com/localhostusak" target="_blank" rel="noopener" class="btn btn-lg btn-secondary" id="cta-btn-instagram">
+              <span>📷 Instagram'da Takip Et</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       SECTION 10: FOOTER
+       ======================================================================== -->
+  <footer class="footer-wrapper" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Col 1: Brand & Slogan -->
+        <div>
+          <div class="brand-logo" style="margin-bottom: 1.25rem;">
+            <span>&gt;_</span>
+            <span>localhost<span class="brand-highlight">[uşak]</span></span>
+          </div>
+          <p style="color: var(--text-secondary); max-width: 380px; line-height: 1.7; margin-bottom: 1.5rem; font-size: 0.95rem;">
+            Uşak'ın yerel teknoloji, yazılım ve tasarım ekosistemini büyüten açık ve bağımsız topluluk.
+          </p>
+          <div class="location-pill">
+            <span>📍 U Ş A K</span>
+            <span style="opacity: 0.4;">|</span>
+            <span style="font-size: 0.75rem; color: var(--accent-primary);">38.6823° N, 29.4082° E</span>
+          </div>
+        </div>
+
+        <!-- Col 2: Navigation Links -->
+        <div>
+          <h4 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--text-primary); margin-bottom: 1.25rem; text-transform: uppercase;">// SAYFALAR</h4>
+          <ul style="display: flex; flex-direction: column; gap: 0.75rem; font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-secondary);">
+            <li><a href="#about">// Nedir?</a></li>
+            <li><a href="#events">// Sıradaki Buluşma</a></li>
+            <li><a href="#personas">// Kimler Katılabilir?</a></li>
+            <li><a href="#flow">// Buluşma Akışı</a></li>
+            <li><a href="#values">// Değerlerimiz</a></li>
+            <li><a href="#stats">// Rakamlarla Topluluk</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Community & Social Links -->
+        <div>
+          <h4 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--text-primary); margin-bottom: 1.25rem; text-transform: uppercase;">// BAĞLANTILAR</h4>
+          <ul style="display: flex; flex-direction: column; gap: 0.75rem; font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-secondary);">
+            <li><a href="https://chat.whatsapp.com/" target="_blank" rel="noopener">💬 WhatsApp Topluluğu</a></li>
+            <li><a href="https://instagram.com/localhostusak" target="_blank" rel="noopener">📷 Instagram (@localhostusak)</a></li>
+            <li><a href="https://github.com/localhostusak" target="_blank" rel="noopener">🐙 GitHub Topluluk Deposu</a></li>
+            <li><a href="https://x.com/localhostusak" target="_blank" rel="noopener">🐦 X / Twitter (@localhostusak)</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Terminal Line & Copyright -->
+      <div class="footer-bottom">
+        <div>
+          <span>&lt;/&gt; connect • build • share • collaborate { }</span>
+        </div>
+        <div>
+          <span>© 2026 localhostusak • Uşak'ta sevgiyle kodlandı 🧡</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp Quick Action Button -->
+  <a href="https://chat.whatsapp.com/" target="_blank" rel="noopener" class="floating-cta" id="floating-whatsapp-btn" aria-label="WhatsApp'tan Topluluğa Katıl">
+    <span class="floating-cta-icon">💬</span>
+    <span>WhatsApp'a Katıl</span>
+  </a>
+
+  <!-- Core JavaScript Modules -->
+  <script src="js/audio-fx.js"></script>
+  <script src="js/theme-switcher.js"></script>
+  <script src="js/reality-breach.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/scroll-effects.js"></script>
+</body>
+</html>

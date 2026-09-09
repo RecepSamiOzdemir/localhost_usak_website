@@ -1,0 +1,29 @@
+[
+  {
+    "id": "cowork",
+    "label": "Cowork",
+    "icon": "☕",
+    "colorModern": "#FF6600",
+    "colorPixel": "#EE6C19",
+    "isDefault": true,
+    "sortOrder": 1
+  },
+  {
+    "id": "workshop",
+    "label": "Workshop",
+    "icon": "🛠️",
+    "colorModern": "#00E5FF",
+    "colorPixel": "#3A86FF",
+    "isDefault": true,
+    "sortOrder": 2
+  },
+  {
+    "id": "talk",
+    "label": "Talk",
+    "icon": "🎤",
+    "colorModern": "#8B5CF6",
+    "colorPixel": "#7C3AED",
+    "isDefault": true,
+    "sortOrder": 3
+  }
+]
