@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db } from '../db/database.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 export const eventTypesRouter = Router();
 
@@ -17,7 +18,7 @@ eventTypesRouter.get('/', (req, res) => {
 });
 
 // POST /api/admin/event-types or /api/event-types
-eventTypesRouter.post('/', (req, res) => {
+eventTypesRouter.post('/', requireAuth, (req, res) => {
   try {
     const { id, label, icon, colorModern, colorPixel, sortOrder } = req.body;
     if (!id || !label) {
@@ -44,7 +45,7 @@ eventTypesRouter.post('/', (req, res) => {
 });
 
 // DELETE /api/admin/event-types/:id
-eventTypesRouter.delete('/:id', (req, res) => {
+eventTypesRouter.delete('/:id', requireAuth, (req, res) => {
   try {
     const { id } = req.params;
     const checkStmt = db.prepare('SELECT is_default FROM event_types WHERE id = ?');

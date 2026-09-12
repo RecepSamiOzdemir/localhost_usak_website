@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db } from '../db/database.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 export const projectsRouter = Router();
 
@@ -70,7 +71,7 @@ projectsRouter.patch('/:id/like', (req, res) => {
 });
 
 // POST /api/admin/projects or /api/projects
-projectsRouter.post('/', (req, res) => {
+projectsRouter.post('/', requireAuth, (req, res) => {
   try {
     const {
       name,
@@ -111,7 +112,7 @@ projectsRouter.post('/', (req, res) => {
 });
 
 // DELETE /api/admin/projects/:id
-projectsRouter.delete('/:id', (req, res) => {
+projectsRouter.delete('/:id', requireAuth, (req, res) => {
   try {
     const stmt = db.prepare('DELETE FROM projects WHERE id = ?');
     stmt.run(req.params.id);

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db } from '../db/database.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 export const eventsRouter = Router();
 
@@ -62,7 +63,7 @@ eventsRouter.get('/:id', (req, res) => {
 });
 
 // POST /api/admin/events or /api/events
-eventsRouter.post('/', (req, res) => {
+eventsRouter.post('/', requireAuth, (req, res) => {
   try {
     const {
       title,
@@ -107,7 +108,7 @@ eventsRouter.post('/', (req, res) => {
 });
 
 // PUT /api/admin/events/:id
-eventsRouter.put('/:id', (req, res) => {
+eventsRouter.put('/:id', requireAuth, (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, typeId, status, dateStart, location, capacity, attendees } = req.body;
@@ -134,7 +135,7 @@ eventsRouter.put('/:id', (req, res) => {
 });
 
 // DELETE /api/admin/events/:id
-eventsRouter.delete('/:id', (req, res) => {
+eventsRouter.delete('/:id', requireAuth, (req, res) => {
   try {
     const stmt = db.prepare('DELETE FROM events WHERE id = ?');
     stmt.run(req.params.id);

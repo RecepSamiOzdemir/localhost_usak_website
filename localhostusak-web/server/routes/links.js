@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db } from '../db/database.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 export const linksRouter = Router();
 
@@ -60,7 +61,7 @@ linksRouter.get('/', (req, res) => {
 });
 
 // PUT /api/admin/links or POST /api/admin/links
-linksRouter.put('/', (req, res) => {
+linksRouter.put('/', requireAuth, (req, res) => {
   try {
     const data = req.body;
     if (!data || typeof data !== 'object') {
@@ -105,6 +106,6 @@ linksRouter.put('/', (req, res) => {
 });
 
 // Alias POST to PUT
-linksRouter.post('/', (req, res) => {
+linksRouter.post('/', requireAuth, (req, res) => {
   return linksRouter.handle(Object.assign(req, { method: 'PUT' }), res);
 });

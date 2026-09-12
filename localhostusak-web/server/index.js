@@ -13,6 +13,7 @@ import { careersRouter } from './routes/careers.js';
 import { projectsRouter } from './routes/projects.js';
 import { linksRouter } from './routes/links.js';
 import { authRouter } from './routes/auth.js';
+import { requireAuth } from './middleware/authMiddleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,8 +35,11 @@ const swaggerSpec = JSON.parse(
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/docs', (req, res) => res.redirect('/api/docs'));
 
-// Auth routes
+// Auth routes (public: login, verify handles its own token)
 app.use('/api/auth', authRouter);
+
+// Global protection for any route starting with /api/admin
+app.use('/api/admin', requireAuth);
 
 // Route mappings
 app.use('/api/event-types', eventTypesRouter);

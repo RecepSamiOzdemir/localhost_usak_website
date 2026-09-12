@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db } from '../db/database.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 export const careersRouter = Router();
 
@@ -61,7 +62,7 @@ careersRouter.get('/:id', (req, res) => {
 });
 
 // POST /api/admin/careers or /api/careers
-careersRouter.post('/', (req, res) => {
+careersRouter.post('/', requireAuth, (req, res) => {
   try {
     const {
       title,
@@ -100,7 +101,7 @@ careersRouter.post('/', (req, res) => {
 });
 
 // DELETE /api/admin/careers/:id
-careersRouter.delete('/:id', (req, res) => {
+careersRouter.delete('/:id', requireAuth, (req, res) => {
   try {
     const stmt = db.prepare('DELETE FROM careers WHERE id = ?');
     stmt.run(req.params.id);
