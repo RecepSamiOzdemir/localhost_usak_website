@@ -6,11 +6,13 @@ import { CareerResources } from '../components/careers/CareerResources';
 import { CareerCTA } from '../components/careers/CareerCTA';
 import { EmptyState } from '../components/shared/EmptyState';
 import { CareerItem } from '../types/career';
+import { useLinks } from '../context/LinksContext';
 
 // Static fallback data
 import initialCareers from '../data/careers.json';
 
 export const CareersPage: React.FC = () => {
+  const { links } = useLinks();
   const [careers, setCareers] = useState<CareerItem[]>(initialCareers as CareerItem[]);
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedWorkMode, setSelectedWorkMode] = useState<string>('all');
@@ -65,7 +67,7 @@ export const CareersPage: React.FC = () => {
         title="Uşak'tan Globale,"
         highlightText="Doğru Fırsatı Yakala"
         description="Topluluk üyelerinin paylaştığı iş ilanları, staj fırsatları, freelance projeler ve ücretsiz mentorluk eşleşmeleri."
-        whatsappUrl="https://chat.whatsapp.com/dummy-kariyer"
+        whatsappUrl={links.whatsappCareers}
         whatsappLabel="WhatsApp Kariyer Grubuna Katıl"
       />
 

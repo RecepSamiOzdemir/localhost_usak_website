@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
+import { useLinks } from '../../context/LinksContext';
 
 export const HeroSection: React.FC = () => {
   const { theme } = useTheme();
+  const { links } = useLinks();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -229,7 +231,7 @@ export const HeroSection: React.FC = () => {
             }}
           >
             <a
-              href="https://chat.whatsapp.com/"
+              href={links.whatsappGeneral}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-lg btn-whatsapp"
@@ -247,7 +249,7 @@ export const HeroSection: React.FC = () => {
             </Link>
 
             <a
-              href="https://instagram.com/localhostusak"
+              href={links.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-lg btn-secondary"

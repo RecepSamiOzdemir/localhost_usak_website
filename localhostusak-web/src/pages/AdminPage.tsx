@@ -3,17 +3,28 @@ import { PageHero } from '../components/layout/PageHero';
 import { EventItem, EventType } from '../types/event';
 import { CareerItem } from '../types/career';
 import { ProjectItem } from '../types/project';
+import { useLinks } from '../context/LinksContext';
+import { COMMUNITY_LINKS_META, CommunityLinks } from '../constants/links';
 
 import defaultEventTypes from '../data/eventTypes.json';
 import defaultEvents from '../data/events.json';
 import defaultCareers from '../data/careers.json';
 import defaultProjects from '../data/projects.json';
 
-type AdminTab = 'eventTypes' | 'events' | 'careers' | 'projects';
+type AdminTab = 'eventTypes' | 'events' | 'careers' | 'projects' | 'links';
 
 export const AdminPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true); // Default accessible locally
   const [activeTab, setActiveTab] = useState<AdminTab>('eventTypes');
+
+  // Links context
+  const { links, updateLinks, resetToDefaults } = useLinks();
+  const [linkForms, setLinkForms] = useState<CommunityLinks>(links);
+  const [isSavingLinks, setIsSavingLinks] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLinkForms(links);
+  }, [links]);
 
   // State collections
   const [eventTypes, setEventTypes] = useState<EventType[]>(defaultEventTypes as EventType[]);
@@ -254,6 +265,26 @@ export const AdminPage: React.FC = () => {
     showFeedback('✓ Proje silindi.');
   };
 
+  // 5. Community & WhatsApp Links Actions
+  const handleLinkChange = (key: keyof CommunityLinks, val: string) => {
+    setLinkForms((prev) => ({ ...prev, [key]: val }));
+  };
+
+  const handleSaveLinks = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingLinks(true);
+    const res = await updateLinks(linkForms);
+    setIsSavingLinks(false);
+    showFeedback(res.message || '✓ Bağlantılar başarıyla güncellendi!');
+  };
+
+  const handleResetLinks = async () => {
+    if (window.confirm('Tüm bağlantıları varsayılan fabrika ayarlarına döndürmek istediğinize emin misiniz?')) {
+      await resetToDefaults();
+      showFeedback('✓ Bağlantılar varsayılan değerlere sıfırlandı.');
+    }
+  };
+
   return (
     <main>
       <PageHero
@@ -311,6 +342,13 @@ export const AdminPage: React.FC = () => {
             onClick={() => setActiveTab('projects')}
           >
             🚀 Proje Vitrini ({projects.length})
+          </button>
+          <button
+            type="button"
+            className={`admin-tab-btn ${activeTab === 'links' ? 'active' : ''}`}
+            onClick={() => setActiveTab('links')}
+          >
+            💬 WhatsApp & Linkler
           </button>
         </div>
 
@@ -836,6 +874,256 @@ export const AdminPage: React.FC = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* TAB 5: WHATSAPP & COMMUNITY LINKS MANAGEMENT */}
+        {activeTab === 'links' && (
+          <div className="admin-links-section">
+            <div className="admin-form-card" style={{ marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.35rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span>💬</span> WhatsApp & Topluluk Bağlantılarını Yönet
+                  </h3>
+                  <p style={{ margin: '0.5rem 0 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                    Burada güncellediğiniz bağlantılar tüm web sitesinde (Ana sayfa hero, altbilgi, sağ alttaki sabit WhatsApp butonu ve alt sayfalardaki CTA'lar) anında canlı olarak güncellenir.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-secondary"
+                  onClick={handleResetLinks}
+                  title="Tüm linkleri ilk fabrika ayarlarına döndür"
+                  style={{ fontSize: '0.8rem', opacity: 0.8 }}
+                >
+                  🔄 Varsayılanlara Sıfırla
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveLinks}>
+                {/* 1. WhatsApp Groups */}
+                <div style={{ marginBottom: '2rem' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem', 
+                    marginBottom: '1rem', 
+                    paddingBottom: '0.5rem',
+                    borderBottom: '1px solid var(--border-color, rgba(255,255,255,0.1))'
+                  }}>
+                    <span style={{ fontSize: '1.25rem' }}>🟢</span>
+                    <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      WhatsApp Çalışma & Topluluk Grupları
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+                    {COMMUNITY_LINKS_META.filter((m) => m.category === 'whatsapp').map((item) => {
+                      const currentValue = linkForms[item.key] || '';
+                      return (
+                        <div
+                          key={item.key}
+                          style={{
+                            background: 'var(--bg-secondary, rgba(255,255,255,0.03))',
+                            border: '1px solid var(--border-color, rgba(255,255,255,0.08))',
+                            borderRadius: 'var(--radius-sm, 6px)',
+                            padding: '1.25rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '0.75rem',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <label
+                              htmlFor={`link-input-${item.key}`}
+                              style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}
+                            >
+                              <span>{item.icon}</span> {item.label}
+                            </label>
+                            <span
+                              style={{
+                                fontSize: '0.7rem',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                background: 'rgba(37, 211, 102, 0.15)',
+                                color: '#25D366',
+                                fontWeight: 700,
+                                fontFamily: 'var(--font-mono, monospace)',
+                              }}
+                            >
+                              {item.badge}
+                            </span>
+                          </div>
+
+                          <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                            {item.description}
+                          </p>
+
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <input
+                              id={`link-input-${item.key}`}
+                              type="url"
+                              value={currentValue}
+                              placeholder={item.placeholder}
+                              onChange={(e) => handleLinkChange(item.key, e.target.value)}
+                              required
+                              style={{
+                                flex: 1,
+                                padding: '0.6rem 0.75rem',
+                                fontFamily: 'var(--font-mono, monospace)',
+                                fontSize: '0.85rem',
+                                borderRadius: 'var(--radius-xs, 4px)',
+                                border: '1px solid var(--border-color, rgba(255,255,255,0.15))',
+                                background: 'var(--bg-card, rgba(0,0,0,0.2))',
+                                color: 'var(--text-primary)',
+                              }}
+                            />
+                            <a
+                              href={currentValue}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-sm btn-secondary"
+                              title="Linki tarayıcıda aç ve test et"
+                              style={{
+                                padding: '0.6rem 0.75rem',
+                                fontSize: '0.8rem',
+                                whiteSpace: 'nowrap',
+                                textDecoration: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.25rem',
+                              }}
+                            >
+                              Test ↗
+                            </a>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. Social Media & Channels */}
+                <div style={{ marginBottom: '2rem' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem', 
+                    marginBottom: '1rem', 
+                    paddingBottom: '0.5rem',
+                    borderBottom: '1px solid var(--border-color, rgba(255,255,255,0.1))'
+                  }}>
+                    <span style={{ fontSize: '1.25rem' }}>🌐</span>
+                    <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      Sosyal Medya & Açık Kaynak Kanalları
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+                    {COMMUNITY_LINKS_META.filter((m) => m.category === 'social').map((item) => {
+                      const currentValue = linkForms[item.key] || '';
+                      return (
+                        <div
+                          key={item.key}
+                          style={{
+                            background: 'var(--bg-secondary, rgba(255,255,255,0.03))',
+                            border: '1px solid var(--border-color, rgba(255,255,255,0.08))',
+                            borderRadius: 'var(--radius-sm, 6px)',
+                            padding: '1.25rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '0.75rem',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <label
+                              htmlFor={`link-input-${item.key}`}
+                              style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}
+                            >
+                              <span>{item.icon}</span> {item.label}
+                            </label>
+                            <span
+                              style={{
+                                fontSize: '0.7rem',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                background: 'rgba(58, 134, 255, 0.15)',
+                                color: '#3A86FF',
+                                fontWeight: 700,
+                                fontFamily: 'var(--font-mono, monospace)',
+                              }}
+                            >
+                              {item.badge}
+                            </span>
+                          </div>
+
+                          <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                            {item.description}
+                          </p>
+
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <input
+                              id={`link-input-${item.key}`}
+                              type="url"
+                              value={currentValue}
+                              placeholder={item.placeholder}
+                              onChange={(e) => handleLinkChange(item.key, e.target.value)}
+                              required
+                              style={{
+                                flex: 1,
+                                padding: '0.6rem 0.75rem',
+                                fontFamily: 'var(--font-mono, monospace)',
+                                fontSize: '0.85rem',
+                                borderRadius: 'var(--radius-xs, 4px)',
+                                border: '1px solid var(--border-color, rgba(255,255,255,0.15))',
+                                background: 'var(--bg-card, rgba(0,0,0,0.2))',
+                                color: 'var(--text-primary)',
+                              }}
+                            />
+                            <a
+                              href={currentValue}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-sm btn-secondary"
+                              title="Linki tarayıcıda aç ve test et"
+                              style={{
+                                padding: '0.6rem 0.75rem',
+                                fontSize: '0.8rem',
+                                whiteSpace: 'nowrap',
+                                textDecoration: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.25rem',
+                              }}
+                            >
+                              Test ↗
+                            </a>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Save action bar */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color, rgba(255,255,255,0.1))', flexWrap: 'wrap' }}>
+                  {feedback && (
+                    <div style={{ color: '#10B981', fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span>✓</span> {feedback}
+                    </div>
+                  )}
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-lg"
+                    disabled={isSavingLinks}
+                    style={{ minWidth: '220px', fontWeight: 700 }}
+                  >
+                    {isSavingLinks ? '⏳ Kaydediliyor...' : '💾 Bağlantıları Kaydet'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </div>

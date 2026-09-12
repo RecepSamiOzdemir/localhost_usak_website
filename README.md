@@ -68,15 +68,18 @@ Platform, Uşak topluluğunun iki farklı ruhunu tek kod tabanında yaşatan int
 - **Etkinlikler:** Yeni etkinlik oluşturma, tarih, yer, kontenjan düzenleme ve silme.
 - **Kariyer İlanları:** Yeni iş/staj ilanı yayınlama, etiketleme ve yönetme.
 - **Projeler:** Topluluk vitrinine yeni projeler ekleme ve güncelleme.
+- **WhatsApp & Topluluk Bağlantıları:** Genel topluluk, projeler, kariyer ve coworking WhatsApp grupları ile sosyal medya (Instagram, GitHub, X) linklerini kod yazmadan tek ekrandan düzenleme, test etme (`Test ↗`) ve kaydetme.
 - Canlı istatistik sayaçları ve anlık veri senkronizasyonu.
 
 ### ⚡ 6. Native SQLite & REST API Backend
 - **Node.js 22+ Native SQLite (`node:sqlite`):** Harici derleyicilere (`node-gyp`, Python vb.) gerek duymayan, sıfır bağımlılıklı modern ve ultra hızlı veritabanı.
 - **Swagger / OpenAPI 3.0 Entegrasyonu:** `/api/docs` üzerinden canlı olarak test edilebilen kapsamlı dokümantasyon arayüzü.
-- **Otomatik Schema & Seed:** İlk çalıştırmada şemayı ve başlangıç verilerini otomatik yükler.
-- **Graceful Offline Fallback:** Backend servisi çalışmasa dahi frontend, yerleşik JSON verileriyle kesintisiz çalışmayı sürdürür.
+- **Otomatik Schema & Seed:** İlk çalıştırmada şemayı ve başlangıç verilerini (`community_links` dahil) otomatik yükler.
+- **Graceful Offline Fallback:** Backend servisi çalışmasa dahi frontend, yerleşik JSON verileri ve `localStorage` ile kesintisiz çalışmayı sürdürür.
 
-### 💬 7. Sosyal & Topluluk Entegrasyonları
+### 💬 7. Sosyal & Topluluk Entegrasyonları (Merkezi Link Mimarisi)
+- **Merkezi Konfigürasyon (`src/constants/links.ts`):** Tüm WhatsApp çalışma grupları ve sosyal bağlantılar tek bir dosyadan veya Admin panelinden yönetilir.
+- **Canlı Senkronizasyon (`LinksContext`):** Linklerde yapılan değişiklikler sayfayı yenilemeye gerek kalmadan tüm sitede (Hero, Altbilgi, Floating CTA, Alt sayfalar) anında yansır.
 - Canlı WhatsApp Topluluk Grubu doğrudan katılım köprüsü.
 - Instagram ve GitHub topluluk sayfaları bağlantıları.
 - Sayfa altı ve sağ alt köşede her zaman erişilebilir dinamik CTA barı.
@@ -122,8 +125,11 @@ localhost_usak_website/
     ├── src/
     │   ├── main.tsx                    # React DOM giriş noktası
     │   ├── App.tsx                     # Sayfa yönlendirmeleri ve Layout
+    │   ├── constants/
+    │   │   └── links.ts                # Merkezi WhatsApp ve sosyal link sabitleri
     │   ├── context/
-    │   │   └── ThemeContext.tsx        # Tema motoru, ses sentezleyici ve Glitch mekanizması
+    │   │   ├── ThemeContext.tsx        # Tema motoru, ses sentezleyici ve Glitch mekanizması
+    │   │   └── LinksContext.tsx        # Link durumu ve anlık canlı güncelleme motoru
     │   ├── components/
     │   │   ├── layout/                 # Navbar, Footer, FloatingCTA, PageHero
     │   │   ├── home/                   # HeroSection, EventSpotlight, Bento, FlowSteps, Stats
@@ -136,7 +142,7 @@ localhost_usak_website/
     │   │   ├── EventsPage.tsx          # Etkinlikler Sayfası (/etkinlikler)
     │   │   ├── CareersPage.tsx         # Kariyer & Staj Sayfası (/kariyer)
     │   │   ├── ProjectsPage.tsx        # Projeler Sayfası (/projeler)
-    │   │   └── AdminPage.tsx           # Yönetim Paneli (/admin)
+    │   │   └── AdminPage.tsx           # Yönetim Paneli (/admin - Etkinlikler, İlanlar, Projeler, Linkler)
     │   ├── data/                       # Çevrimdışı ve başlangıç fallback JSON verileri
     │   ├── styles/                     # CSS Modülleri (Modern, Pixel, Reset, Animasyonlar)
     │   └── types/                      # TypeScript tip tanımları
@@ -152,7 +158,8 @@ localhost_usak_website/
             ├── events.js               # /api/events CRUD uçları
             ├── eventTypes.js           # /api/event-types CRUD uçları
             ├── careers.js              # /api/careers CRUD uçları
-            └── projects.js             # /api/projects CRUD uçları
+            ├── projects.js             # /api/projects CRUD uçları
+            └── links.js                # /api/links ve /api/admin/links uçları
 ```
 
 ---
@@ -218,6 +225,8 @@ Backend servisi REST standartlarına uygun CRUD uçları sunmaktadır:
 | `GET` | `/api/projects` | Topluluk projelerini listeler |
 | `POST` | `/api/admin/projects` | Yeni proje ekler |
 | `DELETE` | `/api/admin/projects/:id` | Projeyi siler |
+| `GET` | `/api/links` | Topluluk ve WhatsApp grup bağlantılarını listeler |
+| `PUT` | `/api/admin/links` | WhatsApp ve topluluk bağlantılarını günceller |
 | `GET` | `/api/docs` | İnteraktif Swagger UI arayüzü |
 
 ---
@@ -230,6 +239,7 @@ Backend servisi REST standartlarına uygun CRUD uçları sunmaktadır:
 - [x] İnteraktif Swagger UI API dokümantasyonu.
 - [x] Tam işlevsel Admin Yönetim Paneli (`/admin`).
 - [x] Offline fallback JSON veri katmanı.
+- [x] Merkezi WhatsApp ve Topluluk Linkleri Yönetimi (Admin Paneli & SQLite entegrasyonu).
 - [ ] Topluluk Üye Profilleri & "Buluşmadayım" QR check-in sistemi.
 - [ ] E-posta / WhatsApp etkinlik hatırlatma bildirimleri.
 - [ ] Blog / Yazılar bölümü (Topluluk üyelerinin teknik makaleleri için).

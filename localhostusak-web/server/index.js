@@ -10,6 +10,7 @@ import { eventTypesRouter } from './routes/eventTypes.js';
 import { eventsRouter } from './routes/events.js';
 import { careersRouter } from './routes/careers.js';
 import { projectsRouter } from './routes/projects.js';
+import { linksRouter } from './routes/links.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,6 +41,8 @@ app.use('/api/careers', careersRouter);
 app.use('/api/admin/careers', careersRouter);
 app.use('/api/projects', projectsRouter);
 app.use('/api/admin/projects', projectsRouter);
+app.use('/api/links', linksRouter);
+app.use('/api/admin/links', linksRouter);
 
 // Root healthcheck
 app.get('/api/health', (req, res) => {

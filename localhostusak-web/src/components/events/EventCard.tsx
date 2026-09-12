@@ -1,6 +1,7 @@
 import React from 'react';
 import { EventItem, EventType } from '../../types/event';
 import { downloadICS } from '../../utils/calendarExport';
+import { useLinks } from '../../context/LinksContext';
 
 interface EventCardProps {
   event: EventItem;
@@ -8,6 +9,7 @@ interface EventCardProps {
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event, eventType }) => {
+  const { links } = useLinks();
   const isUpcoming = event.status === 'upcoming';
   const startDate = new Date(event.dateStart);
 
@@ -123,7 +125,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, eventType }) => {
               <span>📥</span>
             </button>
             <a
-              href={event.whatsappLink || 'https://chat.whatsapp.com/dummy-coworking'}
+              href={event.whatsappLink || links.whatsappCoworking}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary btn-sm"

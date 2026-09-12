@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLinks } from '../../context/LinksContext';
 
 interface PageHeroProps {
   tag: string;
@@ -15,10 +16,13 @@ export const PageHero: React.FC<PageHeroProps> = ({
   title,
   highlightText,
   description,
-  whatsappUrl = 'https://chat.whatsapp.com/',
+  whatsappUrl,
   whatsappLabel = 'WhatsApp Grubuna Katıl',
   secondaryAction,
 }) => {
+  const { links } = useLinks();
+  const effectiveUrl = whatsappUrl !== undefined ? whatsappUrl : links.whatsappGeneral;
+
   return (
     <section className="page-hero">
       <div className="container page-hero-inner">
@@ -34,9 +38,9 @@ export const PageHero: React.FC<PageHeroProps> = ({
         <p className="page-hero-desc">{description}</p>
 
         <div className="page-hero-actions">
-          {whatsappUrl && (
+          {effectiveUrl && (
             <a
-              href={whatsappUrl}
+              href={effectiveUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-whatsapp"

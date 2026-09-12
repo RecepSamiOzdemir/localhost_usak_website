@@ -6,12 +6,14 @@ import { EventCard } from '../components/events/EventCard';
 import { EventStats } from '../components/events/EventStats';
 import { EmptyState } from '../components/shared/EmptyState';
 import { EventItem, EventType } from '../types/event';
+import { useLinks } from '../context/LinksContext';
 
 // Static fallbacks
 import initialEvents from '../data/events.json';
 import initialTypes from '../data/eventTypes.json';
 
 export const EventsPage: React.FC = () => {
+  const { links } = useLinks();
   const [events, setEvents] = useState<EventItem[]>(initialEvents as EventItem[]);
   const [eventTypes, setEventTypes] = useState<EventType[]>(initialTypes as EventType[]);
   const [selectedType, setSelectedType] = useState<string>('all');
@@ -93,7 +95,7 @@ export const EventsPage: React.FC = () => {
         title="Cowork'ten Workshop'a,"
         highlightText="Tüm Buluşmalar"
         description="Kahveni al, etkinliğini seç, masada yerini al. Yazılım, tasarım, yapay zeka ve serbest çalışma Uşak'ta aynı masada."
-        whatsappUrl="https://chat.whatsapp.com/dummy-coworking"
+        whatsappUrl={links.whatsappCoworking}
         whatsappLabel="WhatsApp Coworking Grubuna Katıl"
       />
 

@@ -1,6 +1,8 @@
 import React from 'react';
+import { useLinks } from '../../context/LinksContext';
 
 export const ValuesBento: React.FC = () => {
+  const { links } = useLinks();
   return (
     <section className="section" id="values" style={{ background: 'var(--bg-secondary)' }}>
       <div className="container">
@@ -98,7 +100,7 @@ export const ValuesBento: React.FC = () => {
             </div>
             <div style={{ marginTop: '2rem' }}>
               <a
-                href="https://chat.whatsapp.com/"
+                href={links.whatsappGeneral}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary btn-sm"

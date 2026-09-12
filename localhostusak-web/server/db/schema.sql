@@ -85,3 +85,14 @@ CREATE TABLE IF NOT EXISTS admins (
   password_hash TEXT NOT NULL,
   created_at    TEXT DEFAULT CURRENT_TIMESTAMP
 );
+
+-- ============================================================
+-- Topluluk & WhatsApp Bağlantıları
+-- ============================================================
+CREATE TABLE IF NOT EXISTS community_links (
+  id            TEXT PRIMARY KEY,        -- "whatsapp_general", "whatsapp_projects", etc.
+  url           TEXT NOT NULL,
+  label         TEXT,
+  description   TEXT,
+  updated_at    TEXT DEFAULT CURRENT_TIMESTAMP
+);

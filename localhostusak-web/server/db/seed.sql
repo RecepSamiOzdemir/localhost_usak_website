@@ -29,3 +29,14 @@ INSERT OR IGNORE INTO projects (id, name, description, type, technologies, owner
 -- Varsayılan Admin Kullanıcısı (admin / admin123)
 INSERT OR IGNORE INTO admins (id, username, password_hash) VALUES
 (1, 'admin', 'admin123');
+
+-- Varsayılan Topluluk & WhatsApp Linkleri
+INSERT OR IGNORE INTO community_links (id, url, label, description) VALUES
+('whatsapp_general', 'https://chat.whatsapp.com/', 'WhatsApp Topluluğu', 'Genel topluluk duyuru ve sohbet grubu'),
+('whatsapp_projects', 'https://chat.whatsapp.com/dummy-projeler', 'WhatsApp Projeler Grubu', 'Açık kaynak ve topluluk projeleri grubu'),
+('whatsapp_careers', 'https://chat.whatsapp.com/dummy-kariyer', 'WhatsApp Kariyer Grubu', 'İş, staj ve mentörlük paylaşımları'),
+('whatsapp_coworking', 'https://chat.whatsapp.com/dummy-coworking', 'WhatsApp Coworking Grubu', 'Fiziksel buluşmalar ve coworking masası'),
+('instagram', 'https://instagram.com/localhostusak', 'Instagram', 'Sosyal medya hesabı'),
+('github', 'https://github.com/localhostusak', 'GitHub', 'Açık kaynak organizasyon deposu'),
+('x', 'https://x.com/localhostusak', 'X / Twitter', 'Resmi X hesabı');
+

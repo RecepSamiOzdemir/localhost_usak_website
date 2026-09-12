@@ -2,6 +2,7 @@ import React from 'react';
 import { EventItem, EventType } from '../../types/event';
 import { CountdownTimer } from '../shared/CountdownTimer';
 import { downloadICS, openGoogleCalendar } from '../../utils/calendarExport';
+import { useLinks } from '../../context/LinksContext';
 
 interface EventSpotlightCardProps {
   event: EventItem;
@@ -9,6 +10,7 @@ interface EventSpotlightCardProps {
 }
 
 export const EventSpotlightCard: React.FC<EventSpotlightCardProps> = ({ event, eventType }) => {
+  const { links } = useLinks();
   const startDate = new Date(event.dateStart);
 
   const formattedDate = startDate.toLocaleDateString('tr-TR', {
@@ -162,7 +164,7 @@ export const EventSpotlightCard: React.FC<EventSpotlightCardProps> = ({ event, e
               <span>📅</span>
             </button>
             <a
-              href={event.whatsappLink || 'https://chat.whatsapp.com/dummy-coworking'}
+              href={event.whatsappLink || links.whatsappCoworking}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-whatsapp btn-full"

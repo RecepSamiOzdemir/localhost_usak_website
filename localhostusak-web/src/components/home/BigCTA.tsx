@@ -1,6 +1,8 @@
 import React from 'react';
+import { useLinks } from '../../context/LinksContext';
 
 export const BigCTA: React.FC = () => {
+  const { links } = useLinks();
   return (
     <section className="section" id="cta" style={{ background: 'var(--bg-secondary)' }}>
       <div className="container">
@@ -41,7 +43,7 @@ export const BigCTA: React.FC = () => {
 
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.25rem' }}>
             <a
-              href="https://chat.whatsapp.com/"
+              href={links.whatsappGeneral}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-lg btn-whatsapp"
@@ -54,7 +56,7 @@ export const BigCTA: React.FC = () => {
             </a>
 
             <a
-              href="https://instagram.com/localhostusak"
+              href={links.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-lg btn-secondary"

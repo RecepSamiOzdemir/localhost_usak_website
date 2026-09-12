@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ProjectItem, ProjectType } from '../../types/project';
 import { soundFX } from '../../utils/audioFx';
+import { useLinks } from '../../context/LinksContext';
 
 interface ProjectCardProps {
   project: ProjectItem;
@@ -8,6 +9,7 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onLike }) => {
+  const { links } = useLinks();
   const [likes, setLikes] = useState(project.likes);
   const [hasLiked, setHasLiked] = useState(false);
 
@@ -174,7 +176,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onLike }) => 
 
         {!project.demoUrl && !project.githubUrl && (
           <a
-            href="https://chat.whatsapp.com/dummy-projeler"
+            href={links.whatsappProjects}
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-secondary btn-sm"

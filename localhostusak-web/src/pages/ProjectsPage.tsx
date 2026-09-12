@@ -6,11 +6,13 @@ import { ProjectCard } from '../components/projects/ProjectCard';
 import { ProjectCTA } from '../components/projects/ProjectCTA';
 import { EmptyState } from '../components/shared/EmptyState';
 import { ProjectItem } from '../types/project';
+import { useLinks } from '../context/LinksContext';
 
 // Static fallback data
 import initialProjects from '../data/projects.json';
 
 export const ProjectsPage: React.FC = () => {
+  const { links } = useLinks();
   const [projects, setProjects] = useState<ProjectItem[]>(initialProjects as ProjectItem[]);
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedTech, setSelectedTech] = useState<string>('all');
@@ -76,7 +78,7 @@ export const ProjectsPage: React.FC = () => {
         title="Uşak'ta Üretiliyor,"
         highlightText="Dünyaya Açılıyor"
         description="Topluluk üyelerimizin geliştirdiği açık kaynak projeler, erken aşama girişimler ve birlikte üretmek için ekip arkadaşı arayanlar."
-        whatsappUrl="https://chat.whatsapp.com/dummy-projeler"
+        whatsappUrl={links.whatsappProjects}
         whatsappLabel="WhatsApp Projeler Grubuna Katıl"
       />
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLinks } from '../../context/LinksContext';
 
 interface FloatingCTAProps {
   whatsappUrl?: string;
@@ -6,9 +7,11 @@ interface FloatingCTAProps {
 }
 
 export const FloatingCTA: React.FC<FloatingCTAProps> = ({
-  whatsappUrl = 'https://chat.whatsapp.com/',
+  whatsappUrl,
   label = "WhatsApp'a Katıl",
 }) => {
+  const { links } = useLinks();
+  const effectiveUrl = whatsappUrl || links.whatsappGeneral;
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -49,7 +52,7 @@ export const FloatingCTA: React.FC<FloatingCTAProps> = ({
 
   return (
     <a
-      href={whatsappUrl}
+      href={effectiveUrl}
       target="_blank"
       rel="noopener noreferrer"
       className={`floating-cta ${isVisible ? 'visible' : ''}`}

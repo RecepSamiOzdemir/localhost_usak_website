@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useLinks } from '../../context/LinksContext';
 
 export const Footer: React.FC = () => {
+  const { links } = useLinks();
   return (
     <footer className="footer-wrapper" id="footer">
       <div className="container">
@@ -103,22 +105,22 @@ export const Footer: React.FC = () => {
               }}
             >
               <li>
-                <a href="https://chat.whatsapp.com/" target="_blank" rel="noopener">
+                <a href={links.whatsappGeneral} target="_blank" rel="noopener noreferrer">
                   💬 WhatsApp Topluluğu
                 </a>
               </li>
               <li>
-                <a href="https://instagram.com/localhostusak" target="_blank" rel="noopener">
+                <a href={links.instagram} target="_blank" rel="noopener noreferrer">
                   📷 Instagram (@localhostusak)
                 </a>
               </li>
               <li>
-                <a href="https://github.com/localhostusak" target="_blank" rel="noopener">
+                <a href={links.github} target="_blank" rel="noopener noreferrer">
                   🐙 GitHub Deposu
                 </a>
               </li>
               <li>
-                <a href="https://x.com/localhostusak" target="_blank" rel="noopener">
+                <a href={links.x} target="_blank" rel="noopener noreferrer">
                   🐦 X / Twitter
                 </a>
               </li>

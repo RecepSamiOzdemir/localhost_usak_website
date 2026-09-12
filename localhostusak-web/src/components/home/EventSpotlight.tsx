@@ -1,8 +1,10 @@
 import React from 'react';
 import { CountdownTimer } from '../shared/CountdownTimer';
 import { downloadICS, openGoogleCalendar } from '../../utils/calendarExport';
+import { useLinks } from '../../context/LinksContext';
 
 export const EventSpotlight: React.FC = () => {
+  const { links } = useLinks();
   const meetupDate = new Date('2026-09-28T14:00:00');
 
   const handleDownloadICS = () => {
@@ -162,7 +164,7 @@ export const EventSpotlight: React.FC = () => {
                   <span>📅</span>
                 </button>
                 <a
-                  href="https://chat.whatsapp.com/"
+                  href={links.whatsappCoworking || links.whatsappGeneral}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-whatsapp btn-full"

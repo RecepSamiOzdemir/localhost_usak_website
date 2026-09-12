@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { LinksProvider } from './context/LinksContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { FloatingCTA } from './components/layout/FloatingCTA';
@@ -92,7 +93,9 @@ const AppContent: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <AppContent />
+      <LinksProvider>
+        <AppContent />
+      </LinksProvider>
     </ThemeProvider>
   );
 };

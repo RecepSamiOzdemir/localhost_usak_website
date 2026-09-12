@@ -1,6 +1,8 @@
 import React from 'react';
+import { useLinks } from '../../context/LinksContext';
 
 export const ProjectCTA: React.FC = () => {
+  const { links } = useLinks();
   return (
     <div
       className="card circuit-border"
@@ -31,7 +33,7 @@ export const ProjectCTA: React.FC = () => {
 
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
         <a
-          href="https://chat.whatsapp.com/dummy-projeler"
+          href={links.whatsappProjects}
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-whatsapp btn-lg"

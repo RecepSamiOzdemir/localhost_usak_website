@@ -1,11 +1,13 @@
 import React from 'react';
 import { CareerItem, CareerType } from '../../types/career';
+import { useLinks } from '../../context/LinksContext';
 
 interface CareerCardProps {
   career: CareerItem;
 }
 
 export const CareerCard: React.FC<CareerCardProps> = ({ career }) => {
+  const { links } = useLinks();
   const getTypeBadge = (type: CareerType) => {
     switch (type) {
       case 'job':
@@ -118,7 +120,7 @@ export const CareerCard: React.FC<CareerCardProps> = ({ career }) => {
           </a>
         ) : (
           <a
-            href="https://chat.whatsapp.com/dummy-kariyer"
+            href={links.whatsappCareers}
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary btn-full"
