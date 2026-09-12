@@ -96,3 +96,17 @@ CREATE TABLE IF NOT EXISTS community_links (
   description   TEXT,
   updated_at    TEXT DEFAULT CURRENT_TIMESTAMP
 );
+
+-- ============================================================
+-- Güvenlik ve Denetim Günlüğü (Audit Logs)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  admin_id       INTEGER,
+  admin_username TEXT,
+  action         TEXT NOT NULL,
+  details        TEXT,
+  ip_address     TEXT,
+  created_at     TEXT DEFAULT CURRENT_TIMESTAMP
+);
+

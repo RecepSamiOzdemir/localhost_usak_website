@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/database.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 import { validateEventType } from '../middleware/validators.js';
+import { logAudit } from '../middleware/auditLogger.js';
 
 export const eventTypesRouter = Router();
 
@@ -14,7 +15,8 @@ eventTypesRouter.get('/', (req, res) => {
     const rows = stmt.all();
     res.json(rows.map((r) => ({ ...r, isDefault: Boolean(r.isDefault) })));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[EVENT_TYPES_GET_ERROR]:', err.message);
+    res.status(500).json({ error: 'Etkinlik türleri yüklenirken bir hata oluştu.' });
   }
 });
 
@@ -23,7 +25,7 @@ eventTypesRouter.post('/', requireAuth, validateEventType, (req, res) => {
   try {
     const { id, label, icon, colorModern, colorPixel, sortOrder } = req.body;
     if (!id || !label) {
-      return res.status(400).json({ error: 'id and label are required' });
+      return res.status(400).json({ error: 'Etkinlik türü ID ve etiket zorunludur.' });
     }
 
     const stmt = db.prepare(`
@@ -39,9 +41,11 @@ eventTypesRouter.post('/', requireAuth, validateEventType, (req, res) => {
       sortOrder || 99
     );
 
-    res.status(201).json({ success: true, message: 'Event type created' });
+    logAudit(req, 'CREATE_EVENT_TYPE', { id, label });
+    res.status(201).json({ success: true, message: 'Etkinlik türü başarıyla oluşturuldu.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[EVENT_TYPES_CREATE_ERROR]:', err.message);
+    res.status(500).json({ error: 'Etkinlik türü oluşturulurken bir hata oluştu.' });
   }
 });
 
@@ -53,17 +57,19 @@ eventTypesRouter.delete('/:id', requireAuth, (req, res) => {
     const existing = checkStmt.get(id);
 
     if (!existing) {
-      return res.status(404).json({ error: 'Event type not found' });
+      return res.status(404).json({ error: 'Etkinlik türü bulunamadı.' });
     }
     if (existing.is_default) {
-      return res.status(400).json({ error: 'Default event types cannot be deleted' });
+      return res.status(400).json({ error: 'Varsayılan etkinlik türleri silinemez.' });
     }
 
     const deleteStmt = db.prepare('DELETE FROM event_types WHERE id = ?');
     deleteStmt.run(id);
 
-    res.json({ success: true, message: 'Event type deleted' });
+    logAudit(req, 'DELETE_EVENT_TYPE', { id });
+    res.json({ success: true, message: 'Etkinlik türü başarıyla silindi.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[EVENT_TYPES_DELETE_ERROR]:', err.message);
+    res.status(500).json({ error: 'Etkinlik türü silinirken bir hata oluştu.' });
   }
 });

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/database.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 import { validateCareer } from '../middleware/validators.js';
+import { logAudit } from '../middleware/auditLogger.js';
 
 export const careersRouter = Router();
 
@@ -46,7 +47,8 @@ careersRouter.get('/', (req, res) => {
     const rows = stmt.all(...params);
     res.json(rows.map(formatCareer));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[CAREERS_GET_ERROR]:', err.message);
+    res.status(500).json({ error: 'Kariyer ilanları yüklenirken bir hata oluştu.' });
   }
 });
 
@@ -55,10 +57,11 @@ careersRouter.get('/:id', (req, res) => {
   try {
     const stmt = db.prepare('SELECT * FROM careers WHERE id = ?');
     const row = stmt.get(req.params.id);
-    if (!row) return res.status(404).json({ error: 'Career post not found' });
+    if (!row) return res.status(404).json({ error: 'İlan bulunamadı.' });
     res.json(formatCareer(row));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[CAREERS_GET_BY_ID_ERROR]:', err.message);
+    res.status(500).json({ error: 'İlan detayları getirilemedi.' });
   }
 });
 
@@ -95,9 +98,11 @@ careersRouter.post('/', requireAuth, validateCareer, (req, res) => {
       postedBy || '@admin'
     );
 
-    res.status(201).json({ success: true, message: 'Career post created' });
+    logAudit(req, 'CREATE_CAREER', { title, company, type });
+    res.status(201).json({ success: true, message: 'Kariyer ilanı başarıyla oluşturuldu.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[CAREERS_CREATE_ERROR]:', err.message);
+    res.status(500).json({ error: 'Kariyer ilanı oluşturulurken bir hata oluştu.' });
   }
 });
 
@@ -106,8 +111,10 @@ careersRouter.delete('/:id', requireAuth, (req, res) => {
   try {
     const stmt = db.prepare('DELETE FROM careers WHERE id = ?');
     stmt.run(req.params.id);
-    res.json({ success: true, message: 'Career post deleted' });
+    logAudit(req, 'DELETE_CAREER', { id: req.params.id });
+    res.json({ success: true, message: 'Kariyer ilanı başarıyla silindi.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[CAREERS_DELETE_ERROR]:', err.message);
+    res.status(500).json({ error: 'Kariyer ilanı silinirken bir hata oluştu.' });
   }
 });

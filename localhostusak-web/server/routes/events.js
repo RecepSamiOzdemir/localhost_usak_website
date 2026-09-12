@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/database.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 import { validateEvent } from '../middleware/validators.js';
+import { logAudit } from '../middleware/auditLogger.js';
 
 export const eventsRouter = Router();
 
@@ -47,7 +48,8 @@ eventsRouter.get('/', (req, res) => {
     const rows = stmt.all(...params);
     res.json(rows.map(formatEvent));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[EVENTS_GET_ERROR]:', err.message);
+    res.status(500).json({ error: 'Etkinlikler yüklenirken bir hata oluştu.' });
   }
 });
 
@@ -56,10 +58,11 @@ eventsRouter.get('/:id', (req, res) => {
   try {
     const stmt = db.prepare('SELECT * FROM events WHERE id = ?');
     const row = stmt.get(req.params.id);
-    if (!row) return res.status(404).json({ error: 'Event not found' });
+    if (!row) return res.status(404).json({ error: 'Etkinlik bulunamadı.' });
     res.json(formatEvent(row));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[EVENTS_GET_BY_ID_ERROR]:', err.message);
+    res.status(500).json({ error: 'Etkinlik detayı getirilemedi.' });
   }
 });
 
@@ -102,9 +105,11 @@ eventsRouter.post('/', requireAuth, validateEvent, (req, res) => {
       JSON.stringify(tags || [])
     );
 
-    res.status(201).json({ success: true, message: 'Event created' });
+    logAudit(req, 'CREATE_EVENT', { title, dateStart, typeId });
+    res.status(201).json({ success: true, message: 'Etkinlik başarıyla oluşturuldu.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[EVENTS_CREATE_ERROR]:', err.message);
+    res.status(500).json({ error: 'Etkinlik oluşturulurken bir hata oluştu.' });
   }
 });
 
@@ -129,9 +134,11 @@ eventsRouter.put('/:id', requireAuth, validateEvent, (req, res) => {
     `);
 
     stmt.run(title, description, typeId, status, dateStart, location, capacity, attendees, id);
-    res.json({ success: true, message: 'Event updated' });
+    logAudit(req, 'UPDATE_EVENT', { id, title, status });
+    res.json({ success: true, message: 'Etkinlik başarıyla güncellendi.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[EVENTS_UPDATE_ERROR]:', err.message);
+    res.status(500).json({ error: 'Etkinlik güncellenirken bir hata oluştu.' });
   }
 });
 
@@ -140,8 +147,10 @@ eventsRouter.delete('/:id', requireAuth, (req, res) => {
   try {
     const stmt = db.prepare('DELETE FROM events WHERE id = ?');
     stmt.run(req.params.id);
-    res.json({ success: true, message: 'Event deleted' });
+    logAudit(req, 'DELETE_EVENT', { id: req.params.id });
+    res.json({ success: true, message: 'Etkinlik başarıyla silindi.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[EVENTS_DELETE_ERROR]:', err.message);
+    res.status(500).json({ error: 'Etkinlik silinirken bir hata oluştu.' });
   }
 });

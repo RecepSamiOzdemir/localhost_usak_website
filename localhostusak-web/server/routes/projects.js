@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/database.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 import { validateProject } from '../middleware/validators.js';
+import { logAudit } from '../middleware/auditLogger.js';
 
 export const projectsRouter = Router();
 
@@ -58,7 +59,8 @@ projectsRouter.get('/', (req, res) => {
     const rows = stmt.all(...params);
     res.json(rows.map(formatProject));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[PROJECTS_GET_ERROR]:', err.message);
+    res.status(500).json({ error: 'Projeler yüklenirken bir hata oluştu.' });
   }
 });
 
@@ -67,10 +69,11 @@ projectsRouter.get('/:id', (req, res) => {
   try {
     const stmt = db.prepare('SELECT * FROM projects WHERE id = ?');
     const row = stmt.get(req.params.id);
-    if (!row) return res.status(404).json({ error: 'Project not found' });
+    if (!row) return res.status(404).json({ error: 'Proje bulunamadı.' });
     res.json(formatProject(row));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[PROJECTS_GET_BY_ID_ERROR]:', err.message);
+    res.status(500).json({ error: 'Proje detayı getirilemedi.' });
   }
 });
 
@@ -146,9 +149,11 @@ projectsRouter.post('/', requireAuth, validateProject, (req, res) => {
       imageUrl || null
     );
 
-    res.status(201).json({ success: true, message: 'Project created' });
+    logAudit(req, 'CREATE_PROJECT', { name, type, owner });
+    res.status(201).json({ success: true, message: 'Proje başarıyla oluşturuldu.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[PROJECTS_CREATE_ERROR]:', err.message);
+    res.status(500).json({ error: 'Proje oluşturulurken bir hata oluştu.' });
   }
 });
 
@@ -157,8 +162,10 @@ projectsRouter.delete('/:id', requireAuth, (req, res) => {
   try {
     const stmt = db.prepare('DELETE FROM projects WHERE id = ?');
     stmt.run(req.params.id);
-    res.json({ success: true, message: 'Project deleted' });
+    logAudit(req, 'DELETE_PROJECT', { id: req.params.id });
+    res.json({ success: true, message: 'Proje başarıyla silindi.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[PROJECTS_DELETE_ERROR]:', err.message);
+    res.status(500).json({ error: 'Proje silinirken bir hata oluştu.' });
   }
 });

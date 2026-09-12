@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/database.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 import { validateCommunityLinks } from '../middleware/validators.js';
+import { logAudit } from '../middleware/auditLogger.js';
 
 export const linksRouter = Router();
 
@@ -57,7 +58,8 @@ linksRouter.get('/', (req, res) => {
     const rows = db.prepare('SELECT id, url, label, description, updated_at as updatedAt FROM community_links').all();
     res.json(formatLinksResponse(rows));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[LINKS_GET_ERROR]:', err.message);
+    res.status(500).json({ error: 'Bağlantılar yüklenirken bir hata oluştu.' });
   }
 });
 
@@ -66,7 +68,7 @@ linksRouter.put('/', requireAuth, validateCommunityLinks, (req, res) => {
   try {
     const data = req.body;
     if (!data || typeof data !== 'object') {
-      return res.status(400).json({ error: 'Request body must be an object' });
+      return res.status(400).json({ error: 'İstek gövdesi bir nesne olmalıdır.' });
     }
 
     const mapping = {
@@ -96,13 +98,16 @@ linksRouter.put('/', requireAuth, validateCommunityLinks, (req, res) => {
     }
 
     const updatedRows = db.prepare('SELECT id, url, label, description, updated_at as updatedAt FROM community_links').all();
+    logAudit(req, 'UPDATE_COMMUNITY_LINKS', Object.keys(data));
+
     res.json({
       success: true,
-      message: 'Topluluk bağlantıları başarıyla güncellendi',
+      message: 'Topluluk bağlantıları başarıyla güncellendi.',
       ...formatLinksResponse(updatedRows),
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[LINKS_UPDATE_ERROR]:', err.message);
+    res.status(500).json({ error: 'Bağlantılar güncellenirken bir hata oluştu.' });
   }
 });
 
