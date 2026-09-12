@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { db } from '../db/database.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
+import { validateEventType } from '../middleware/validators.js';
 
 export const eventTypesRouter = Router();
 
@@ -18,7 +19,7 @@ eventTypesRouter.get('/', (req, res) => {
 });
 
 // POST /api/admin/event-types or /api/event-types
-eventTypesRouter.post('/', requireAuth, (req, res) => {
+eventTypesRouter.post('/', requireAuth, validateEventType, (req, res) => {
   try {
     const { id, label, icon, colorModern, colorPixel, sortOrder } = req.body;
     if (!id || !label) {

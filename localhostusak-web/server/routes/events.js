@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { db } from '../db/database.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
+import { validateEvent } from '../middleware/validators.js';
 
 export const eventsRouter = Router();
 
@@ -63,7 +64,7 @@ eventsRouter.get('/:id', (req, res) => {
 });
 
 // POST /api/admin/events or /api/events
-eventsRouter.post('/', requireAuth, (req, res) => {
+eventsRouter.post('/', requireAuth, validateEvent, (req, res) => {
   try {
     const {
       title,
@@ -108,7 +109,7 @@ eventsRouter.post('/', requireAuth, (req, res) => {
 });
 
 // PUT /api/admin/events/:id
-eventsRouter.put('/:id', requireAuth, (req, res) => {
+eventsRouter.put('/:id', requireAuth, validateEvent, (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, typeId, status, dateStart, location, capacity, attendees } = req.body;

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { db } from '../db/database.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
+import { validateCareer } from '../middleware/validators.js';
 
 export const careersRouter = Router();
 
@@ -62,7 +63,7 @@ careersRouter.get('/:id', (req, res) => {
 });
 
 // POST /api/admin/careers or /api/careers
-careersRouter.post('/', requireAuth, (req, res) => {
+careersRouter.post('/', requireAuth, validateCareer, (req, res) => {
   try {
     const {
       title,
