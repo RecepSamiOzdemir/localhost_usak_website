@@ -12,6 +12,7 @@ import { eventsRouter } from './routes/events.js';
 import { careersRouter } from './routes/careers.js';
 import { projectsRouter } from './routes/projects.js';
 import { linksRouter } from './routes/links.js';
+import { authRouter } from './routes/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,6 +33,9 @@ const swaggerSpec = JSON.parse(
 );
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/docs', (req, res) => res.redirect('/api/docs'));
+
+// Auth routes
+app.use('/api/auth', authRouter);
 
 // Route mappings
 app.use('/api/event-types', eventTypesRouter);
