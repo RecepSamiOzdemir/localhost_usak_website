@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "set-admin": "node scripts/setAdmin.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
