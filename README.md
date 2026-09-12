@@ -1,0 +1,251 @@
+<div align="center">
+
+# 🌐 localhost[uşak]
+
+### Uşak Teknoloji, Yazılım ve Tasarım Topluluğu Web Platformu
+
+[![React](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-22+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![SQLite](https://img.shields.io/badge/SQLite-Native_Sync-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://nodejs.org/api/sqlite.html)
+[![Swagger](https://img.shields.io/badge/OpenAPI-Swagger_UI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](http://localhost:3001/api/docs)
+[![License](https://img.shields.io/badge/License-MIT-orange?style=for-the-badge)](LICENSE)
+
+<br />
+
+> **`CONNECT • CODE • CREATE • COMMUNITY`**  
+> *"Deneyimli olmak şart değil; merak, öğrenme isteği ve samimiyet en önemli ortak noktamız.  
+> Kahveni al, laptopunu getir, masada sana da yer var!"*
+
+<br />
+
+[⚡ Canlı Özellikler](#-öne-çıkan-özellikler) •
+[🌓 Çift Tema Mimarisi](#-ikili-tasarım-mimarisi-dual-theme-engine) •
+[🛠️ Kurulum & Çalıştırma](#-kurulum-ve-yerel-geliştirme) •
+[📁 Proje Mimarisi](#-proje-dizin-yapısı) •
+[🔌 API & Swagger](#-api-ve-veritabanı-mimarisi) •
+[💬 Topluluk](#-topluluğa-katılın)
+
+</div>
+
+---
+
+## 📌 Proje Hakkında
+
+**localhost[uşak]**, Uşak ilindeki yazılımcılar, mühendisler, dijital tasarımcılar, remote/freelance çalışanlar, üniversite öğrencileri ve teknoloji meraklılarını bir araya getiren bağımsız yerel teknoloji topluluğunun resmi web platformudur.
+
+Bu platform; topluluk buluşmalarını organize etmek, Uşak ve uzaktan çalışma ekosistemindeki staj/iş fırsatlarını listelemek, üyelerin açık kaynak ve yerel projelerini vitrine taşımak ve topluluk içi etkileşimi güçlendirmek amacıyla geliştirilmektedir.
+
+---
+
+## 🚀 Güncel Durum ve Tamamlanan Özellikler
+
+Platform güncel olarak **Frontend (SPA)**, **Backend (REST API + SQLite)** ve **Yönetim Paneli (Admin CMS)** ile tam entegre çalışmaktadır.
+
+### 🌟 1. Çift Tasarım Dili Motoru (Dual Theme Engine)
+Platform, Uşak topluluğunun iki farklı ruhunu tek kod tabanında yaşatan interaktif bir tema motoruna sahiptir:
+- **Cyber HUD Mode (Modern):** Fütüristik koyu zemin, neon turuncu/camgöbeği detaylar, cam efekti (`glassmorphism`), terminal estetiği ve modern monospace tipografi.
+- **Cozy Retro Mode (Pixel Art Kafe):** 8-bit / 16-bit nostaljik arcade estetiği, pikselli fontlar (*Press Start 2P*, *Silkscreen*), retro basmalı butonlar ve samimi kafe masası sıcaklığı.
+- **🕹️ "The Reality Fracture" (Glitch Easter Egg):** Kullanıcı navbar üzerindeki boyutsal çatlak/durum göstergesine 3 kez tıkladığında; ekran sarsıntısı, parazit efektleri ve yerleşik **Web Audio API** tarafından sentezlenen 8-bit sesler eşliğinde retro piksel evrenine geçiş gerçekleşir.
+
+### 📅 2. Etkinlik Yönetimi & Geri Sayım (Events)
+- **Sıradaki Buluşma Odağı:** Canlı geri sayım sayacı, etkinlik tipi rozetleri, mekan/saat bilgisi ve harita yönlendirmesi.
+- **Takvim Entegrasyonu:** Google Calendar ve standart `.ics` formatında tek tıkla takvime ekleme.
+- **Etkinlik Filtreleme & Arşiv:** Kategori bazlı filtreleme (Code & Coffee, Tech Talk & Workshop, Hackathon, Networking) ve geçmiş etkinlik kayıtları.
+
+### 💼 3. Kariyer & Staj Platformu (Careers)
+- Uşak yerelindeki teknoloji şirketleri ile remote çalışan ekiplerin staj ve iş ilanları.
+- Rol seviyesi (Junior, Mid, Senior, Stajyer) ve çalışma modeli (Remote, Hibrit, Yerinde) filtreleri.
+- Başvuru linkleri, maaş/yan haklar şeffaflığı ve şirket detayları.
+
+### 💻 4. Topluluk Projeleri Vitrini (Showcase)
+- Uşak'taki geliştiricilerin ürettiği açık kaynak veya canlı ürünlerin sergilendiği vitrin.
+- Tech stack etiketleri, GitHub repo bağlantıları ve canlı demo yönlendirmeleri.
+
+### 🛡️ 5. Dinamik Admin Yönetim Paneli (`/admin`)
+- **Etkinlik Türleri (Event Types):** İkon, etiket ve tema rengi belirleyerek yeni etkinlik kategorileri tanımlama.
+- **Etkinlikler:** Yeni etkinlik oluşturma, tarih, yer, kontenjan düzenleme ve silme.
+- **Kariyer İlanları:** Yeni iş/staj ilanı yayınlama, etiketleme ve yönetme.
+- **Projeler:** Topluluk vitrinine yeni projeler ekleme ve güncelleme.
+- Canlı istatistik sayaçları ve anlık veri senkronizasyonu.
+
+### ⚡ 6. Native SQLite & REST API Backend
+- **Node.js 22+ Native SQLite (`node:sqlite`):** Harici derleyicilere (`node-gyp`, Python vb.) gerek duymayan, sıfır bağımlılıklı modern ve ultra hızlı veritabanı.
+- **Swagger / OpenAPI 3.0 Entegrasyonu:** `/api/docs` üzerinden canlı olarak test edilebilen kapsamlı dokümantasyon arayüzü.
+- **Otomatik Schema & Seed:** İlk çalıştırmada şemayı ve başlangıç verilerini otomatik yükler.
+- **Graceful Offline Fallback:** Backend servisi çalışmasa dahi frontend, yerleşik JSON verileriyle kesintisiz çalışmayı sürdürür.
+
+### 💬 7. Sosyal & Topluluk Entegrasyonları
+- Canlı WhatsApp Topluluk Grubu doğrudan katılım köprüsü.
+- Instagram ve GitHub topluluk sayfaları bağlantıları.
+- Sayfa altı ve sağ alt köşede her zaman erişilebilir dinamik CTA barı.
+
+---
+
+## 🛠️ Teknoloji Yığını
+
+### Frontend
+| Teknoloji | Sürüm | Kullanım Amacı |
+|---|---|---|
+| **React** | `^19.0.0` | Modern SPA mimarisi ve bileşen yapısı |
+| **TypeScript** | `~5.7.2` | Tip güvenliği ve ölçeklenebilir kod tabanı |
+| **Vite** | `^6.2.0` | Hızlı HMR, geliştirme sunucusu ve optimize derleme |
+| **React Router** | `^7.3.0` | SPA istemci tarafı sayfa yönlendirmeleri |
+| **Vanilla CSS / Custom Design System** | - | CSS Değişkenleri, Dual Theme motoru, Camgöbeği/Neon efektler, Responsive Grid |
+| **Web Audio API** | Native | Retro tema geçişinde prosedürel sentezlenen 8-bit ses efektleri |
+
+### Backend
+| Teknoloji | Sürüm | Kullanım Amacı |
+|---|---|---|
+| **Node.js** | `>= 22.0.0` | Modern ES Module JavaScript çalışma ortamı |
+| **Express** | `^4.21.2` | RESTful API servisi |
+| **node:sqlite (DatabaseSync)** | Native | Yerel, sıfır konfigürasyonlu SQLite veritabanı motoru |
+| **Swagger UI Express** | `^5.0.1` | İnteraktif OpenAPI 3.0 dokümantasyon arayüzü (`/api/docs`) |
+| **CORS** | `^2.8.5` | Güvenli yerel API erişim izinleri |
+
+---
+
+## 📁 Proje Dizin Yapısı
+
+```text
+localhost_usak_website/
+├── DESIGN_SYSTEM.md                    # Temel tasarım ilkeleri dokümantasyonu
+├── DESIGN_SYSTEM_MODERN.md             # Modern Cyber-HUD tema kuralları
+├── DESIGN_SYSTEM_PIXEL.md              # Cozy Retro Pixel tema kuralları
+├── WEBSITE_STRUCTURE_AND_BRAINSTORMING.md # Sayfa mimarisi ve beyin fırtınası notları
+├── References/                         # Topluluk afişleri, logolar ve grafik referansları
+└── localhostusak-web/                  # Ana Web Uygulaması (Client & Server)
+    ├── package.json                    # Frontend paket konfigürasyonu
+    ├── vite.config.ts                  # Vite + API Proxy yapılandırması
+    ├── index.html                      # Giriş HTML şablonu ve font bağlantıları
+    ├── src/
+    │   ├── main.tsx                    # React DOM giriş noktası
+    │   ├── App.tsx                     # Sayfa yönlendirmeleri ve Layout
+    │   ├── context/
+    │   │   └── ThemeContext.tsx        # Tema motoru, ses sentezleyici ve Glitch mekanizması
+    │   ├── components/
+    │   │   ├── layout/                 # Navbar, Footer, FloatingCTA, PageHero
+    │   │   ├── home/                   # HeroSection, EventSpotlight, Bento, FlowSteps, Stats
+    │   │   ├── events/                 # Etkinlik listesi ve takvim kartları
+    │   │   ├── careers/                # İlan kartları ve filtreler
+    │   │   ├── projects/               # Proje vitrin kartları
+    │   │   └── shared/                 # Ortak UI bileşenleri (Button, Badge vb.)
+    │   ├── pages/
+    │   │   ├── HomePage.tsx            # Ana Karşılama Sayfası
+    │   │   ├── EventsPage.tsx          # Etkinlikler Sayfası (/etkinlikler)
+    │   │   ├── CareersPage.tsx         # Kariyer & Staj Sayfası (/kariyer)
+    │   │   ├── ProjectsPage.tsx        # Projeler Sayfası (/projeler)
+    │   │   └── AdminPage.tsx           # Yönetim Paneli (/admin)
+    │   ├── data/                       # Çevrimdışı ve başlangıç fallback JSON verileri
+    │   ├── styles/                     # CSS Modülleri (Modern, Pixel, Reset, Animasyonlar)
+    │   └── types/                      # TypeScript tip tanımları
+    └── server/
+        ├── package.json                # Backend sunucu bağımlılıkları
+        ├── index.js                    # Express API sunucusu
+        ├── swagger.json                # OpenAPI 3.0 API spesifikasyonu
+        ├── db/
+        │   ├── database.js             # node:sqlite bağlantı motoru
+        │   ├── schema.sql              # Tablo şemaları (DDL)
+        │   └── seed.sql                # Başlangıç test verileri
+        └── routes/
+            ├── events.js               # /api/events CRUD uçları
+            ├── eventTypes.js           # /api/event-types CRUD uçları
+            ├── careers.js              # /api/careers CRUD uçları
+            └── projects.js             # /api/projects CRUD uçları
+```
+
+---
+
+## 🛠️ Kurulum ve Yerel Geliştirme
+
+### Gereksinimler
+- **Node.js:** `v22.0.0` veya üzeri önerilir (*native SQLite desteği için*).
+- **npm:** `v10.0.0` veya üzeri.
+
+### 1. Repoyu Klonlayın
+```bash
+git clone https://github.com/RecepSamiOzdemir/localhost_usak_website.git
+cd "localhost_usak_website/localhostusak-web"
+```
+
+### 2. Bağımlılıkları Yükleyin
+Hem frontend hem backend bağımlılıklarını kurun:
+
+```bash
+# Frontend paketlerini yükleyin
+npm install
+
+# Backend paketlerini yükleyin
+npm --prefix server install
+```
+
+### 3. Geliştirme Sunucularını Başlatın
+
+İki ayrı terminal penceresinde frontend ve backend servislerini çalıştırabilirsiniz:
+
+#### Terminal 1 — Backend API & Veritabanı
+```bash
+npm run server
+```
+> Sunucu `http://localhost:3001` portunda ayağa kalkar.  
+> 📖 Canlı Swagger dokümantasyonu: `http://localhost:3001/api/docs`
+
+#### Terminal 2 — Frontend Geliştirme Sunucusu (Vite)
+```bash
+npm run dev
+```
+> Web sitesi `http://localhost:5173` adresinde açılır.  
+> Vite, `/api/*` isteklerini otomatik olarak arka plandaki `http://localhost:3001` servisine yönlendirir.
+
+---
+
+## 🔌 API ve Veritabanı Mimarisi
+
+Backend servisi REST standartlarına uygun CRUD uçları sunmaktadır:
+
+| Yöntem | Uç Nokta | Açıklama |
+|---|---|---|
+| `GET` | `/api/health` | Sunucu sağlık durumu kontrolü |
+| `GET` | `/api/events` | Tüm etkinlikleri listeler |
+| `POST` | `/api/admin/events` | Yeni etkinlik oluşturur |
+| `DELETE` | `/api/admin/events/:id` | Etkinliği siler |
+| `GET` | `/api/event-types` | Etkinlik türlerini listeler |
+| `POST` | `/api/admin/event-types` | Yeni etkinlik türü ekler |
+| `GET` | `/api/careers` | İş ve staj ilanlarını listeler |
+| `POST` | `/api/admin/careers` | Yeni ilan oluşturur |
+| `DELETE` | `/api/admin/careers/:id` | İlanı yayından kaldırır |
+| `GET` | `/api/projects` | Topluluk projelerini listeler |
+| `POST` | `/api/admin/projects` | Yeni proje ekler |
+| `DELETE` | `/api/admin/projects/:id` | Projeyi siler |
+| `GET` | `/api/docs` | İnteraktif Swagger UI arayüzü |
+
+---
+
+## 🗺️ Yol Haritası (Roadmap)
+
+- [x] Temel sayfa mimarisinin kurulması (Ana Sayfa, Etkinlikler, Kariyer, Projeler).
+- [x] Çift tema motoru (Cyber-HUD & Cozy Pixel Kafe) ve ses efektli Glitch geçişi.
+- [x] Node.js 22 Native SQLite veritabanı entegrasyonu.
+- [x] İnteraktif Swagger UI API dokümantasyonu.
+- [x] Tam işlevsel Admin Yönetim Paneli (`/admin`).
+- [x] Offline fallback JSON veri katmanı.
+- [ ] Topluluk Üye Profilleri & "Buluşmadayım" QR check-in sistemi.
+- [ ] E-posta / WhatsApp etkinlik hatırlatma bildirimleri.
+- [ ] Blog / Yazılar bölümü (Topluluk üyelerinin teknik makaleleri için).
+
+---
+
+## 💬 Topluluğa Katılın
+
+Uşak'ta teknoloji üretiyor, öğreniyor ya da sadece samimi bir ortamda kahve eşliğinde sohbet etmek istiyorsanız aramıza davetlisiniz:
+
+- 💬 **WhatsApp Topluluğu:** [Katılmak İçin Tıklayın](https://chat.whatsapp.com/G4lE8B7s1h696jM7q5hUfR)
+- 📸 **Instagram:** [@localhostusak](https://instagram.com/localhostusak)
+- 💻 **GitHub:** [localhost_usak_website](https://github.com/RecepSamiOzdemir/localhost_usak_website)
+
+---
+
+## 📄 Lisans
+
+Bu proje [MIT Lisansı](LICENSE) altında açık kaynak olarak geliştirilmektedir. Topluluğa katkıda bulunmaktan çekinmeyin!
