@@ -26,9 +26,9 @@ INSERT OR IGNORE INTO projects (id, name, description, type, technologies, owner
 (3, 'AI Destekli Yerel Esnaf Menü Asistanı', 'Uşak''taki kafe ve restoranların basılı menülerini interaktif dijital menülere dönüştüren yapay zeka projesi.', 'showcase', '["Next.js","Python","FastAPI","Claude API"]', '@deniz_ai', 1, 3, '["UI/UX Tasarımcı"]', 'https://github.com/deniz/menu-ai-assistant', 'https://menu-assistant.example.com', 35),
 (4, 'Uşak Tech Hub CLI Aracı', 'Terminalden ayrılmadan localhostusak etkinliklerini listeleme ve takvime ekleme CLI aracı.', 'opensource', '["TypeScript","Node.js","Commander.js"]', '@mert_terminal', 1, 1, '[]', 'https://github.com/localhostusak/cli-hub', 'https://www.npmjs.com/package/@localhostusak/cli', 19);
 
--- Varsayılan Admin Kullanıcısı (admin / admin123)
+-- Varsayılan Admin Kullanıcısı (admin / admin123 -> bcrypt ile hashlenmiş)
 INSERT OR IGNORE INTO admins (id, username, password_hash) VALUES
-(1, 'admin', 'admin123');
+(1, 'admin', '$2b$10$GUaelBZV0fCmN1kzcrqfc.KD.WpvmFuz5KFfCIoqrQgjstGM7S1Je');
 
 -- Varsayılan Topluluk & WhatsApp Linkleri
 INSERT OR IGNORE INTO community_links (id, url, label, description) VALUES
