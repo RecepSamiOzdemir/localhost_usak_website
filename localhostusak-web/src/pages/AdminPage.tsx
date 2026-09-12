@@ -5,6 +5,14 @@ import { CareerItem } from '../types/career';
 import { ProjectItem } from '../types/project';
 import { useLinks } from '../context/LinksContext';
 import { COMMUNITY_LINKS_META, CommunityLinks } from '../constants/links';
+import {
+  getAuthHeaders,
+  getStoredToken,
+  getStoredUser,
+  saveAuthSession,
+  clearAuthSession,
+  AuthUser,
+} from '../utils/auth';
 
 import defaultEventTypes from '../data/eventTypes.json';
 import defaultEvents from '../data/events.json';
@@ -14,7 +22,13 @@ import defaultProjects from '../data/projects.json';
 type AdminTab = 'eventTypes' | 'events' | 'careers' | 'projects' | 'links';
 
 export const AdminPage: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true); // Default accessible locally
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
+  const [adminUser, setAdminUser] = useState<AuthUser | null>(() => getStoredUser());
+  const [loginUsername, setLoginUsername] = useState<string>('admin');
+  const [loginPassword, setLoginPassword] = useState<string>('');
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<AdminTab>('eventTypes');
 
   // Links context
@@ -91,6 +105,98 @@ export const AdminPage: React.FC = () => {
     setTimeout(() => setFeedback(null), 4000);
   };
 
+  // Check existing token validity on mount
+  useEffect(() => {
+    const token = getStoredToken();
+    if (!token) {
+      setIsCheckingAuth(false);
+      setIsAuthenticated(false);
+      return;
+    }
+
+    fetch('/api/auth/verify', {
+      headers: getAuthHeaders(),
+    })
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error('Unauthorized');
+      })
+      .then((data) => {
+        if (data.valid && data.user) {
+          setIsAuthenticated(true);
+          setAdminUser(data.user);
+        } else {
+          clearAuthSession();
+          setIsAuthenticated(false);
+          setAdminUser(null);
+        }
+      })
+      .catch(() => {
+        clearAuthSession();
+        setIsAuthenticated(false);
+        setAdminUser(null);
+      })
+      .finally(() => {
+        setIsCheckingAuth(false);
+      });
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loginUsername.trim() || !loginPassword.trim()) {
+      setLoginError('Lütfen kullanıcı adı ve şifrenizi girin.');
+      return;
+    }
+
+    setIsLoggingIn(true);
+    setLoginError(null);
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: loginUsername.trim(),
+          password: loginPassword,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setLoginError(data.error || 'Giriş başarısız. Bilgilerinizi kontrol edin.');
+        return;
+      }
+
+      saveAuthSession(data.token, data.user);
+      setIsAuthenticated(true);
+      setAdminUser(data.user);
+      setLoginPassword('');
+      showFeedback(`✓ Hoş geldiniz, @${data.user.username}! Yönetici paneli aktif.`);
+    } catch {
+      setLoginError('Sunucuya bağlanılamadı. Lütfen sunucunun çalıştığından emin olun.');
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const handleLogout = () => {
+    clearAuthSession();
+    setIsAuthenticated(false);
+    setAdminUser(null);
+    showFeedback('Güvenli çıkış yapıldı.');
+  };
+
+  const handleAuthError = (res: Response) => {
+    if (res.status === 401) {
+      clearAuthSession();
+      setIsAuthenticated(false);
+      setAdminUser(null);
+      showFeedback('⚠️ Oturum süreniz doldu veya yetkisiz istek. Lütfen tekrar giriş yapın.');
+      return true;
+    }
+    return false;
+  };
+
   // 1. Event Types Actions
   const handleAddEventType = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,9 +221,13 @@ export const AdminPage: React.FC = () => {
     // Post to API if possible
     fetch('/api/admin/event-types', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(newType),
-    }).catch(() => {});
+    })
+      .then((res) => {
+        if (handleAuthError(res)) return;
+      })
+      .catch(() => {});
 
     setEventTypes((prev) => [...prev, newType]);
     setNewTypeId('');
@@ -132,7 +242,15 @@ export const AdminPage: React.FC = () => {
       return;
     }
 
-    fetch(`/api/admin/event-types/${id}`, { method: 'DELETE' }).catch(() => {});
+    fetch(`/api/admin/event-types/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    })
+      .then((res) => {
+        if (handleAuthError(res)) return;
+      })
+      .catch(() => {});
+
     setEventTypes((prev) => prev.filter((t) => t.id !== id));
     showFeedback(`✓ Etkinlik türü silindi.`);
   };
@@ -158,9 +276,13 @@ export const AdminPage: React.FC = () => {
 
     fetch('/api/admin/events', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(newEv),
-    }).catch(() => {});
+    })
+      .then((res) => {
+        if (handleAuthError(res)) return;
+      })
+      .catch(() => {});
 
     setEvents((prev) => [newEv, ...prev]);
     setNewEventTitle('');
@@ -175,9 +297,13 @@ export const AdminPage: React.FC = () => {
           const nextStatus = ev.status === 'upcoming' ? 'completed' : 'upcoming';
           fetch(`/api/admin/events/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getAuthHeaders(),
             body: JSON.stringify({ ...ev, status: nextStatus }),
-          }).catch(() => {});
+          })
+            .then((res) => {
+              if (handleAuthError(res)) return;
+            })
+            .catch(() => {});
           return { ...ev, status: nextStatus };
         }
         return ev;
@@ -187,7 +313,15 @@ export const AdminPage: React.FC = () => {
   };
 
   const handleDeleteEvent = (id: number) => {
-    fetch(`/api/admin/events/${id}`, { method: 'DELETE' }).catch(() => {});
+    fetch(`/api/admin/events/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    })
+      .then((res) => {
+        if (handleAuthError(res)) return;
+      })
+      .catch(() => {});
+
     setEvents((prev) => prev.filter((e) => e.id !== id));
     showFeedback('✓ Etkinlik silindi.');
   };
@@ -213,9 +347,13 @@ export const AdminPage: React.FC = () => {
 
     fetch('/api/admin/careers', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(newCar),
-    }).catch(() => {});
+    })
+      .then((res) => {
+        if (handleAuthError(res)) return;
+      })
+      .catch(() => {});
 
     setCareers((prev) => [newCar, ...prev]);
     setNewCareerTitle('');
@@ -224,7 +362,15 @@ export const AdminPage: React.FC = () => {
   };
 
   const handleDeleteCareer = (id: number) => {
-    fetch(`/api/admin/careers/${id}`, { method: 'DELETE' }).catch(() => {});
+    fetch(`/api/admin/careers/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    })
+      .then((res) => {
+        if (handleAuthError(res)) return;
+      })
+      .catch(() => {});
+
     setCareers((prev) => prev.filter((c) => c.id !== id));
     showFeedback('✓ Kariyer ilanı silindi.');
   };
@@ -249,9 +395,13 @@ export const AdminPage: React.FC = () => {
 
     fetch('/api/admin/projects', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(newPr),
-    }).catch(() => {});
+    })
+      .then((res) => {
+        if (handleAuthError(res)) return;
+      })
+      .catch(() => {});
 
     setProjects((prev) => [newPr, ...prev]);
     setNewProjName('');
@@ -260,7 +410,15 @@ export const AdminPage: React.FC = () => {
   };
 
   const handleDeleteProject = (id: number) => {
-    fetch(`/api/admin/projects/${id}`, { method: 'DELETE' }).catch(() => {});
+    fetch(`/api/admin/projects/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    })
+      .then((res) => {
+        if (handleAuthError(res)) return;
+      })
+      .catch(() => {});
+
     setProjects((prev) => prev.filter((p) => p.id !== id));
     showFeedback('✓ Proje silindi.');
   };
@@ -284,6 +442,27 @@ export const AdminPage: React.FC = () => {
       showFeedback('✓ Bağlantılar varsayılan değerlere sıfırlandı.');
     }
   };
+
+  if (isCheckingAuth) {
+    return (
+      <main>
+        <PageHero
+          tag="// YÖNETİM & KONTROL PANELİ"
+          title="localhost[uşak]"
+          highlightText="Admin Merkezi"
+          description="Etkinlik türleri ekleme/düzenleme, buluşma takvimi, kariyer ilanları ve proje vitrinini tek bir konsoldan yönet."
+          whatsappUrl=""
+          whatsappLabel=""
+        />
+        <div className="container admin-wrapper" style={{ minHeight: '350px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center', color: 'var(--text-muted, #888)' }}>
+            <div style={{ fontSize: '2rem', marginBottom: '1rem', animation: 'spin 1.5s linear infinite' }}>⏳</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>Güvenli oturum kontrol ediliyor...</div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main>
@@ -313,13 +492,235 @@ export const AdminPage: React.FC = () => {
           </div>
         )}
 
-        {/* Tab Navigation */}
-        <div className="admin-tabs">
-          <button
-            type="button"
-            className={`admin-tab-btn ${activeTab === 'eventTypes' ? 'active' : ''}`}
-            onClick={() => setActiveTab('eventTypes')}
+        {!isAuthenticated ? (
+          <div
+            className="admin-login-card"
+            style={{
+              maxWidth: '460px',
+              margin: '2rem auto 4rem auto',
+              padding: '2.5rem 2rem',
+              background: 'var(--card-bg, #121212)',
+              border: '1px solid var(--border-color, #2a2a2a)',
+              borderRadius: 'var(--radius-md, 12px)',
+              boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
+            }}
           >
+            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+              <div
+                style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 102, 0, 0.15)',
+                  border: '1px solid #FF6600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.75rem',
+                  margin: '0 auto 1rem auto',
+                }}
+              >
+                🔐
+              </div>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                Yönetici Girişi
+              </h2>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted, #999)', margin: 0 }}>
+                localhostusak yönetim konsoluna erişmek için kimliğinizi doğrulayın.
+              </p>
+            </div>
+
+            {loginError && (
+              <div
+                style={{
+                  padding: '0.85rem 1.1rem',
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid #EF4444',
+                  borderRadius: 'var(--radius-sm, 6px)',
+                  color: '#FCA5A5',
+                  marginBottom: '1.5rem',
+                  fontSize: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                }}
+              >
+                <span>⚠️</span>
+                <span>{loginError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleLogin}>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label
+                  htmlFor="admin-username"
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    marginBottom: '0.5rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'var(--text-muted, #aaa)',
+                  }}
+                >
+                  Kullanıcı Adı
+                </label>
+                <input
+                  id="admin-username"
+                  type="text"
+                  value={loginUsername}
+                  onChange={(e) => setLoginUsername(e.target.value)}
+                  placeholder="admin"
+                  required
+                  autoFocus
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    borderRadius: 'var(--radius-sm, 6px)',
+                    background: 'var(--input-bg, rgba(255,255,255,0.05))',
+                    border: '1px solid var(--border-color, #333)',
+                    color: 'inherit',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '1.75rem' }}>
+                <label
+                  htmlFor="admin-password"
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    marginBottom: '0.5rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'var(--text-muted, #aaa)',
+                  }}
+                >
+                  Parola
+                </label>
+                <input
+                  id="admin-password"
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    borderRadius: 'var(--radius-sm, 6px)',
+                    background: 'var(--input-bg, rgba(255,255,255,0.05))',
+                    border: '1px solid var(--border-color, #333)',
+                    color: 'inherit',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                id="admin-login-submit"
+                className="btn btn-primary btn-lg"
+                disabled={isLoggingIn}
+                style={{
+                  width: '100%',
+                  fontWeight: 800,
+                  letterSpacing: '0.05em',
+                  padding: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                {isLoggingIn ? '⏳ Doğrulanıyor...' : '⚡ Oturum Aç'}
+              </button>
+            </form>
+
+            <div
+              style={{
+                marginTop: '2rem',
+                paddingTop: '1.25rem',
+                borderTop: '1px solid var(--border-color, rgba(255,255,255,0.08))',
+                fontSize: '0.8rem',
+                color: 'var(--text-muted, #777)',
+                textAlign: 'center',
+                lineHeight: 1.5,
+              }}
+            >
+              🔒 <strong>Güvenli Oturum:</strong> JWT yetkilendirmesi ve bcrypt şifrelemesi etkindir.
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Admin Session Status Bar */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0.85rem 1.25rem',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid var(--border-color, rgba(255,255,255,0.08))',
+                borderRadius: 'var(--radius-sm, 6px)',
+                marginBottom: '1.75rem',
+                flexWrap: 'wrap',
+                gap: '0.75rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span
+                  style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    background: '#10B981',
+                    display: 'inline-block',
+                    boxShadow: '0 0 10px #10B981',
+                  }}
+                ></span>
+                <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>Güvenli Oturum Açık:</span>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-mono, monospace)',
+                    color: 'var(--color-accent, #00E5FF)',
+                    fontWeight: 700,
+                  }}
+                >
+                  @{adminUser?.username || 'admin'}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="btn btn-outline"
+                style={{
+                  padding: '0.45rem 1.1rem',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#EF4444',
+                  borderColor: 'rgba(239, 68, 68, 0.4)',
+                }}
+              >
+                🚪 Güvenli Çıkış Yap
+              </button>
+            </div>
+
+            {/* Tab Navigation */}
+            <div className="admin-tabs">
+              <button
+                type="button"
+                className={`admin-tab-btn ${activeTab === 'eventTypes' ? 'active' : ''}`}
+                onClick={() => setActiveTab('eventTypes')}
+              >
             ☕ Etkinlik Türleri ({eventTypes.length})
           </button>
           <button
@@ -1126,7 +1527,9 @@ export const AdminPage: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
-    </main>
+      </>
+    )}
+  </div>
+</main>
   );
 };

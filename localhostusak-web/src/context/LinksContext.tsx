@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CommunityLinks, DEFAULT_COMMUNITY_LINKS } from '../constants/links';
+import { getAuthHeaders } from '../utils/auth';
 
 interface LinksContextType {
   links: CommunityLinks;
@@ -72,7 +73,7 @@ export const LinksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       const res = await fetch('/api/admin/links', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(newLinks),
       });
 
