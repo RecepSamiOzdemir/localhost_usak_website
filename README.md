@@ -104,8 +104,12 @@ Platform, Uşak topluluğunun iki farklı ruhunu tek kod tabanında yaşatan int
 | **Node.js** | `>= 22.0.0` | Modern ES Module JavaScript çalışma ortamı |
 | **Express** | `^4.21.2` | RESTful API servisi |
 | **node:sqlite (DatabaseSync)** | Native | Yerel, sıfır konfigürasyonlu SQLite veritabanı motoru |
+| **Bcrypt.js** | `^3.0.3` | Güvenli tek yönlü parola hashleme (SaltRounds=10) |
+| **JSON Web Token (JWT)** | `^9.0.2` | Stateless, imzalı 24 saatlik yönetici oturum tokenları |
+| **Helmet** | `^8.1.0` | HTTP güvenlik başlıkları (X-Frame-Options, HSTS, No-Sniff) |
+| **Express Rate Limit** | `^8.2.1` | Brute-force ve DoS kalkanı (Auth & API hız sınırlayıcı) |
 | **Swagger UI Express** | `^5.0.1` | İnteraktif OpenAPI 3.0 dokümantasyon arayüzü (`/api/docs`) |
-| **CORS** | `^2.8.5` | Güvenli yerel API erişim izinleri |
+| **CORS** | `^2.8.5` | Origin Whitelist tabanlı sıkı erişim denetimi |
 
 ---
 
@@ -125,6 +129,8 @@ localhost_usak_website/
     ├── src/
     │   ├── main.tsx                    # React DOM giriş noktası
     │   ├── App.tsx                     # Sayfa yönlendirmeleri ve Layout
+    │   ├── utils/
+    │   │   └── auth.ts                 # JWT Token yönetimi, Bearer header ve logout yardımcıları
     │   ├── constants/
     │   │   └── links.ts                # Merkezi WhatsApp ve sosyal link sabitleri
     │   ├── context/
@@ -142,24 +148,35 @@ localhost_usak_website/
     │   │   ├── EventsPage.tsx          # Etkinlikler Sayfası (/etkinlikler)
     │   │   ├── CareersPage.tsx         # Kariyer & Staj Sayfası (/kariyer)
     │   │   ├── ProjectsPage.tsx        # Projeler Sayfası (/projeler)
-    │   │   └── AdminPage.tsx           # Yönetim Paneli (/admin - Etkinlikler, İlanlar, Projeler, Linkler)
+    │   │   └── AdminPage.tsx           # Yönetim Paneli (JWT Login Kartı + CMS Yönetimi)
     │   ├── data/                       # Çevrimdışı ve başlangıç fallback JSON verileri
     │   ├── styles/                     # CSS Modülleri (Modern, Pixel, Reset, Animasyonlar)
     │   └── types/                      # TypeScript tip tanımları
     └── server/
         ├── package.json                # Backend sunucu bağımlılıkları
-        ├── index.js                    # Express API sunucusu
+        ├── index.js                    # Express API sunucusu (Güvenlik katmanları)
         ├── swagger.json                # OpenAPI 3.0 API spesifikasyonu
+        ├── .env.example                # Ortam değişkenleri şablonu
+        ├── .env                        # Yerel ortam değişkenleri (Gizli)
         ├── db/
-        │   ├── database.js             # node:sqlite bağlantı motoru
-        │   ├── schema.sql              # Tablo şemaları (DDL)
-        │   └── seed.sql                # Başlangıç test verileri
+        │   ├── database.js             # node:sqlite bağlantı & otomatik migrasyon motoru
+        │   ├── schema.sql              # Tablo şemaları (admins, audit_logs dahil DDL)
+        │   └── seed.sql                # Başlangıç test verileri (bcrypt hash)
+        ├── middleware/
+        │   ├── authMiddleware.js       # JWT requireAuth yetkilendirme kalkanı
+        │   ├── rateLimiter.js          # Auth (10/15dk) & API (300/15dk) rate limiter
+        │   ├── validators.js           # XSS tag temizleme & veri doğrulama
+        │   └── auditLogger.js          # Admin işlemlerini SQLite'a kaydeden denetim günlüğü
+        ├── scripts/
+        │   ├── hashPassword.js         # Parola hashleme yardımcı scripti
+        │   └── setAdmin.js             # Admin kullanıcı/şifre güncelleme CLI aracı
         └── routes/
-            ├── events.js               # /api/events CRUD uçları
-            ├── eventTypes.js           # /api/event-types CRUD uçları
-            ├── careers.js              # /api/careers CRUD uçları
-            ├── projects.js             # /api/projects CRUD uçları
-            └── links.js                # /api/links ve /api/admin/links uçları
+            ├── auth.js                 # /api/auth/login, verify & change-password
+            ├── events.js               # /api/events & korumalı admin uçları
+            ├── eventTypes.js           # /api/event-types & korumalı admin uçları
+            ├── careers.js              # /api/careers & korumalı admin uçları
+            ├── projects.js             # /api/projects & like cooldown kalkanı
+            └── links.js                # /api/links ve korumalı /api/admin/links uçları
 ```
 
 ---
@@ -187,7 +204,19 @@ npm install
 npm --prefix server install
 ```
 
-### 3. Geliştirme Sunucularını Başlatın
+### 3. Çevre Değişkenlerini (.env) Yapılandırın
+Backend dizininde `.env.example` dosyasını `.env` olarak kopyalayın:
+
+```bash
+cp server/.env.example server/.env
+```
+
+> **Varsayılan Admin Giriş Bilgileri:**  
+> Kullanıcı Adı: `admin`  
+> Şifre: `admin123`  
+> *(Şifrenizi dilediğiniz an `node server/scripts/setAdmin.js admin YeniSifreniz` komutu ile değiştirebilirsiniz).*
+
+### 4. Geliştirme Sunucularını Başlatın
 
 İki ayrı terminal penceresinde frontend ve backend servislerini çalıştırabilirsiniz:
 
@@ -207,27 +236,50 @@ npm run dev
 
 ---
 
+## 🛡️ Siber Güvenlik Mimarisi
+
+Platform, kurumsal düzeyde 13 temel güvenlik açığına karşı tam koruma altına alınmıştır:
+
+1. **JWT Yetkilendirme & Giriş Kartı:** `/admin` rotası token kontrolüyle kilitlidir. 24 saat geçerli JWT token tarayıcıda yönetilir.
+2. **Backend Route Kilidi:** Tüm `/api/admin/*` ve veri değiştiren endpointler `requireAuth` middleware'i ile korunmaktadır.
+3. **Bcrypt Parola Güvenliği:** Parolalar veritabanında asla düz metin saklanmaz, `bcrypt` (10 salt round) ile hashlenir.
+4. **Sıkı CORS Whitelist:** Sadece izin verilen origin'lerden (`CORS_ORIGIN`) gelen isteklere izin verilir; yetkisiz erişimler `403 Forbidden` ile reddedilir.
+5. **Rate Limiting (Brute-Force Kalkanı):** `/api/auth/*` için 15 dakikada en fazla 10 istek; genel `/api/*` için 15 dakikada 300 istek sınırı.
+6. **XSS Sanitization & Input Validation:** İstemciden gelen zararlı `<script>` ve HTML etiketleri otomatik temizlenir.
+7. **DoS & Payload Flood Koruması:** İstek gövdesi maksimum 20KB ile sınırlandırılmıştır (`413 Payload Too Large`).
+8. **Güvenlik HTTP Başlıkları (Helmet):** Clickjacking (`X-Frame-Options`), MIME sniffing (`nosniff`) ve HSTS başlıkları devrededir.
+9. **Beğeni Spam Koruması:** Proje beğenme endpointinde IP + Proje ID bazlı 1 saatlik cooldown uygulanır (`429 Too Many Requests`).
+10. **Denetim Günlüğü (Audit Logging):** Tüm yönetici ekleme, düzenleme ve silme hareketleri `audit_logs` tablosuna kaydedilir.
+11. **Hata Bilgi Sızıntısı Engeli:** Sunucu içi dosya yolları ve SQL hataları gizlenerek istemciye jenerik güvenli mesajlar iletilir.
+12. **Swagger Prodüksiyon Gizleme:** Canlı ortamda (`NODE_ENV=production`) API dökümantasyonu otomatik olarak `404` döndürerek gizlenir.
+
+---
+
 ## 🔌 API ve Veritabanı Mimarisi
 
-Backend servisi REST standartlarına uygun CRUD uçları sunmaktadır:
+Backend servisi REST standartlarına uygun CRUD ve Kimlik Doğrulama uçları sunmaktadır:
 
-| Yöntem | Uç Nokta | Açıklama |
-|---|---|---|
-| `GET` | `/api/health` | Sunucu sağlık durumu kontrolü |
-| `GET` | `/api/events` | Tüm etkinlikleri listeler |
-| `POST` | `/api/admin/events` | Yeni etkinlik oluşturur |
-| `DELETE` | `/api/admin/events/:id` | Etkinliği siler |
-| `GET` | `/api/event-types` | Etkinlik türlerini listeler |
-| `POST` | `/api/admin/event-types` | Yeni etkinlik türü ekler |
-| `GET` | `/api/careers` | İş ve staj ilanlarını listeler |
-| `POST` | `/api/admin/careers` | Yeni ilan oluşturur |
-| `DELETE` | `/api/admin/careers/:id` | İlanı yayından kaldırır |
-| `GET` | `/api/projects` | Topluluk projelerini listeler |
-| `POST` | `/api/admin/projects` | Yeni proje ekler |
-| `DELETE` | `/api/admin/projects/:id` | Projeyi siler |
-| `GET` | `/api/links` | Topluluk ve WhatsApp grup bağlantılarını listeler |
-| `PUT` | `/api/admin/links` | WhatsApp ve topluluk bağlantılarını günceller |
-| `GET` | `/api/docs` | İnteraktif Swagger UI arayüzü |
+| Yöntem | Uç Nokta | Yetki | Açıklama |
+|---|---|---|---|
+| `GET` | `/api/health` | Herkese Açık | Sunucu sağlık durumu kontrolü |
+| `POST` | `/api/auth/login` | Rate Limited | Kullanıcı adı & şifre ile JWT token alma |
+| `GET` | `/api/auth/verify` | 🔒 Bearer Token | Mevcut JWT token geçerlilik kontrolü |
+| `POST` | `/api/auth/change-password`| 🔒 Bearer Token | Admin parolasını güncelleme |
+| `GET` | `/api/events` | Herkese Açık | Tüm etkinlikleri listeler |
+| `POST` | `/api/admin/events` | 🔒 Bearer Token | Yeni etkinlik oluşturur (XSS Filtreli) |
+| `DELETE` | `/api/admin/events/:id` | 🔒 Bearer Token | Etkinliği siler (Audit loglanır) |
+| `GET` | `/api/event-types` | Herkese Açık | Etkinlik türlerini listeler |
+| `POST` | `/api/admin/event-types` | 🔒 Bearer Token | Yeni etkinlik türü ekler |
+| `GET` | `/api/careers` | Herkese Açık | İş ve staj ilanlarını listeler |
+| `POST` | `/api/admin/careers` | 🔒 Bearer Token | Yeni ilan oluşturur |
+| `DELETE` | `/api/admin/careers/:id` | 🔒 Bearer Token | İlanı yayından kaldırır |
+| `GET` | `/api/projects` | Herkese Açık | Topluluk projelerini listeler |
+| `PATCH`| `/api/projects/:id/like` | Cooldown Korumalı | Projeyi beğenir (1 saatte 1 beğeni/IP) |
+| `POST` | `/api/admin/projects` | 🔒 Bearer Token | Yeni proje ekler |
+| `DELETE` | `/api/admin/projects/:id` | 🔒 Bearer Token | Projeyi siler |
+| `GET` | `/api/links` | Herkese Açık | Topluluk ve WhatsApp grup bağlantılarını listeler |
+| `PUT` | `/api/admin/links` | 🔒 Bearer Token | WhatsApp ve topluluk bağlantılarını günceller |
+| `GET` | `/api/docs` | Dev/Ops | İnteraktif Swagger UI arayüzü |
 
 ---
 

@@ -74,12 +74,30 @@ app.use('/api', apiLimiter);
 // Initialize SQLite database
 initDatabase();
 
-// Swagger Documentation
-const swaggerSpec = JSON.parse(
-  fs.readFileSync(path.join(__dirname, 'swagger.json'), 'utf8')
-);
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use('/docs', (req, res) => res.redirect('/api/docs'));
+// 6. Swagger API Dokümantasyonu (Prodüksiyonda varsayılan olarak gizlenir)
+const isSwaggerEnabled =
+  process.env.ENABLE_SWAGGER === 'true' || process.env.NODE_ENV !== 'production';
+
+if (isSwaggerEnabled) {
+  try {
+    const swaggerSpec = JSON.parse(
+      fs.readFileSync(path.join(__dirname, 'swagger.json'), 'utf8')
+    );
+    app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    app.use('/docs', (req, res) => res.redirect('/api/docs'));
+  } catch (err) {
+    console.warn('Swagger dokümantasyon dosyası okunamadı:', err.message);
+  }
+} else {
+  const docsDisabledHandler = (req, res) => {
+    res.status(404).json({
+      error: 'API dokümantasyonu prodüksiyon ortamında güvenlik nedeniyle devre dışı bırakılmıştır.',
+      code: 'DOCS_DISABLED',
+    });
+  };
+  app.use('/api/docs', docsDisabledHandler);
+  app.use('/docs', docsDisabledHandler);
+}
 
 // Auth routes (Brute-force kalkanı ile korunur)
 app.use('/api/auth', authLimiter, authRouter);
