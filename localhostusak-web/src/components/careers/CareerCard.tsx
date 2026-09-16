@@ -1,6 +1,7 @@
 import React from 'react';
 import { CareerItem, CareerType } from '../../types/career';
 import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
 interface CareerCardProps {
   career: CareerItem;
@@ -8,6 +9,7 @@ interface CareerCardProps {
 
 export const CareerCard: React.FC<CareerCardProps> = ({ career }) => {
   const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   const getTypeBadge = (type: CareerType) => {
     switch (type) {
       case 'job':
@@ -124,6 +126,10 @@ export const CareerCard: React.FC<CareerCardProps> = ({ career }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary btn-full"
+            onClick={(e) => {
+              e.preventDefault();
+              openWhatsAppWithRules(links.whatsappCareers, 'Kariyer & İlanlar');
+            }}
           >
             <span>Detay / İletişim</span>
             <span>💬</span>

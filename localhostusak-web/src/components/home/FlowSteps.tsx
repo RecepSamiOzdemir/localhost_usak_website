@@ -9,7 +9,7 @@ interface Step {
 const steps: Step[] = [
   {
     num: '01',
-    title: 'Tanışma & Sıcak Kahve',
+    title: 'Tanışma & Kahve',
     desc: 'Mekana gelip masaya oturuyoruz. Kahvemizi sipariş edip kısaca kim neyle uğraşıyor tanışıyoruz. Sıkıcı sunumlar yok, tamamen samimi bir sohbet.',
   },
   {
@@ -24,7 +24,7 @@ const steps: Step[] = [
   },
   {
     num: '04',
-    title: 'Serbest Muhabbet & Networking',
+    title: 'Muhabbet & Networking',
     desc: 'Topluluk projeleri, şehirdeki yeni girişimler ve gelecekteki buluşmalar üzerine konuşup yeni dostluklar kuruyoruz.',
   },
 ];

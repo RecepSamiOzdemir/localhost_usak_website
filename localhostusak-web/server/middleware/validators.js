@@ -207,3 +207,40 @@ export function validateCommunityLinks(req, res, next) {
 
   next();
 }
+
+/**
+ * Sponsor Doğrulama Middleware'i
+ */
+export function validateSponsor(req, res, next) {
+  const { name, logoUrl, websiteUrl, sortOrder, isActive } = req.body || {};
+
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    return res.status(400).json({ error: 'Sponsor adı zorunludur.', field: 'name' });
+  }
+
+  if (name.length > 200) {
+    return res.status(400).json({ error: 'Sponsor adı en fazla 200 karakter olabilir.', field: 'name' });
+  }
+
+  if (!logoUrl || !isValidUrl(logoUrl)) {
+    return res.status(400).json({ error: 'Geçerli bir logo bağlantısı (URL) zorunludur.', field: 'logoUrl' });
+  }
+
+  if (!websiteUrl || !isValidUrl(websiteUrl)) {
+    return res.status(400).json({ error: 'Geçerli bir web sitesi bağlantısı (URL) zorunludur.', field: 'websiteUrl' });
+  }
+
+  if (sortOrder !== undefined && (isNaN(Number(sortOrder)) || Number(sortOrder) < 0 || Number(sortOrder) > 10000)) {
+    return res.status(400).json({ error: 'Sıralama değeri 0 ile 10000 arasında bir sayı olmalıdır.', field: 'sortOrder' });
+  }
+
+  // Sanitization
+  req.body.name = sanitizeText(name);
+  req.body.logoUrl = logoUrl.trim();
+  req.body.websiteUrl = websiteUrl.trim();
+  if (sortOrder !== undefined) req.body.sortOrder = Number(sortOrder);
+  if (isActive !== undefined) req.body.isActive = Boolean(isActive) ? 1 : 0;
+
+  next();
+}
+

@@ -696,3 +696,177 @@
   text-transform: uppercase;
 }
 
+/* --------------------------------------------------------------------------
+   14. Sponsors Section & Cards
+   -------------------------------------------------------------------------- */
+.sponsors-section {
+  position: relative;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.sponsors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.sponsor-card {
+  display: block;
+  text-decoration: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 1.5rem;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.sponsor-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-primary);
+  background: var(--bg-card-hover);
+  box-shadow: 0 10px 25px rgba(255, 102, 0, 0.18), 0 0 15px rgba(255, 102, 0, 0.12);
+}
+
+.sponsor-card-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+}
+
+.sponsor-logo-container {
+  width: 100%;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: border-color var(--transition-normal);
+}
+
+.sponsor-card:hover .sponsor-logo-container {
+  border-color: rgba(255, 102, 0, 0.3);
+}
+
+.sponsor-logo-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: transform var(--transition-normal);
+}
+
+.sponsor-card:hover .sponsor-logo-img {
+  transform: scale(1.05);
+}
+
+.sponsor-logo-fallback {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-primary), #3A86FF);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: 0.05em;
+}
+
+.sponsor-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.sponsor-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.sponsor-link-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  color: var(--accent-primary);
+  opacity: 0.85;
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.sponsor-card:hover .sponsor-link-badge {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+.sponsor-external-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+/* Empty state banner */
+.sponsors-empty-box {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border-medium);
+}
+
+.sponsors-empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Pixel Mode Adjustments */
+[data-theme="pixel"] .sponsor-card {
+  border-radius: 0;
+  border: 2px solid var(--pixel-black);
+  box-shadow: 4px 4px 0px var(--pixel-black);
+}
+
+[data-theme="pixel"] .sponsor-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--pixel-black);
+  border-color: var(--pixel-orange);
+}
+
+[data-theme="pixel"] .sponsor-logo-container {
+  border-radius: 0;
+  background: var(--pixel-cream);
+  border: 2px solid var(--pixel-black);
+}
+
+[data-theme="pixel"] .sponsor-name {
+  font-family: var(--font-pixel);
+  font-size: 0.95rem;
+  color: var(--pixel-brown);
+}
+
+[data-theme="pixel"] .sponsors-empty-box {
+  border-radius: 0;
+  border: 2px dashed var(--pixel-brown);
+  box-shadow: 4px 4px 0px var(--pixel-black);
+}
+
+

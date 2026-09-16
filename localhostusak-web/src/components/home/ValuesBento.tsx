@@ -1,8 +1,10 @@
 import React from 'react';
 import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
 export const ValuesBento: React.FC = () => {
   const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   return (
     <section className="section" id="values" style={{ background: 'var(--bg-secondary)' }}>
       <div className="container">
@@ -104,6 +106,10 @@ export const ValuesBento: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary btn-sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openWhatsAppWithRules(links.whatsappGeneral, 'Genel Topluluk Grubu');
+                }}
               >
                 <span>İlk Adımı At: WhatsApp'a Katıl</span>
                 <span>→</span>

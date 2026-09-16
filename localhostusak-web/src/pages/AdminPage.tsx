@@ -3,6 +3,7 @@ import { PageHero } from '../components/layout/PageHero';
 import { EventItem, EventType } from '../types/event';
 import { CareerItem } from '../types/career';
 import { ProjectItem } from '../types/project';
+import { SponsorItem } from '../types/sponsor';
 import { useLinks } from '../context/LinksContext';
 import { COMMUNITY_LINKS_META, CommunityLinks } from '../constants/links';
 import {
@@ -18,8 +19,9 @@ import defaultEventTypes from '../data/eventTypes.json';
 import defaultEvents from '../data/events.json';
 import defaultCareers from '../data/careers.json';
 import defaultProjects from '../data/projects.json';
+import defaultSponsors from '../data/sponsors.json';
 
-type AdminTab = 'eventTypes' | 'events' | 'careers' | 'projects' | 'links';
+type AdminTab = 'eventTypes' | 'events' | 'careers' | 'projects' | 'links' | 'sponsors';
 
 export const AdminPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -45,6 +47,7 @@ export const AdminPage: React.FC = () => {
   const [events, setEvents] = useState<EventItem[]>(defaultEvents as EventItem[]);
   const [careers, setCareers] = useState<CareerItem[]>(defaultCareers as CareerItem[]);
   const [projects, setProjects] = useState<ProjectItem[]>(defaultProjects as ProjectItem[]);
+  const [sponsors, setSponsors] = useState<SponsorItem[]>(defaultSponsors as SponsorItem[]);
 
   // Fetch initial data from backend if server is alive
   useEffect(() => {
@@ -66,6 +69,11 @@ export const AdminPage: React.FC = () => {
     fetch('/api/projects')
       .then((res) => (res.ok ? res.json() : null))
       .then((d) => d && setProjects(d))
+      .catch(() => {});
+
+    fetch('/api/sponsors?all=true')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((d) => d && setSponsors(d))
       .catch(() => {});
   }, []);
 
@@ -97,6 +105,13 @@ export const AdminPage: React.FC = () => {
   const [newProjType, setNewProjType] = useState<'showcase' | 'seeking_team' | 'opensource'>('showcase');
   const [newProjOwner, setNewProjOwner] = useState('@topluluk_uyesi');
   const [newProjTech, setNewProjTech] = useState('React, Node.js');
+
+  // Form states for new Sponsor
+  const [newSponsorName, setNewSponsorName] = useState('');
+  const [newSponsorLogoUrl, setNewSponsorLogoUrl] = useState('');
+  const [newSponsorWebsiteUrl, setNewSponsorWebsiteUrl] = useState('');
+  const [newSponsorOrder, setNewSponsorOrder] = useState<number>(0);
+  const [isSavingSponsor, setIsSavingSponsor] = useState(false);
 
   // Feedback banner
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -443,6 +458,102 @@ export const AdminPage: React.FC = () => {
     }
   };
 
+  // 6. Sponsor Actions
+  const handleAddSponsor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSponsorName.trim() || !newSponsorLogoUrl.trim() || !newSponsorWebsiteUrl.trim()) {
+      showFeedback('Lütfen tüm alanları (Sponsor Adı, Logo URL, Web Sitesi URL) doldurun.');
+      return;
+    }
+
+    setIsSavingSponsor(true);
+    try {
+      const payload = {
+        name: newSponsorName.trim(),
+        logoUrl: newSponsorLogoUrl.trim(),
+        websiteUrl: newSponsorWebsiteUrl.trim(),
+        sortOrder: Number(newSponsorOrder) || 0,
+        isActive: 1,
+      };
+
+      const res = await fetch('/api/admin/sponsors', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload),
+      });
+
+      if (handleAuthError(res)) return;
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        const created: SponsorItem = {
+          id: data.id || Date.now(),
+          name: payload.name,
+          logoUrl: payload.logoUrl,
+          websiteUrl: payload.websiteUrl,
+          sortOrder: payload.sortOrder,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+        };
+
+        setSponsors((prev) => [...prev, created]);
+        setNewSponsorName('');
+        setNewSponsorLogoUrl('');
+        setNewSponsorWebsiteUrl('');
+        setNewSponsorOrder(0);
+        showFeedback(`✓ "${payload.name}" sponsoru başarıyla eklendi!`);
+      } else {
+        showFeedback(`Hata: ${data.error || 'Sponsor eklenemedi.'}`);
+      }
+    } catch {
+      showFeedback('Sunucuya bağlanılamadı.');
+    } finally {
+      setIsSavingSponsor(false);
+    }
+  };
+
+  const handleDeleteSponsor = async (id: number) => {
+    if (!window.confirm('Bu sponsoru silmek istediğinize emin misiniz?')) return;
+
+    try {
+      const res = await fetch(`/api/admin/sponsors/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+
+      if (handleAuthError(res)) return;
+      setSponsors((prev) => prev.filter((s) => s.id !== id));
+      showFeedback('✓ Sponsor silindi.');
+    } catch {
+      showFeedback('Sunucuya bağlanılamadı.');
+    }
+  };
+
+  const handleToggleSponsorActive = async (sponsor: SponsorItem) => {
+    try {
+      const updatedActive = !sponsor.isActive;
+      const res = await fetch(`/api/admin/sponsors/${sponsor.id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          name: sponsor.name,
+          logoUrl: sponsor.logoUrl,
+          websiteUrl: sponsor.websiteUrl,
+          sortOrder: sponsor.sortOrder,
+          isActive: updatedActive ? 1 : 0,
+        }),
+      });
+
+      if (handleAuthError(res)) return;
+      setSponsors((prev) =>
+        prev.map((s) => (s.id === sponsor.id ? { ...s, isActive: updatedActive } : s))
+      );
+      showFeedback(`✓ "${sponsor.name}" ${updatedActive ? 'aktif' : 'pasif'} duruma getirildi.`);
+    } catch {
+      showFeedback('Durum güncellenirken sunucuya ulaşılamadı.');
+    }
+  };
+
   if (isCheckingAuth) {
     return (
       <main>
@@ -750,6 +861,13 @@ export const AdminPage: React.FC = () => {
             onClick={() => setActiveTab('links')}
           >
             💬 WhatsApp & Linkler
+          </button>
+          <button
+            type="button"
+            className={`admin-tab-btn ${activeTab === 'sponsors' ? 'active' : ''}`}
+            onClick={() => setActiveTab('sponsors')}
+          >
+            🤝 Sponsorlar ({sponsors.length})
           </button>
         </div>
 
@@ -1524,6 +1642,262 @@ export const AdminPage: React.FC = () => {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: SPONSORS MANAGEMENT */}
+        {activeTab === 'sponsors' && (
+          <div>
+            {/* New Sponsor Form */}
+            <div className="admin-form-card">
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem' }}>
+                + Yeni Sponsor Ekle
+              </h3>
+              <form onSubmit={handleAddSponsor}>
+                <div className="admin-form-grid">
+                  <div className="form-group">
+                    <label>SPONSOR ADI / KURUM:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Örn: Google Developer Groups, JetBrains..."
+                      value={newSponsorName}
+                      onChange={(e) => setNewSponsorName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>LOGO BAĞLANTISI (URL):</label>
+                    <input
+                      type="url"
+                      className="form-control"
+                      placeholder="https://... /logo.png veya .svg"
+                      value={newSponsorLogoUrl}
+                      onChange={(e) => setNewSponsorLogoUrl(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>WEB SİTESİ BAĞLANTISI (URL):</label>
+                    <input
+                      type="url"
+                      className="form-control"
+                      placeholder="https://sponsor-firmasi.com"
+                      value={newSponsorWebsiteUrl}
+                      onChange={(e) => setNewSponsorWebsiteUrl(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>GÖSTERİM SIRASI (Opsiyonel):</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="0"
+                      min={0}
+                      value={newSponsorOrder}
+                      onChange={(e) => setNewSponsorOrder(Number(e.target.value) || 0)}
+                    />
+                  </div>
+                </div>
+
+                {/* Live Logo Preview if URL exists */}
+                {newSponsorLogoUrl.trim() && (
+                  <div
+                    style={{
+                      margin: '1.25rem 0',
+                      padding: '1rem',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-subtle)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '1rem',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                      Logo Önizlemesi:
+                    </span>
+                    <div
+                      style={{
+                        width: '120px',
+                        height: '50px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: 'var(--radius-sm)',
+                        padding: '0.4rem',
+                      }}
+                    >
+                      <img
+                        src={newSponsorLogoUrl}
+                        alt="Önizleme"
+                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={isSavingSponsor}
+                  style={{ marginTop: '1.25rem', fontWeight: 700 }}
+                >
+                  {isSavingSponsor ? '⏳ Ekleniyor...' : '+ Sponsoru Kaydet'}
+                </button>
+              </form>
+            </div>
+
+            {/* Existing Sponsors List */}
+            <div className="admin-list-container">
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '1rem' }}>
+                Kayıtlı Sponsorlar ({sponsors.length})
+              </h3>
+
+              {sponsors.length === 0 ? (
+                <div
+                  style={{
+                    padding: '2.5rem',
+                    textAlign: 'center',
+                    background: 'var(--bg-card)',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px dashed var(--border-medium)',
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  Henüz kayıtlı bir sponsor bulunmamaktadır. Yukarıdaki formu kullanarak ilk sponsorunuzu ekleyebilirsiniz.
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
+                  {sponsors.map((sp) => (
+                    <div
+                      key={sp.id}
+                      className="card"
+                      style={{
+                        padding: '1.25rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        gap: '1rem',
+                        border: '1px solid var(--border-subtle)',
+                        opacity: sp.isActive ? 1 : 0.6,
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div
+                          style={{
+                            width: '70px',
+                            height: '50px',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: 'var(--radius-sm)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '0.4rem',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <img
+                            src={sp.logoUrl}
+                            alt={sp.name}
+                            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                        <div style={{ overflow: 'hidden' }}>
+                          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                            {sp.name}
+                          </h4>
+                          <a
+                            href={sp.websiteUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              fontSize: '0.8rem',
+                              color: 'var(--accent-primary)',
+                              textDecoration: 'none',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.2rem',
+                              marginTop: '0.2rem',
+                            }}
+                          >
+                            <span>{sp.websiteUrl.replace(/^https?:\/\//, '')}</span>
+                            <span>↗</span>
+                          </a>
+                        </div>
+                      </div>
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          paddingTop: '0.75rem',
+                          borderTop: '1px solid var(--border-subtle)',
+                          fontSize: '0.85rem',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span
+                            style={{
+                              padding: '0.2rem 0.55rem',
+                              borderRadius: '4px',
+                              fontSize: '0.75rem',
+                              fontFamily: 'var(--font-mono)',
+                              background: sp.isActive ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                              color: sp.isActive ? '#22c55e' : '#ef4444',
+                              fontWeight: 700,
+                            }}
+                          >
+                            {sp.isActive ? 'Aktif' : 'Pasif'}
+                          </span>
+                          <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
+                            Sıra: {sp.sortOrder}
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSponsorActive(sp)}
+                            className="btn btn-sm btn-secondary"
+                            title={sp.isActive ? 'Pasife Al' : 'Aktif Et'}
+                            style={{ padding: '0.35rem 0.65rem', fontSize: '0.8rem' }}
+                          >
+                            {sp.isActive ? 'Gizle' : 'Göster'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteSponsor(sp.id)}
+                            className="btn btn-sm"
+                            style={{
+                              padding: '0.35rem 0.65rem',
+                              fontSize: '0.8rem',
+                              background: 'rgba(239, 68, 68, 0.15)',
+                              color: '#ef4444',
+                              border: '1px solid rgba(239, 68, 68, 0.3)',
+                            }}
+                          >
+                            Sil
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

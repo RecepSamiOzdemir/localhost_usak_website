@@ -2,6 +2,7 @@ import React from 'react';
 import { EventItem, EventType } from '../../types/event';
 import { downloadICS } from '../../utils/calendarExport';
 import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
 interface EventCardProps {
   event: EventItem;
@@ -10,6 +11,7 @@ interface EventCardProps {
 
 export const EventCard: React.FC<EventCardProps> = ({ event, eventType }) => {
   const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   const isUpcoming = event.status === 'upcoming';
   const startDate = new Date(event.dateStart);
 
@@ -129,6 +131,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, eventType }) => {
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary btn-sm"
+              onClick={(e) => {
+                e.preventDefault();
+                openWhatsAppWithRules(event.whatsappLink || links.whatsappCoworking, 'Coworking Masası');
+              }}
             >
               <span>Masada Yer Ayır</span>
               <span>💬</span>

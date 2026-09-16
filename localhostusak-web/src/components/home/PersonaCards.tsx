@@ -9,38 +9,38 @@ interface Persona {
 
 const personas: Persona[] = [
   {
-    icon: '</>',
-    title: 'Yazılım Geliştiriciler',
+    icon: '💡',
+    title: 'Teknoloji Meraklıları',
     description:
-      'Frontend, Backend, Mobil, DevOps veya AI mühendisleri. Kod yazarken takıldığın noktaları konuş, mimari tartış veya sadece yan yana kodla.',
-    tags: ['React', 'Node.js', 'Python', 'Flutter', 'AI'],
+      'Teknoloji dünyasındaki gelişmeleri, yapay zekayı ve dijital yenilikleri yakından takip edenler. Yeni fikirler keşfetmek, vizyonunu genişletmek ve ekosistemin nabzını tutmak için masada yerini al.',
+    tags: ['Yapay Zeka', 'İnovasyon', 'Trendler', 'Vizyon'],
   },
   {
-    icon: '🎨',
-    title: 'Tasarımcılar',
+    icon: '⚙️',
+    title: 'Mühendis',
     description:
-      'UI/UX tasarımcıları, grafik illüstratörler, 3D artistler ve ürün yöneticileri. Piksel mükemmelliğini ve kullanıcı deneyimini masada tartış.',
-    tags: ['Figma', 'UI/UX', 'Design Systems', '3D'],
+      'Bilgisayar, yazılım, endüstri, elektrik-elektronik ve tüm mühendislik disiplinlerinden profesyoneller. Sistem tasarımı, teknik mimariler ve analitik problem çözme yaklaşımlarını masada tartış.',
+    tags: ['Sistem Tasarımı', 'Donanım', 'Otomasyon', 'Mimari'],
+  },
+  {
+    icon: '</>',
+    title: 'Yazılım Geliştirici',
+    description:
+      'Frontend, Backend, Mobil, DevOps veya Veri alanlarında kod üretenler. Mimarileri konuş, takıldığın teknik problemleri masaya yatır ve yeni teknolojileri yan yana deneyimle.',
+    tags: ['Frontend', 'Backend', 'DevOps', 'Mobile', 'Cloud'],
   },
   {
     icon: '🌍',
-    title: 'Remote & Freelance',
+    title: 'Remote and Freelance',
     description:
-      'Uşak\'ta yaşayıp globale ya da büyük şehirlere uzaktan çalışanlar. Evdeki dört duvar arasından çıkıp kahve kokulu bir coworking ortamı yakala.',
+      "Uşak'ta yaşayıp globale ya da farklı şehirlere uzaktan çalışanlar veya bağımsız projeler üretenler. Ev ortamının monotonluğundan çıkıp kahve eşliğinde üretken bir coworking atmosferi yakala.",
     tags: ['Coworking', 'Global', 'Freelance', 'Networking'],
-  },
-  {
-    icon: '🎓',
-    title: 'Öğrenci & Meraklılar',
-    description:
-      'Sektöre yeni girenler, üniversite öğrencileri ve kariyerini teknolojiye yönlendirmek isteyenler. Deneyimli kişilerden mentorluk al, staj veya proje arkadaşı bul.',
-    tags: ['Öğrenme', 'Mentorluk', 'Kariyer', 'İlk Proje'],
   },
 ];
 
 export const PersonaCards: React.FC = () => {
   return (
-    <section className="section" id="personas" style={{ background: 'var(--bg-secondary)' }}>
+    <section className="section" id="personas">
       <div className="container">
         <div className="section-header">
           <span className="section-tag">// MASADA KİMLER VAR?</span>

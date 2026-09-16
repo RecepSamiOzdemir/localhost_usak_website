@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { LinksProvider } from './context/LinksContext';
+import { WhatsAppModalProvider } from './context/WhatsAppModalContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { FloatingCTA } from './components/layout/FloatingCTA';
@@ -21,6 +22,7 @@ import './styles/modern-theme.css';
 import './styles/pixel-theme.css';
 import './styles/animations.css';
 import './styles/subpages.css';
+import './styles/whatsapp-rules-modal.css';
 
 // Auto scroll to top on page navigation
 const ScrollToTop: React.FC = () => {
@@ -94,7 +96,9 @@ export const App: React.FC = () => {
   return (
     <ThemeProvider>
       <LinksProvider>
-        <AppContent />
+        <WhatsAppModalProvider>
+          <AppContent />
+        </WhatsAppModalProvider>
       </LinksProvider>
     </ThemeProvider>
   );

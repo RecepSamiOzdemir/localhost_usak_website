@@ -1,8 +1,10 @@
 import React from 'react';
 import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
 export const CareerCTA: React.FC = () => {
   const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   return (
     <div
       className="card circuit-border"
@@ -37,6 +39,10 @@ export const CareerCTA: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-whatsapp btn-lg"
+          onClick={(e) => {
+            e.preventDefault();
+            openWhatsAppWithRules(links.whatsappCareers, 'Kariyer & İlanlar Grubu');
+          }}
         >
           <span>💬 WhatsApp Kariyer Grubuna Katıl</span>
         </a>

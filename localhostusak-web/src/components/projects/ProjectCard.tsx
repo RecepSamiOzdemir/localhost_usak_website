@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ProjectItem, ProjectType } from '../../types/project';
 import { soundFX } from '../../utils/audioFx';
 import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
 interface ProjectCardProps {
   project: ProjectItem;
@@ -10,6 +11,7 @@ interface ProjectCardProps {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onLike }) => {
   const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   const [likes, setLikes] = useState(project.likes);
   const [hasLiked, setHasLiked] = useState(false);
 
@@ -181,6 +183,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onLike }) => 
             rel="noopener noreferrer"
             className="btn btn-secondary btn-sm"
             style={{ flex: 1 }}
+            onClick={(e) => {
+              e.preventDefault();
+              openWhatsAppWithRules(links.whatsappProjects, 'Projeler Grubu');
+            }}
           >
             <span>Ekiple İletişime Geç</span>
             <span>💬</span>

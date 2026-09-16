@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
 export const Footer: React.FC = () => {
   const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   return (
     <footer className="footer-wrapper" id="footer">
       <div className="container">
@@ -105,7 +107,15 @@ export const Footer: React.FC = () => {
               }}
             >
               <li>
-                <a href={links.whatsappGeneral} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={links.whatsappGeneral}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    openWhatsAppWithRules(links.whatsappGeneral, 'Genel Topluluk Grubu');
+                  }}
+                >
                   💬 WhatsApp Topluluğu
                 </a>
               </li>

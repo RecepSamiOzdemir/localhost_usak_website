@@ -7,7 +7,7 @@ export function initConsoleEasterEgg(): void {
   if (typeof window === 'undefined') return;
 
   const asciiArt = `
-  _                 _ _               _   [ u ş a k ]
+  _                 _ _               _   
  | |               | | |             | |  
  | | ___   ___ __ _| | |__   ___  ___| |_ 
  | |/ _ \\ / __/ _\` | | '_ \\ / _ \\/ __| __|

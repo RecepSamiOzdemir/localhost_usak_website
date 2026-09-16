@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
 interface FloatingCTAProps {
   whatsappUrl?: string;
@@ -11,6 +12,7 @@ export const FloatingCTA: React.FC<FloatingCTAProps> = ({
   label = "WhatsApp'a Katıl",
 }) => {
   const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   const effectiveUrl = whatsappUrl || links.whatsappGeneral;
   const [isVisible, setIsVisible] = useState(false);
 
@@ -58,6 +60,10 @@ export const FloatingCTA: React.FC<FloatingCTAProps> = ({
       className={`floating-cta ${isVisible ? 'visible' : ''}`}
       id="floating-whatsapp-btn"
       aria-label="WhatsApp'tan Topluluğa Katıl"
+      onClick={(e) => {
+        e.preventDefault();
+        openWhatsAppWithRules(effectiveUrl, label);
+      }}
     >
       <span className="floating-cta-icon">💬</span>
       <span>{label}</span>

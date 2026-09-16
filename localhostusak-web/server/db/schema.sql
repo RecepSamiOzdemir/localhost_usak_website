@@ -110,3 +110,18 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   created_at     TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ============================================================
+-- Sponsorlar
+-- ============================================================
+CREATE TABLE IF NOT EXISTS sponsors (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  name        TEXT NOT NULL,
+  logo_url    TEXT NOT NULL,
+  website_url TEXT NOT NULL,
+  sort_order  INTEGER DEFAULT 0,
+  is_active   INTEGER DEFAULT 1,
+  created_at  TEXT DEFAULT CURRENT_TIMESTAMP,
+  updated_at  TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+

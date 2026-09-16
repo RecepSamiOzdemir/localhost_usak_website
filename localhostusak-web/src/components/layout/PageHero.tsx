@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
 interface PageHeroProps {
   tag: string;
@@ -21,6 +22,7 @@ export const PageHero: React.FC<PageHeroProps> = ({
   secondaryAction,
 }) => {
   const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   const effectiveUrl = whatsappUrl !== undefined ? whatsappUrl : links.whatsappGeneral;
 
   return (
@@ -44,6 +46,10 @@ export const PageHero: React.FC<PageHeroProps> = ({
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-whatsapp"
+              onClick={(e) => {
+                e.preventDefault();
+                openWhatsAppWithRules(effectiveUrl, whatsappLabel);
+              }}
             >
               <span>💬</span>
               <span>{whatsappLabel}</span>

@@ -3,6 +3,7 @@ import { EventItem, EventType } from '../../types/event';
 import { CountdownTimer } from '../shared/CountdownTimer';
 import { downloadICS, openGoogleCalendar } from '../../utils/calendarExport';
 import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
 interface EventSpotlightCardProps {
   event: EventItem;
@@ -11,6 +12,7 @@ interface EventSpotlightCardProps {
 
 export const EventSpotlightCard: React.FC<EventSpotlightCardProps> = ({ event, eventType }) => {
   const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   const startDate = new Date(event.dateStart);
 
   const formattedDate = startDate.toLocaleDateString('tr-TR', {
@@ -168,6 +170,10 @@ export const EventSpotlightCard: React.FC<EventSpotlightCardProps> = ({ event, e
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-whatsapp btn-full"
+              onClick={(e) => {
+                e.preventDefault();
+                openWhatsAppWithRules(event.whatsappLink || links.whatsappCoworking, 'WhatsApp Coworking Masası');
+              }}
             >
               <span>WhatsApp Coworking Masasına Katıl</span>
               <span>💬</span>

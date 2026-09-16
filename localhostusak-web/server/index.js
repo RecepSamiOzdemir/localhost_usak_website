@@ -13,6 +13,7 @@ import { eventsRouter } from './routes/events.js';
 import { careersRouter } from './routes/careers.js';
 import { projectsRouter } from './routes/projects.js';
 import { linksRouter } from './routes/links.js';
+import { sponsorsRouter } from './routes/sponsors.js';
 import { authRouter } from './routes/auth.js';
 import { requireAuth } from './middleware/authMiddleware.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimiter.js';
@@ -116,6 +117,8 @@ app.use('/api/projects', projectsRouter);
 app.use('/api/admin/projects', projectsRouter);
 app.use('/api/links', linksRouter);
 app.use('/api/admin/links', linksRouter);
+app.use('/api/sponsors', sponsorsRouter);
+app.use('/api/admin/sponsors', sponsorsRouter);
 
 // Root healthcheck
 app.get('/api/health', (req, res) => {

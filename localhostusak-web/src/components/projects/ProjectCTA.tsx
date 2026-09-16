@@ -1,8 +1,10 @@
 import React from 'react';
 import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
 export const ProjectCTA: React.FC = () => {
   const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   return (
     <div
       className="card circuit-border"
@@ -37,6 +39,10 @@ export const ProjectCTA: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-whatsapp btn-lg"
+          onClick={(e) => {
+            e.preventDefault();
+            openWhatsAppWithRules(links.whatsappProjects, 'Projeler Grubu');
+          }}
         >
           <span>💬 WhatsApp Projeler Grubuna Katıl</span>
         </a>
