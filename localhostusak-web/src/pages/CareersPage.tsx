@@ -8,7 +8,9 @@ import { EmptyState } from '../components/shared/EmptyState';
 import { CareerItem } from '../types/career';
 import { useLinks } from '../context/LinksContext';
 
-// Static fallback data
+import { fetchCareers } from '../services/api';
+
+// Static fallback
 import initialCareers from '../data/careers.json';
 
 export const CareersPage: React.FC = () => {
@@ -20,10 +22,9 @@ export const CareersPage: React.FC = () => {
 
   // Fetch from API with fallback
   useEffect(() => {
-    fetch('/api/careers')
-      .then((res) => (res.ok ? res.json() : null))
+    fetchCareers()
       .then((data) => {
-        if (data && Array.isArray(data)) setCareers(data);
+        if (data && data.length > 0) setCareers(data);
       })
       .catch(() => {
         // Fallback to static data

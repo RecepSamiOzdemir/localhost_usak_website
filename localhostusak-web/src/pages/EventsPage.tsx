@@ -8,6 +8,8 @@ import { EmptyState } from '../components/shared/EmptyState';
 import { EventItem, EventType } from '../types/event';
 import { useLinks } from '../context/LinksContext';
 
+import { fetchEvents, fetchEventTypes } from '../services/api';
+
 // Static fallbacks
 import initialEvents from '../data/events.json';
 import initialTypes from '../data/eventTypes.json';
@@ -22,19 +24,17 @@ export const EventsPage: React.FC = () => {
 
   // Fetch from API with fallback
   useEffect(() => {
-    fetch('/api/events')
-      .then((res) => (res.ok ? res.json() : null))
+    fetchEvents()
       .then((data) => {
-        if (data && Array.isArray(data)) setEvents(data);
+        if (data && data.length > 0) setEvents(data);
       })
       .catch(() => {
         // Fallback to static data
       });
 
-    fetch('/api/event-types')
-      .then((res) => (res.ok ? res.json() : null))
+    fetchEventTypes()
       .then((data) => {
-        if (data && Array.isArray(data)) setEventTypes(data);
+        if (data && data.length > 0) setEventTypes(data);
       })
       .catch(() => {
         // Fallback to static data

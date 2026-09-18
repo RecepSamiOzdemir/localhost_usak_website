@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CommunityLinks, DEFAULT_COMMUNITY_LINKS } from '../constants/links';
 import { getAuthHeaders } from '../utils/auth';
 
+import { fetchCommunityLinks } from '../services/api';
+
 interface LinksContextType {
   links: CommunityLinks;
   updateLinks: (newLinks: Partial<CommunityLinks>) => Promise<{ success: boolean; message?: string }>;
@@ -35,15 +37,11 @@ export const LinksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     let isMounted = true;
 
-    fetch('/api/links')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch links');
-        return res.json();
-      })
+    fetchCommunityLinks()
       .then((data) => {
         if (!isMounted) return;
-        if (data && data.links) {
-          const merged = { ...DEFAULT_COMMUNITY_LINKS, ...data.links };
+        if (data) {
+          const merged = { ...DEFAULT_COMMUNITY_LINKS, ...data };
           setLinks(merged);
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));

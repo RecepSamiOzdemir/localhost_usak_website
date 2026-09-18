@@ -3,16 +3,17 @@ import { SponsorItem } from '../../types/sponsor';
 import defaultSponsors from '../../data/sponsors.json';
 import { useLinks } from '../../context/LinksContext';
 
+import { fetchSponsors } from '../../services/api';
+
 export const SponsorsSection: React.FC = () => {
   const [sponsors, setSponsors] = useState<SponsorItem[]>(defaultSponsors as SponsorItem[]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { links } = useLinks();
 
   useEffect(() => {
-    fetch('/api/sponsors')
-      .then((res) => (res.ok ? res.json() : null))
+    fetchSponsors()
       .then((data) => {
-        if (Array.isArray(data)) {
+        if (data && data.length > 0) {
           setSponsors(data);
         }
       })

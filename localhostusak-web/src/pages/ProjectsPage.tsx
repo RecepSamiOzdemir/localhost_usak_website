@@ -8,7 +8,9 @@ import { EmptyState } from '../components/shared/EmptyState';
 import { ProjectItem } from '../types/project';
 import { useLinks } from '../context/LinksContext';
 
-// Static fallback data
+import { fetchProjects, likeProject } from '../services/api';
+
+// Static fallback
 import initialProjects from '../data/projects.json';
 
 export const ProjectsPage: React.FC = () => {
@@ -20,10 +22,9 @@ export const ProjectsPage: React.FC = () => {
 
   // Fetch from API with fallback
   useEffect(() => {
-    fetch('/api/projects')
-      .then((res) => (res.ok ? res.json() : null))
+    fetchProjects()
       .then((data) => {
-        if (data && Array.isArray(data)) setProjects(data);
+        if (data && data.length > 0) setProjects(data);
       })
       .catch(() => {
         // Fallback to static data
@@ -31,7 +32,7 @@ export const ProjectsPage: React.FC = () => {
   }, []);
 
   const handleLikeProject = (id: number) => {
-    fetch(`/api/projects/${id}/like`, { method: 'PATCH' }).catch(() => {});
+    likeProject(id);
   };
 
   const primaryOptions: FilterOption[] = [
