@@ -11,8 +11,8 @@
     "mapUrl": "https://maps.google.com/?q=Uşak+Coff+The+Story",
     "capacity": 25,
     "attendees": 18,
-    "imageUrl": "/assets/images/WhatsApp Image 2026-09-09 at 11.21.23.jpeg",
-    "whatsappLink": "https://chat.whatsapp.com/dummy-coworking",
+    "imageUrl": "/assets/images/og-cover.jpg",
+    "whatsappLink": "https://chat.whatsapp.com/",
     "tags": ["#WebDev", "#AI_Agents", "#UI_UX", "#CoffeeAndCode", "#Coworking"],
     "createdAt": "2026-09-01T10:00:00.000Z"
   },
@@ -29,7 +29,7 @@
     "capacity": 20,
     "attendees": 14,
     "imageUrl": "/assets/images/01-localhostusak-3963536971235621522_1-20260814_153443.jpg",
-    "whatsappLink": "https://chat.whatsapp.com/dummy-coworking",
+    "whatsappLink": "https://chat.whatsapp.com/",
     "tags": ["#Workshop", "#AIAgents", "#React", "#HandsOn"],
     "createdAt": "2026-09-05T12:00:00.000Z"
   },
@@ -46,7 +46,7 @@
     "capacity": 35,
     "attendees": 22,
     "imageUrl": "/assets/images/02-localhostusak-3963536972520323330_2-20260814_153443.jpg",
-    "whatsappLink": "https://chat.whatsapp.com/dummy-coworking",
+    "whatsappLink": "https://chat.whatsapp.com/",
     "tags": ["#TechTalk", "#RemoteWork", "#GlobalCareer", "#QandA"],
     "createdAt": "2026-09-07T09:00:00.000Z"
   },
@@ -62,7 +62,7 @@
     "capacity": 20,
     "attendees": 21,
     "imageUrl": "/assets/images/03-localhostusak-3963536972989931689_3-20260814_153443.jpg",
-    "whatsappLink": "https://chat.whatsapp.com/dummy-coworking",
+    "whatsappLink": "https://chat.whatsapp.com/",
     "tags": ["#Coworking", "#Community", "#Networking"],
     "createdAt": "2026-08-01T10:00:00.000Z"
   },
@@ -78,7 +78,7 @@
     "capacity": 15,
     "attendees": 16,
     "imageUrl": "/assets/images/04-localhostusak-3963536974466346212_4-20260814_153443.jpg",
-    "whatsappLink": "https://chat.whatsapp.com/dummy-coworking",
+    "whatsappLink": "https://chat.whatsapp.com/",
     "tags": ["#Genesis", "#FirstMeetup", "#Uşak"],
     "createdAt": "2026-07-01T10:00:00.000Z"
   }

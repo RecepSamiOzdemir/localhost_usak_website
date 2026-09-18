@@ -23,9 +23,9 @@ export interface CommunityLinks {
 
 export const DEFAULT_COMMUNITY_LINKS: CommunityLinks = {
   whatsappGeneral: 'https://chat.whatsapp.com/',
-  whatsappProjects: 'https://chat.whatsapp.com/dummy-projeler',
-  whatsappCareers: 'https://chat.whatsapp.com/dummy-kariyer',
-  whatsappCoworking: 'https://chat.whatsapp.com/dummy-coworking',
+  whatsappProjects: 'https://chat.whatsapp.com/',
+  whatsappCareers: 'https://chat.whatsapp.com/',
+  whatsappCoworking: 'https://chat.whatsapp.com/',
   instagram: 'https://instagram.com/localhostusak',
   github: 'https://github.com/localhostusak',
   x: 'https://x.com/localhostusak',
