@@ -1,0 +1,12 @@
+{
+  "name": "localhostusak-root",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix localhostusak-web run dev",
+    "cms": "npm --prefix localhostusak-cms run dev",
+    "server": "npm --prefix localhostusak-cms run dev",
+    "build": "npm --prefix localhostusak-web run build && npm --prefix localhostusak-cms run build",
+    "build:web": "npm --prefix localhostusak-web run build",
+    "build:cms": "npm --prefix localhostusak-cms run build"
+  }
+}
