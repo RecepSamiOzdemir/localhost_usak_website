@@ -12,6 +12,8 @@ import { EventsPage } from './pages/EventsPage';
 import { CareersPage } from './pages/CareersPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { AdminPage } from './pages/AdminPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { ErrorBoundary } from './components/shared/ErrorBoundary';
 
 // Styles
 import './styles/tokens.css';
@@ -84,6 +86,7 @@ const AppContent: React.FC = () => {
         <Route path="/kariyer" element={<CareersPage />} />
         <Route path="/projeler" element={<ProjectsPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
       <Footer />
@@ -94,13 +97,15 @@ const AppContent: React.FC = () => {
 
 export const App: React.FC = () => {
   return (
-    <ThemeProvider>
-      <LinksProvider>
-        <WhatsAppModalProvider>
-          <AppContent />
-        </WhatsAppModalProvider>
-      </LinksProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <LinksProvider>
+          <WhatsAppModalProvider>
+            <AppContent />
+          </WhatsAppModalProvider>
+        </LinksProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 };
 
