@@ -7,6 +7,12 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { EventTypes } from './collections/EventTypes'
+import { Events } from './collections/Events'
+import { Careers } from './collections/Careers'
+import { Projects } from './collections/Projects'
+import { Sponsors } from './collections/Sponsors'
+import { CommunityLinks } from './collections/CommunityLinks'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -18,9 +24,26 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [
+    Users,
+    Media,
+    EventTypes,
+    Events,
+    Careers,
+    Projects,
+    Sponsors,
+    CommunityLinks,
+  ],
+  cors: [
+    'https://localhostusak.com',
+    'http://localhost:5173',
+  ],
+  csrf: [
+    'https://localhostusak.com',
+    'http://localhost:5173',
+  ],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET || 'dev_secret_localhostusak_payload_2026_x89a',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

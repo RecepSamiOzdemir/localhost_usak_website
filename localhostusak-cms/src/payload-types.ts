@@ -69,6 +69,12 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    'event-types': EventType;
+    events: Event;
+    careers: Career;
+    projects: Project;
+    sponsors: Sponsor;
+    'community-links': CommunityLink;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,13 +84,19 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'event-types': EventTypesSelect<false> | EventTypesSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    careers: CareersSelect<false> | CareersSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
+    'community-links': CommunityLinksSelect<false> | CommunityLinksSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
   globals: {};
@@ -122,7 +134,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -147,7 +159,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -163,10 +175,272 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-types".
+ */
+export interface EventType {
+  id: number;
+  /**
+   * Örn: cowork, workshop, talk, hackathon
+   */
+  slug: string;
+  /**
+   * Görünen isim (Örn: Cowork & Sohbet)
+   */
+  label: string;
+  /**
+   * Emoji veya simge (Örn: ☕, 🛠️, 🎤)
+   */
+  icon: string;
+  /**
+   * Modern HUD tema rengi (HEX)
+   */
+  colorModern: string;
+  /**
+   * Pixel Retro tema rengi (HEX)
+   */
+  colorPixel: string;
+  isDefault?: boolean | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  /**
+   * Etkinlik türü seçin
+   */
+  type: number | EventType;
+  status: 'upcoming' | 'completed' | 'cancelled';
+  dateStart: string;
+  dateEnd?: string | null;
+  /**
+   * Mekan adı (Örn: Coff The Story / Treehouse Cafe)
+   */
+  location?: string | null;
+  /**
+   * Google Maps bağlantısı
+   */
+  mapUrl?: string | null;
+  capacity?: number | null;
+  attendees?: number | null;
+  /**
+   * Etkinlik kapak görseli (Sürükle-bırak)
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * Harici görsel linki (Opsiyonel alternatif)
+   */
+  imageUrl?: string | null;
+  /**
+   * Etkinlik / Topluluk WhatsApp grup linki
+   */
+  whatsappLink?: string | null;
+  /**
+   * Etiketler (Örn: #WebDev, #AIAgents)
+   */
+  tags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Etkinlik detayları ve açıklaması
+   */
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers".
+ */
+export interface Career {
+  id: number;
+  /**
+   * İlan başlığı (Örn: Junior Frontend Developer)
+   */
+  title: string;
+  /**
+   * Şirket veya topluluk adı
+   */
+  company?: string | null;
+  type: 'job' | 'internship' | 'freelance' | 'mentorship';
+  workMode?: ('remote' | 'hybrid' | 'onsite') | null;
+  schedule?: ('fulltime' | 'parttime' | 'project') | null;
+  /**
+   * Kullanılan teknolojiler (Örn: React, Node.js, TypeScript)
+   */
+  technologies?:
+    | {
+        name?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * İlan detayları ve aranan nitelikler
+   */
+  description?: string | null;
+  /**
+   * Başvuru linki veya e-posta
+   */
+  applyUrl?: string | null;
+  /**
+   * İletişim kişisi veya platformu
+   */
+  contact?: string | null;
+  /**
+   * İlanı paylaşan kişi / kurum
+   */
+  postedBy?: string | null;
+  /**
+   * İlan yayında mı?
+   */
+  isActive?: boolean | null;
+  /**
+   * İlan bitiş tarihi
+   */
+  expiresAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  /**
+   * Proje adı
+   */
+  name: string;
+  /**
+   * Proje açıklaması ve vizyonu
+   */
+  description?: string | null;
+  type: 'showcase' | 'seeking_team' | 'opensource';
+  /**
+   * Projede kullanılan teknolojiler
+   */
+  technologies?:
+    | {
+        name?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Proje sahibi / Takım lideri
+   */
+  owner?: string | null;
+  teamSize?: number | null;
+  teamMax?: number | null;
+  /**
+   * Aranan roller (Örn: UI Tasarımcı, Frontend Dev)
+   */
+  rolesNeeded?:
+    | {
+        role?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * GitHub repo bağlantısı
+   */
+  githubUrl?: string | null;
+  /**
+   * Canlı demo bağlantısı
+   */
+  demoUrl?: string | null;
+  /**
+   * Proje kapak görseli
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * Harici görsel linki (Opsiyonel)
+   */
+  imageUrl?: string | null;
+  /**
+   * Topluluk beğeni sayısı
+   */
+  likes?: number | null;
+  /**
+   * Proje yayında mı?
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsors".
+ */
+export interface Sponsor {
+  id: number;
+  /**
+   * Sponsor / Destekçi adı
+   */
+  name: string;
+  tier?: ('gold' | 'silver' | 'bronze' | 'community') | null;
+  /**
+   * Sponsor logo görseli
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Harici logo linki (Opsiyonel)
+   */
+  logoUrl?: string | null;
+  /**
+   * Sponsor web sitesi bağlantısı
+   */
+  websiteUrl: string;
+  /**
+   * Sıralama önceliği (Küçük sayılar önce çıkar)
+   */
+  sortOrder?: number | null;
+  /**
+   * Sponsor yayında mı?
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "community-links".
+ */
+export interface CommunityLink {
+  id: number;
+  /**
+   * Benzersiz anahtar (Örn: whatsapp_coworking, whatsapp_projects, whatsapp_careers)
+   */
+  key: string;
+  /**
+   * Görünen etiket (Örn: WhatsApp Coworking Grubu)
+   */
+  label: string;
+  /**
+   * Bağlantı adresi (URL)
+   */
+  url: string;
+  /**
+   * Kısa açıklama
+   */
+  description?: string | null;
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -183,20 +457,44 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'event-types';
+        value: number | EventType;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'careers';
+        value: number | Career;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'sponsors';
+        value: number | Sponsor;
+      } | null)
+    | ({
+        relationTo: 'community-links';
+        value: number | CommunityLink;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -206,10 +504,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -229,7 +527,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -274,6 +572,133 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-types_select".
+ */
+export interface EventTypesSelect<T extends boolean = true> {
+  slug?: T;
+  label?: T;
+  icon?: T;
+  colorModern?: T;
+  colorPixel?: T;
+  isDefault?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  type?: T;
+  status?: T;
+  dateStart?: T;
+  dateEnd?: T;
+  location?: T;
+  mapUrl?: T;
+  capacity?: T;
+  attendees?: T;
+  coverImage?: T;
+  imageUrl?: T;
+  whatsappLink?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers_select".
+ */
+export interface CareersSelect<T extends boolean = true> {
+  title?: T;
+  company?: T;
+  type?: T;
+  workMode?: T;
+  schedule?: T;
+  technologies?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  description?: T;
+  applyUrl?: T;
+  contact?: T;
+  postedBy?: T;
+  isActive?: T;
+  expiresAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  type?: T;
+  technologies?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  owner?: T;
+  teamSize?: T;
+  teamMax?: T;
+  rolesNeeded?:
+    | T
+    | {
+        role?: T;
+        id?: T;
+      };
+  githubUrl?: T;
+  demoUrl?: T;
+  coverImage?: T;
+  imageUrl?: T;
+  likes?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsors_select".
+ */
+export interface SponsorsSelect<T extends boolean = true> {
+  name?: T;
+  tier?: T;
+  logo?: T;
+  logoUrl?: T;
+  websiteUrl?: T;
+  sortOrder?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "community-links_select".
+ */
+export interface CommunityLinksSelect<T extends boolean = true> {
+  key?: T;
+  label?: T;
+  url?: T;
+  description?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
