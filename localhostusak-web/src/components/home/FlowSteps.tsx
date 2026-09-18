@@ -1,35 +1,10 @@
 import React from 'react';
-
-interface Step {
-  num: string;
-  title: string;
-  desc: string;
-}
-
-const steps: Step[] = [
-  {
-    num: '01',
-    title: 'Tanışma & Kahve',
-    desc: 'Mekana gelip masaya oturuyoruz. Kahvemizi sipariş edip kısaca kim neyle uğraşıyor tanışıyoruz. Sıkıcı sunumlar yok, tamamen samimi bir sohbet.',
-  },
-  {
-    num: '02',
-    title: 'Proje Paylaşımı & Geri Bildirim',
-    desc: 'Üzerinde çalıştığın bir side-project\'i, yeni öğrendiğin bir kütüphaneyi masaya açıyorsun. Masadakilerden anında tarafsız ve yapıcı geri bildirim alıyorsun.',
-  },
-  {
-    num: '03',
-    title: 'Birlikte Çalışma & Problem Çözme',
-    desc: 'Laptopları açıp çalışıyoruz. Takıldığın bir bug veya tasarım düğümü varsa masadaki herkes fikrini söylüyor, birlikte çözüyoruz.',
-  },
-  {
-    num: '04',
-    title: 'Muhabbet & Networking',
-    desc: 'Topluluk projeleri, şehirdeki yeni girişimler ve gelecekteki buluşmalar üzerine konuşup yeni dostluklar kuruyoruz.',
-  },
-];
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 
 export const FlowSteps: React.FC = () => {
+  const { settings } = useSiteSettings();
+  const steps = settings.flowSteps || [];
+
   return (
     <section className="section" id="flow">
       <div className="container">

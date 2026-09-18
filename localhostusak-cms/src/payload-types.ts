@@ -99,8 +99,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -739,6 +743,131 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  hero?: {
+    cityCoordinates?: string | null;
+    title?: string | null;
+    titleHighlight?: string | null;
+    subtitle?: string | null;
+    description?: string | null;
+  };
+  /**
+   * Ana sayfadaki sayaç kartları (Örn: 150+ Topluluk Üyesi)
+   */
+  stats?:
+    | {
+        target: number;
+        prefix?: string | null;
+        suffix?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  values?:
+    | {
+        icon: string;
+        title: string;
+        description: string;
+        tags?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  personas?:
+    | {
+        icon: string;
+        title: string;
+        description: string;
+        tags?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  flowSteps?:
+    | {
+        num: string;
+        title: string;
+        desc: string;
+        id?: string | null;
+      }[]
+    | null;
+  careerResources?:
+    | {
+        icon: string;
+        title: string;
+        desc: string;
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        cityCoordinates?: T;
+        title?: T;
+        titleHighlight?: T;
+        subtitle?: T;
+        description?: T;
+      };
+  stats?:
+    | T
+    | {
+        target?: T;
+        prefix?: T;
+        suffix?: T;
+        label?: T;
+        id?: T;
+      };
+  values?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        tags?: T;
+        id?: T;
+      };
+  personas?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        tags?: T;
+        id?: T;
+      };
+  flowSteps?:
+    | T
+    | {
+        num?: T;
+        title?: T;
+        desc?: T;
+        id?: T;
+      };
+  careerResources?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        desc?: T;
+        tag?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

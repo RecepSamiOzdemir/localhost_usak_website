@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 
 export const HeroSection: React.FC = () => {
   const { theme } = useTheme();
   const { links } = useLinks();
   const { openWhatsAppWithRules } = useWhatsAppModal();
+  const { settings } = useSiteSettings();
+  const hero = settings.hero;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -177,7 +180,7 @@ export const HeroSection: React.FC = () => {
               <span>📍 U Ş A K</span>
               <span style={{ opacity: 0.4 }}>|</span>
               <span style={{ fontSize: '0.8rem', color: 'var(--accent-primary)' }}>
-                38.6823° N, 29.4082° E
+                {hero?.cityCoordinates || '38.6823° N, 29.4082° E'}
               </span>
             </div>
           </div>
@@ -191,8 +194,8 @@ export const HeroSection: React.FC = () => {
               letterSpacing: '-0.03em',
             }}
           >
-            Uşak'ın Teknoloji ve <br />
-            <span className="gradient-text">Tasarım Topluluğu</span>
+            {hero?.title || "Uşak'ın Teknoloji ve"} <br />
+            <span className="gradient-text">{hero?.titleHighlight || 'Tasarım Topluluğu'}</span>
           </h1>
 
           {/* Terminal Prompt Subtitle */}
@@ -204,7 +207,7 @@ export const HeroSection: React.FC = () => {
               marginBottom: '1.5rem',
             }}
           >
-            <span>&gt;_ connect • build • collaborate • grow</span>
+            <span>&gt;_ {hero?.subtitle || 'connect • build • collaborate • grow'}</span>
             <span className="terminal-cursor" />
           </div>
 
@@ -218,8 +221,8 @@ export const HeroSection: React.FC = () => {
               lineHeight: 1.7,
             }}
           >
-            Kahveni al, laptopunu getir, aramıza katıl. Deneyimli olmak şart değil;{' '}
-            <strong>merakın ve öğrenme isteğin varsa masada sana da yer var.</strong>
+            {hero?.description ||
+              'Kahveni al, laptopunu getir, aramıza katıl. Deneyimli olmak şart değil; merakın ve öğrenme isteğin varsa masada sana da yer var.'}
           </p>
 
           {/* Primary Hero Actions */}

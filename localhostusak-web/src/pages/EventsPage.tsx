@@ -79,9 +79,12 @@ export const EventsPage: React.FC = () => {
     });
   }, [events, selectedType, selectedStatus, searchQuery]);
 
-  // Spotlight event: First upcoming event
+  // Spotlight event: En yakın yaklaşan etkinlik (tarihe göre sıralı)
   const spotlightEvent = useMemo(() => {
-    return events.find((e) => e.status === 'upcoming');
+    const upcoming = events
+      .filter((e) => e.status === 'upcoming')
+      .sort((a, b) => new Date(a.dateStart).getTime() - new Date(b.dateStart).getTime());
+    return upcoming[0];
   }, [events]);
 
   const totalAttendees = useMemo(() => {

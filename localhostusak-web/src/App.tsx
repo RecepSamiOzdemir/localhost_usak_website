@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { LinksProvider } from './context/LinksContext';
+import { SiteSettingsProvider } from './context/SiteSettingsContext';
 import { WhatsAppModalProvider } from './context/WhatsAppModalContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
@@ -99,11 +100,13 @@ export const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <LinksProvider>
-          <WhatsAppModalProvider>
-            <AppContent />
-          </WhatsAppModalProvider>
-        </LinksProvider>
+        <SiteSettingsProvider>
+          <LinksProvider>
+            <WhatsAppModalProvider>
+              <AppContent />
+            </WhatsAppModalProvider>
+          </LinksProvider>
+        </SiteSettingsProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

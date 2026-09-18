@@ -1,19 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { CountdownTimer } from '../shared/CountdownTimer';
 import { downloadICS, openGoogleCalendar } from '../../utils/calendarExport';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
+import { fetchEvents } from '../../services/api';
+import { EventItem } from '../../types/event';
+import defaultEvents from '../../data/events.json';
 
 export const EventSpotlight: React.FC = () => {
   const { links } = useLinks();
   const { openWhatsAppWithRules } = useWhatsAppModal();
-  const meetupDate = new Date('2026-09-28T14:00:00');
+  const [events, setEvents] = useState<EventItem[]>(defaultEvents as EventItem[]);
+
+  useEffect(() => {
+    fetchEvents()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setEvents(data);
+        }
+      })
+      .catch(() => {
+        // Fallback to defaultEvents
+      });
+  }, []);
+
+  // En yakın yaklaşan (upcoming) etkinliği tarihe göre en yakından uzağa sıralayarak seç:
+  const upcomingEvent = useMemo(() => {
+    const upcomingList = events
+      .filter((e) => e.status === 'upcoming')
+      .sort((a, b) => new Date(a.dateStart).getTime() - new Date(b.dateStart).getTime());
+    return upcomingList[0] || events[0];
+  }, [events]);
+
+  const targetDate = upcomingEvent?.dateStart || '2026-09-28T14:00:00';
+  const meetupDate = new Date(targetDate);
+
+  const formattedDate = !isNaN(meetupDate.getTime())
+    ? meetupDate.toLocaleDateString('tr-TR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        weekday: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : targetDate;
+
+  const eventTitle = upcomingEvent?.title || 'Buluşma #3: Kahve, Kod ve Gelecek Projeler';
+  const eventDesc =
+    upcomingEvent?.description ||
+    "Uşak'ta teknolojiyle ilgilenen herkesin bir araya geldiği, projelerini anlattığı, takıldığı noktalarda birbirine destek olduğu ve keyifli bir kahve eşliğinde networking yaptığı 3. buluşmamız!";
+  const eventLocation = upcomingEvent?.location || 'Coff The Story / Treehouse Cafe, Uşak';
+  const eventMapUrl = upcomingEvent?.mapUrl || 'https://maps.google.com/?q=Uşak+Coff+The+Story';
+  const eventTags =
+    upcomingEvent?.tags && upcomingEvent.tags.length > 0
+      ? upcomingEvent.tags
+      : ['#WebDev', '#AI_Agents', '#UI_UX', '#MobileDev', '#Freelance', '#CoffeeAndCode'];
 
   const handleDownloadICS = () => {
     downloadICS({
-      title: 'localhostusak Buluşması #3',
-      description: 'Uşak teknoloji ve tasarım topluluğu buluşması. Kahveni al, laptopunu getir!',
-      location: 'Coff The Story / Treehouse Cafe, Uşak',
+      title: eventTitle,
+      description: eventDesc,
+      location: eventLocation,
       startDate: meetupDate,
       durationHours: 3,
     });
@@ -21,9 +69,9 @@ export const EventSpotlight: React.FC = () => {
 
   const handleGoogleCalendar = () => {
     openGoogleCalendar({
-      title: 'localhostusak Buluşması #3',
-      description: 'Uşak teknoloji ve tasarım topluluğu buluşması. Kahveni al, laptopunu getir!',
-      location: 'Coff The Story, Uşak',
+      title: eventTitle,
+      description: eventDesc,
+      location: eventLocation,
       startDate: meetupDate,
       durationHours: 3,
     });
@@ -34,7 +82,7 @@ export const EventSpotlight: React.FC = () => {
       <div className="container">
         <div className="section-header">
           <span className="section-tag">// BULUŞMA TAKVİMİ</span>
-          <h2 className="section-title">Sıradaki Buluşma: Buluşma #3</h2>
+          <h2 className="section-title">Sıradaki Buluşma: {eventTitle.split(':')[0]}</h2>
           <p className="section-desc">
             Laptopunu hazırla, kahveni seç. Uşak'taki diğer geliştirici ve tasarımcılarla aynı masadayız.
           </p>
@@ -54,17 +102,19 @@ export const EventSpotlight: React.FC = () => {
             {/* Left Info Block */}
             <div>
               <div className="spotlight-badges">
-                <span className="badge badge-orange">#03. BULUŞMA</span>
+                <span className="badge badge-orange">
+                  {upcomingEvent?.type?.label?.toUpperCase() || 'BULUŞMA'}
+                </span>
                 <span className="badge badge-blue">YÜZ YÜZE</span>
                 <span className="badge badge-live">KATILIM ÜCRETSİZ</span>
               </div>
 
               <h3 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', marginBottom: '0.75rem' }}>
-                Kahve, Kod ve Gelecek Projeler
+                {eventTitle.includes(':') ? eventTitle.split(':')[1].trim() : eventTitle}
               </h3>
 
               <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                Uşak'ta teknolojiyle ilgilenen herkesin bir araya geldiği, projelerini anlattığı, takıldığı noktalarda birbirine destek olduğu ve keyifli bir kahve eşliğinde networking yaptığı 3. buluşmamız!
+                {eventDesc}
               </p>
 
               {/* Meetup Metadata List */}
@@ -72,26 +122,28 @@ export const EventSpotlight: React.FC = () => {
                 <div className="meetup-meta-item">
                   <span className="meta-icon">📅</span>
                   <div>
-                    <strong>Tarih:</strong> 28 Eylül 2026 Pazar, 14:00 - 17:00
+                    <strong>Tarih:</strong> {formattedDate}
                   </div>
                 </div>
                 <div className="meetup-meta-item">
                   <span className="meta-icon">📍</span>
                   <div>
-                    <strong>Mekan:</strong> Coff The Story / Treehouse Cafe, Uşak
-                    <a
-                      href="https://maps.google.com/?q=Uşak+Coff+The+Story"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        color: 'var(--accent-secondary)',
-                        fontSize: '0.85rem',
-                        marginLeft: '0.5rem',
-                        textDecoration: 'underline',
-                      }}
-                    >
-                      (Haritada Gör ↗)
-                    </a>
+                    <strong>Mekan:</strong> {eventLocation}
+                    {eventMapUrl && (
+                      <a
+                        href={eventMapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          color: 'var(--accent-secondary)',
+                          fontSize: '0.85rem',
+                          marginLeft: '0.5rem',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        (Haritada Gör ↗)
+                      </a>
+                    )}
                   </div>
                 </div>
                 <div className="meetup-meta-item">
@@ -104,12 +156,11 @@ export const EventSpotlight: React.FC = () => {
 
               {/* Agenda Tags */}
               <div className="agenda-tags">
-                <span className="agenda-tag">#WebDev</span>
-                <span className="agenda-tag">#AI_Agents</span>
-                <span className="agenda-tag">#UI_UX</span>
-                <span className="agenda-tag">#MobileDev</span>
-                <span className="agenda-tag">#Freelance</span>
-                <span className="agenda-tag">#CoffeeAndCode</span>
+                {eventTags.map((tag, idx) => (
+                  <span key={idx} className="agenda-tag">
+                    {tag.startsWith('#') ? tag : `#${tag}`}
+                  </span>
+                ))}
               </div>
             </div>
 
@@ -137,7 +188,7 @@ export const EventSpotlight: React.FC = () => {
               </div>
 
               {/* Live Countdown Grid */}
-              <CountdownTimer targetDate="2026-09-28T14:00:00" />
+              <CountdownTimer targetDate={targetDate} />
 
               <div
                 style={{

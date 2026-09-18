@@ -1,10 +1,14 @@
 import React from 'react';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 
 export const ValuesBento: React.FC = () => {
   const { links } = useLinks();
   const { openWhatsAppWithRules } = useWhatsAppModal();
+  const { settings } = useSiteSettings();
+  const values = settings.values || [];
+
   return (
     <section className="section" id="values" style={{ background: 'var(--bg-secondary)' }}>
       <div className="container">
@@ -17,105 +21,64 @@ export const ValuesBento: React.FC = () => {
         </div>
 
         <div className="bento-grid">
-          {/* Card 1 (Span 8) */}
-          <div className="card bento-card bento-span-8 circuit-border">
-            <div>
-              <div className="bento-icon" aria-hidden="true">
-                🧡
-              </div>
-              <h3 style={{ fontSize: '1.6rem', marginBottom: '0.75rem' }}>
-                Resmiyetten Uzak, Samimi Bir Masa
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '1.05rem' }}>
-                Buluşmalarımız kurumsal konferans formatında değil. Kimse kravat takmıyor, kimse unvan satmıyor. En tecrübeli yazılımcı da yeni başlayan öğrenci de aynı masada yan yana kahvesini yudumluyor.
-              </p>
-            </div>
-            <div style={{ marginTop: '2rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-              <span className="badge badge-orange">#Samimiyet</span>
-              <span className="badge badge-blue">#Eşitlik</span>
-              <span className="badge badge-orange">#Yardımlaşma</span>
-            </div>
-          </div>
+          {values.map((val, idx) => {
+            const isWide = idx === 0 || idx === 3 || idx % 3 === 0;
+            const tags = val.tags ? val.tags.split(',').map((t) => t.trim()) : [];
 
-          {/* Card 2 (Span 4) */}
-          <div className="card bento-card bento-span-4">
-            <div>
-              <div className="bento-icon" aria-hidden="true">
-                🚀
-              </div>
-              <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem' }}>
-                Yerel Güç, Evrensel Vizyon
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                Uşak'ta üretip dünyaya açılmak mümkün. Şehirdeki yetenekleri birbirine bağlayarak ortak projeler ve startup tohumları atıyoruz.
-              </p>
-            </div>
-            <div
-              style={{
-                marginTop: '1.5rem',
-                fontFamily: 'var(--font-mono)',
-                color: 'var(--accent-secondary)',
-                fontSize: '0.85rem',
-              }}
-            >
-              &gt;_ Local Roots, Global Wings
-            </div>
-          </div>
-
-          {/* Card 3 (Span 4) */}
-          <div className="card bento-card bento-span-4">
-            <div>
-              <div className="bento-icon" aria-hidden="true">
-                ☕
-              </div>
-              <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem' }}>
-                Kahve Eşliğinde Coworking
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                Uşak'ın en keyifli kafelerinde toplanıp hem çalışıyor hem sosyalleşiyoruz. Odaklanma ve verimlilik masada artıyor.
-              </p>
-            </div>
-            <div
-              style={{
-                marginTop: '1.5rem',
-                fontFamily: 'var(--font-mono)',
-                color: 'var(--accent-primary)',
-                fontSize: '0.85rem',
-              }}
-            >
-              &gt;_ Coffee: ∞ | Bugs: 0
-            </div>
-          </div>
-
-          {/* Card 4 (Span 8) */}
-          <div className="card bento-card bento-span-8 circuit-border">
-            <div>
-              <div className="bento-icon" aria-hidden="true">
-                💡
-              </div>
-              <h3 style={{ fontSize: '1.6rem', marginBottom: '0.75rem' }}>
-                Yalnız Gelebilir miyim? Kesinlikle Evet!
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '1.05rem' }}>
-                Katılımcılarımızın çoğu ilk buluşmaya tek başına geldi. Masaya oturduğun andan itibaren topluluğun sıcaklığı seni kucaklar. Çekinmene hiç gerek yok!
-              </p>
-            </div>
-            <div style={{ marginTop: '2rem' }}>
-              <a
-                href={links.whatsappGeneral}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary btn-sm"
-                onClick={(e) => {
-                  e.preventDefault();
-                  openWhatsAppWithRules(links.whatsappGeneral, 'Genel Topluluk Grubu');
-                }}
+            return (
+              <div
+                key={idx}
+                className={`card bento-card ${isWide ? 'bento-span-8 circuit-border' : 'bento-span-4'}`}
               >
-                <span>İlk Adımı At: WhatsApp'a Katıl</span>
-                <span>→</span>
-              </a>
-            </div>
-          </div>
+                <div>
+                  <div className="bento-icon" aria-hidden="true">
+                    {val.icon}
+                  </div>
+                  <h3 style={{ fontSize: isWide ? '1.6rem' : '1.35rem', marginBottom: '0.75rem' }}>
+                    {val.title}
+                  </h3>
+                  <p
+                    style={{
+                      color: 'var(--text-secondary)',
+                      lineHeight: 1.7,
+                      fontSize: isWide ? '1.05rem' : '1rem',
+                    }}
+                  >
+                    {val.description}
+                  </p>
+                </div>
+
+                {tags.length > 0 && (
+                  <div style={{ marginTop: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    {tags.map((tag, tIdx) => (
+                      <span key={tIdx} className={tIdx % 2 === 0 ? 'badge badge-orange' : 'badge badge-blue'}>
+                        {tag.startsWith('#') ? tag : `#${tag}`}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* If last card, offer WhatsApp button */}
+                {idx === values.length - 1 && (
+                  <div style={{ marginTop: '2rem' }}>
+                    <a
+                      href={links.whatsappGeneral}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary btn-sm"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openWhatsAppWithRules(links.whatsappGeneral, 'Genel Topluluk Grubu');
+                      }}
+                    >
+                      <span>İlk Adımı At: WhatsApp'a Katıl</span>
+                      <span>→</span>
+                    </a>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

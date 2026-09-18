@@ -15,13 +15,8 @@ function normalizeMediaUrl(media: any, fallbackUrl?: string): string {
   return fallbackUrl || '';
 }
 
-export async function fetchEvents(): Promise<EventItem[]> {
-  const res = await fetch(`${API_BASE}/events?limit=100&sort=-dateStart`);
-  if (!res.ok) throw new Error('Events could not be fetched');
-  const data = await res.json();
-  const docs = Array.isArray(data) ? data : data.docs || [];
-
-  return docs.map((doc: any) => ({
+export function normalizeEventDoc(doc: any): EventItem {
+  return {
     id: doc.id,
     title: doc.title,
     description: typeof doc.description === 'string' ? doc.description : (doc.description?.root?.children?.[0]?.children?.[0]?.text || ''),
@@ -44,7 +39,45 @@ export async function fetchEvents(): Promise<EventItem[]> {
     whatsappLink: doc.whatsappLink,
     tags: Array.isArray(doc.tags) ? doc.tags.map((t: any) => (typeof t === 'string' ? t : t.tag || t.name)) : [],
     createdAt: doc.createdAt || new Date().toISOString(),
-  }));
+  };
+}
+
+export async function fetchEvents(): Promise<EventItem[]> {
+  const res = await fetch(`${API_BASE}/events?limit=100`);
+  if (!res.ok) throw new Error('Events could not be fetched');
+  const data = await res.json();
+  const docs = Array.isArray(data) ? data : data.docs || [];
+
+  const items = docs.map(normalizeEventDoc);
+
+  // Sıralama mantığı:
+  // 1. Önce yaklaşan (upcoming) etkinlikler, tarihi EN YAKIN olan en başta (ASC)
+  // 2. Ardından tamamlanan (completed) etkinlikler, EN SON yapılan en başta (DESC)
+  return items.sort((a: EventItem, b: EventItem) => {
+    if (a.status === 'upcoming' && b.status !== 'upcoming') return -1;
+    if (a.status !== 'upcoming' && b.status === 'upcoming') return 1;
+
+    const timeA = new Date(a.dateStart).getTime();
+    const timeB = new Date(b.dateStart).getTime();
+
+    if (a.status === 'upcoming' && b.status === 'upcoming') {
+      return timeA - timeB; // En yakın tarih ilk sırada
+    }
+    return timeB - timeA; // Geçmişte en son yapılan ilk sırada
+  });
+}
+
+export async function fetchNextUpcomingEvent(): Promise<EventItem | null> {
+  try {
+    const res = await fetch(`${API_BASE}/events?where[status][equals]=upcoming&sort=dateStart&limit=1`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const docs = Array.isArray(data) ? data : data.docs || [];
+    if (docs.length === 0) return null;
+    return normalizeEventDoc(docs[0]);
+  } catch {
+    return null;
+  }
 }
 
 export async function fetchEventTypes(): Promise<EventType[]> {
@@ -161,3 +194,66 @@ export async function fetchCommunityLinks(): Promise<Partial<CommunityLinks> | n
     return null;
   }
 }
+
+export interface SiteHeroSettings {
+  cityCoordinates?: string;
+  title?: string;
+  titleHighlight?: string;
+  subtitle?: string;
+  description?: string;
+}
+
+export interface SiteStatItem {
+  target: number;
+  prefix: string;
+  suffix: string;
+  label: string;
+}
+
+export interface SiteValueItem {
+  icon: string;
+  title: string;
+  description: string;
+  tags?: string;
+}
+
+export interface SitePersonaItem {
+  icon: string;
+  title: string;
+  description: string;
+  tags?: string;
+}
+
+export interface SiteFlowStep {
+  num: string;
+  title: string;
+  desc: string;
+}
+
+export interface SiteCareerResource {
+  icon: string;
+  title: string;
+  desc: string;
+  tag?: string;
+}
+
+export interface SiteSettingsData {
+  hero?: SiteHeroSettings;
+  stats?: SiteStatItem[];
+  values?: SiteValueItem[];
+  personas?: SitePersonaItem[];
+  flowSteps?: SiteFlowStep[];
+  careerResources?: SiteCareerResource[];
+}
+
+export async function fetchSiteSettings(): Promise<SiteSettingsData | null> {
+  try {
+    const res = await fetch(`${API_BASE}/globals/site-settings`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data as SiteSettingsData;
+  } catch {
+    return null;
+  }
+}
+

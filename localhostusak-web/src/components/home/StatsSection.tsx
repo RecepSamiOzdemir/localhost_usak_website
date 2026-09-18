@@ -1,29 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTheme } from '../../context/ThemeContext';
-
-interface StatItem {
-  target: number;
-  prefix: string;
-  suffix: string;
-  label: string;
-}
-
-const statsData: StatItem[] = [
-  { target: 150, prefix: '', suffix: '+', label: 'Topluluk Üyesi' },
-  { target: 2, prefix: '#', suffix: '', label: 'Başarılı Buluşma' },
-  { target: 240, prefix: '', suffix: '+', label: 'İçilen Sıcak Kahve' },
-  { target: 100, prefix: '%', suffix: '', label: 'Açık Kaynak & Bağımsız' },
-];
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 
 export const StatsSection: React.FC = () => {
   const { theme } = useTheme();
+  const { settings } = useSiteSettings();
+  const statsData = settings.stats && settings.stats.length > 0 ? settings.stats : [];
   const [counts, setCounts] = useState<number[]>(statsData.map(() => 0));
   const sectionRef = useRef<HTMLElement | null>(null);
   const animatedRef = useRef(false);
 
   useEffect(() => {
+    setCounts(statsData.map(() => 0));
+    animatedRef.current = false;
+  }, [statsData]);
+
+  useEffect(() => {
     const el = sectionRef.current;
-    if (!el) return;
+    if (!el || statsData.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -56,7 +50,7 @@ export const StatsSection: React.FC = () => {
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [statsData]);
 
   return (
     <section className="section" id="stats" ref={sectionRef}>
@@ -74,7 +68,7 @@ export const StatsSection: React.FC = () => {
             <div key={i} className="stat-card">
               <div className="stat-number">
                 {stat.prefix}
-                {counts[i]}
+                {counts[i] !== undefined ? counts[i] : stat.target}
                 {stat.suffix}
               </div>
               <div className="stat-label">{stat.label}</div>
