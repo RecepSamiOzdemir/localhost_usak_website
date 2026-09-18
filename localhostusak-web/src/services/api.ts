@@ -257,3 +257,122 @@ export async function fetchSiteSettings(): Promise<SiteSettingsData | null> {
   }
 }
 
+// --- Genel Site & SEO Ayarları ---
+export interface GeneralSettingsData {
+  meta?: {
+    siteTitle?: string;
+    defaultDescription?: string;
+    keywords?: string;
+    ogImage?: any;
+  };
+  header?: {
+    announcementActive?: boolean;
+    announcementText?: string;
+    announcementUrl?: string;
+  };
+  footer?: {
+    tagline?: string;
+    locationCoordinates?: string;
+    copyrightText?: string;
+  };
+}
+
+export async function fetchGeneralSettings(): Promise<GeneralSettingsData | null> {
+  try {
+    const res = await fetch(`${API_BASE}/globals/general-settings`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data as GeneralSettingsData;
+  } catch {
+    return null;
+  }
+}
+
+// --- Etkinlikler Sayfası Ayarları ---
+export interface EventsPageSettingsData {
+  hero?: {
+    tag?: string;
+    title?: string;
+    highlightText?: string;
+    description?: string;
+  };
+  whatsappCta?: {
+    buttonText?: string;
+    overrideUrl?: string;
+  };
+  meta?: {
+    title?: string;
+    description?: string;
+  };
+}
+
+export async function fetchEventsPageSettings(): Promise<EventsPageSettingsData | null> {
+  try {
+    const res = await fetch(`${API_BASE}/globals/events-page-settings`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data as EventsPageSettingsData;
+  } catch {
+    return null;
+  }
+}
+
+// --- Kariyer Sayfası Ayarları ---
+export interface CareersPageSettingsData {
+  hero?: {
+    tag?: string;
+    title?: string;
+    highlightText?: string;
+    description?: string;
+  };
+  whatsappCta?: {
+    buttonText?: string;
+    overrideUrl?: string;
+  };
+  careerResources?: SiteCareerResource[];
+  meta?: {
+    title?: string;
+    description?: string;
+  };
+}
+
+export async function fetchCareersPageSettings(): Promise<CareersPageSettingsData | null> {
+  try {
+    const res = await fetch(`${API_BASE}/globals/careers-page-settings`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data as CareersPageSettingsData;
+  } catch {
+    return null;
+  }
+}
+
+// --- Projeler Sayfası Ayarları ---
+export interface ProjectsPageSettingsData {
+  hero?: {
+    tag?: string;
+    title?: string;
+    highlightText?: string;
+    description?: string;
+  };
+  whatsappCta?: {
+    buttonText?: string;
+    overrideUrl?: string;
+  };
+  meta?: {
+    title?: string;
+    description?: string;
+  };
+}
+
+export async function fetchProjectsPageSettings(): Promise<ProjectsPageSettingsData | null> {
+  try {
+    const res = await fetch(`${API_BASE}/globals/projects-page-settings`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data as ProjectsPageSettingsData;
+  } catch {
+    return null;
+  }
+}
+

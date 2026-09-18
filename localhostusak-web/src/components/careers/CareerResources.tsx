@@ -1,9 +1,14 @@
 import React from 'react';
 import { useSiteSettings } from '../../context/SiteSettingsContext';
+import { SiteCareerResource } from '../../services/api';
 
-export const CareerResources: React.FC = () => {
+interface CareerResourcesProps {
+  items?: SiteCareerResource[];
+}
+
+export const CareerResources: React.FC<CareerResourcesProps> = ({ items }) => {
   const { settings } = useSiteSettings();
-  const resources = settings.careerResources || [];
+  const resources = items && items.length > 0 ? items : (settings.careerResources || []);
 
   return (
     <section style={{ margin: '3.5rem 0' }}>

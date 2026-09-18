@@ -2,7 +2,7 @@ import type { GlobalConfig } from 'payload'
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
-  label: 'Site & Ana Sayfa Ayarları',
+  label: 'Ana Sayfa Ayarları',
   access: {
     read: () => true, // Frontend can read publicly
   },

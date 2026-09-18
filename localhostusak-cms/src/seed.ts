@@ -337,9 +337,146 @@ async function seed() {
         ],
       },
     })
-    console.log('  ✓ Site Ayarları (Global) başarıyla tohumlandı.')
+    console.log('  ✓ Ana Sayfa Ayarları (Global) başarıyla tohumlandı.')
   } catch (err: any) {
-    console.error('  ⚠️ Site Ayarları tohumlanırken hata (atlanıyor):', err?.message || err)
+    console.error('  ⚠️ Ana Sayfa Ayarları tohumlanırken hata (atlanıyor):', err?.message || err)
+  }
+
+  // 8. General Settings (Global)
+  try {
+    await payload.updateGlobal({
+      slug: 'general-settings',
+      data: {
+        meta: {
+          siteTitle: "localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu",
+          defaultDescription:
+            "Uşak'taki yazılımcılar, tasarımcılar, remote çalışanlar ve öğrenciler için açık, samimi ve üretken teknoloji topluluğu. Kahveni al, laptopunu getir!",
+          keywords:
+            'Uşak yazılım, Uşak teknoloji, localhostusak, developer community, UI UX Uşak, Uşak meetup, remote çalışma, coworking',
+        },
+        header: {
+          announcementActive: false,
+          announcementText: '🎉 Yeni buluşma takvimimiz açıklandı! Detaylar etkinlikler sayfasında.',
+          announcementUrl: '/etkinlikler',
+        },
+        footer: {
+          tagline:
+            "Uşak'ın yerel teknoloji, yazılım ve tasarım ekosistemini büyüten açık ve bağımsız topluluk.",
+          locationCoordinates: '38.6823° N, 29.4082° E',
+          copyrightText: "© 2026 localhostusak • Uşak'ta sevgiyle kodlandı 🧡",
+        },
+      },
+    })
+    console.log('  ✓ Genel Site & SEO Ayarları (Global) başarıyla tohumlandı.')
+  } catch (err: any) {
+    console.error('  ⚠️ Genel Ayarlar tohumlanırken hata (atlanıyor):', err?.message || err)
+  }
+
+  // 9. Events Page Settings (Global)
+  try {
+    await payload.updateGlobal({
+      slug: 'events-page-settings',
+      data: {
+        hero: {
+          tag: '// ETKİNLİK TAKVİMİ & COWORKING',
+          title: "Cowork'ten Workshop'a,",
+          highlightText: 'Tüm Buluşmalar',
+          description:
+            "Kahveni al, etkinliğini seç, masada yerini al. Yazılım, tasarım, yapay zeka ve serbest çalışma Uşak'ta aynı masada.",
+        },
+        whatsappCta: {
+          buttonText: 'WhatsApp Coworking Grubuna Katıl',
+        },
+        meta: {
+          title: 'Etkinlikler & Coworking — localhostusak',
+          description:
+            "Uşak'taki yazılım, tasarım ve yapay zeka buluşmaları, coworking günleri ve workshop takvimi.",
+        },
+      },
+    })
+    console.log('  ✓ Etkinlikler Sayfası Ayarları (Global) başarıyla tohumlandı.')
+  } catch (err: any) {
+    console.error('  ⚠️ Etkinlikler Ayarları tohumlanırken hata (atlanıyor):', err?.message || err)
+  }
+
+  // 10. Careers Page Settings (Global)
+  try {
+    await payload.updateGlobal({
+      slug: 'careers-page-settings',
+      data: {
+        hero: {
+          tag: '// KARİYER & FIRSAT PANOSU',
+          title: "Uşak'tan Globale,",
+          highlightText: 'Doğru Fırsatı Yakala',
+          description:
+            'Topluluk üyelerinin paylaştığı iş ilanları, staj fırsatları, freelance projeler ve ücretsiz mentorluk eşleşmeleri.',
+        },
+        whatsappCta: {
+          buttonText: 'WhatsApp Kariyer Grubuna Katıl',
+        },
+        careerResources: [
+          {
+            icon: '📄',
+            title: 'Modern CV & Portfolyo Şablonu',
+            desc: 'ATS uyumlu, sade ve global standartlarda developer & designer özgeçmiş formatları.',
+            tag: '#KariyerRehberi',
+          },
+          {
+            icon: '🎯',
+            title: 'Teknik Mülakat İpuçları',
+            desc: 'Live coding mülakatlarında stres yönetimi, algoritma soruları ve sistem tasarımı yaklaşımı.',
+            tag: '#Mülakat',
+          },
+          {
+            icon: '🌐',
+            title: 'Global Remote İş Arama',
+            desc: "Uşak'tan döviz kazanarak dünyaya çalışma: platformlar, vergi/şirketleşme ve saat farkı yönetimi.",
+            tag: '#RemoteWork',
+          },
+          {
+            icon: '🤝',
+            title: 'Birebir Mentorluk Eşleşmesi',
+            desc: 'Kariyer başlangıcında takıldığın noktalarda topluluktaki kıdemli geliştiricilerden tavsiye al.',
+            tag: '#Mentorluk',
+          },
+        ],
+        meta: {
+          title: 'Kariyer & İlanlar — localhostusak',
+          description:
+            "Uşak ve uzaktan çalışma olanakları; teknoloji, yazılım, staj ve freelance kariyer fırsatları panosu.",
+        },
+      },
+    })
+    console.log('  ✓ Kariyer Sayfası Ayarları (Global) başarıyla tohumlandı.')
+  } catch (err: any) {
+    console.error('  ⚠️ Kariyer Ayarları tohumlanırken hata (atlanıyor):', err?.message || err)
+  }
+
+  // 11. Projects Page Settings (Global)
+  try {
+    await payload.updateGlobal({
+      slug: 'projects-page-settings',
+      data: {
+        hero: {
+          tag: '// PROJE VİTRİNİ & AÇIK KAYNAK',
+          title: "Uşak'ta Üretiliyor,",
+          highlightText: 'Dünyaya Açılıyor',
+          description:
+            'Topluluk üyelerimizin geliştirdiği açık kaynak projeler, erken aşama girişimler ve birlikte üretmek için ekip arkadaşı arayanlar.',
+        },
+        whatsappCta: {
+          buttonText: 'WhatsApp Projeler Grubuna Katıl',
+        },
+        meta: {
+          title: 'Projeler & Vitrin — localhostusak',
+          description:
+            "Uşak teknoloji topluluğu üyelerinin geliştirdiği projeler, açık kaynak depoları ve ekip arkadaşı arayan girişimler.",
+        },
+      },
+    })
+    console.log('  ✓ Projeler Sayfası Ayarları (Global) başarıyla tohumlandı.')
+  } catch (err: any) {
+    console.error('  ⚠️ Projeler Ayarları tohumlanırken hata (atlanıyor):', err?.message || err)
   }
 
   console.log('🎉 Tohumlama başarıyla tamamlandı! Tüm veriler PostgreSQL veritabanına işlendi.')

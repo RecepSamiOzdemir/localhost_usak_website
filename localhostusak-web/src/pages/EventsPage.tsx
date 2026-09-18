@@ -8,7 +8,8 @@ import { EmptyState } from '../components/shared/EmptyState';
 import { EventItem, EventType } from '../types/event';
 import { useLinks } from '../context/LinksContext';
 
-import { fetchEvents, fetchEventTypes } from '../services/api';
+import { fetchEvents, fetchEventTypes, fetchEventsPageSettings, EventsPageSettingsData } from '../services/api';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 // Static fallbacks
 import initialEvents from '../data/events.json';
@@ -21,6 +22,15 @@ export const EventsPage: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [settings, setSettings] = useState<EventsPageSettingsData | null>(null);
+
+  // SEO Meta
+  usePageMeta({
+    title: settings?.meta?.title || 'Etkinlikler & Coworking — localhostusak',
+    description:
+      settings?.meta?.description ||
+      "Uşak'taki yazılım, tasarım ve yapay zeka buluşmaları, coworking günleri ve workshop takvimi.",
+  });
 
   // Fetch from API with fallback
   useEffect(() => {
@@ -38,6 +48,14 @@ export const EventsPage: React.FC = () => {
       })
       .catch(() => {
         // Fallback to static data
+      });
+
+    fetchEventsPageSettings()
+      .then((data) => {
+        if (data) setSettings(data);
+      })
+      .catch(() => {
+        // Fallback to static defaults
       });
   }, []);
 
@@ -94,12 +112,12 @@ export const EventsPage: React.FC = () => {
   return (
     <main>
       <PageHero
-        tag="// ETKİNLİK TAKVİMİ & COWORKING"
-        title="Cowork'ten Workshop'a,"
-        highlightText="Tüm Buluşmalar"
-        description="Kahveni al, etkinliğini seç, masada yerini al. Yazılım, tasarım, yapay zeka ve serbest çalışma Uşak'ta aynı masada."
-        whatsappUrl={links.whatsappCoworking}
-        whatsappLabel="WhatsApp Coworking Grubuna Katıl"
+        tag={settings?.hero?.tag || "// ETKİNLİK TAKVİMİ & COWORKING"}
+        title={settings?.hero?.title || "Cowork'ten Workshop'a,"}
+        highlightText={settings?.hero?.highlightText || "Tüm Buluşmalar"}
+        description={settings?.hero?.description || "Kahveni al, etkinliğini seç, masada yerini al. Yazılım, tasarım, yapay zeka ve serbest çalışma Uşak'ta aynı masada."}
+        whatsappUrl={settings?.whatsappCta?.overrideUrl || links.whatsappCoworking}
+        whatsappLabel={settings?.whatsappCta?.buttonText || "WhatsApp Coworking Grubuna Katıl"}
       />
 
       <div className="container" style={{ paddingBottom: '4rem' }}>

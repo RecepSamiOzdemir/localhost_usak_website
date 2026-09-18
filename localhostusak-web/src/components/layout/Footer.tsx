@@ -2,10 +2,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
+import { useGeneralSettings } from '../../context/GeneralSettingsContext';
 
 export const Footer: React.FC = () => {
   const { links } = useLinks();
   const { openWhatsAppWithRules } = useWhatsAppModal();
+  const { settings } = useGeneralSettings();
+
+  const tagline =
+    settings?.footer?.tagline ||
+    "Uşak'ın yerel teknoloji, yazılım ve tasarım ekosistemini büyüten açık ve bağımsız topluluk.";
+  const locationCoordinates = settings?.footer?.locationCoordinates || '38.6823° N, 29.4082° E';
+
   return (
     <footer className="footer-wrapper" id="footer">
       <div className="container">
@@ -27,13 +35,13 @@ export const Footer: React.FC = () => {
                 fontSize: '0.95rem',
               }}
             >
-              Uşak'ın yerel teknoloji, yazılım ve tasarım ekosistemini büyüten açık ve bağımsız topluluk.
+              {tagline}
             </p>
             <div className="location-pill">
               <span>📍 U Ş A K</span>
               <span style={{ opacity: 0.4 }}>|</span>
               <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)' }}>
-                38.6823° N, 29.4082° E
+                {locationCoordinates}
               </span>
             </div>
           </div>
@@ -144,7 +152,7 @@ export const Footer: React.FC = () => {
             <span>&lt;/&gt; connect • build • share • collaborate &#123; &#125;</span>
           </div>
           <div>
-            <span>© 2026 localhostusak • Uşak'ta sevgiyle kodlandı 🧡</span>
+            <span>{settings?.footer?.copyrightText || "© 2026 localhostusak • Uşak'ta sevgiyle kodlandı 🧡"}</span>
           </div>
         </div>
       </div>

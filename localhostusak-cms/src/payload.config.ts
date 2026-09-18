@@ -14,6 +14,10 @@ import { Projects } from './collections/Projects'
 import { Sponsors } from './collections/Sponsors'
 import { CommunityLinks } from './collections/CommunityLinks'
 import { SiteSettings } from './globals/SiteSettings'
+import { GeneralSettings } from './globals/GeneralSettings'
+import { EventsPageSettings } from './globals/EventsPageSettings'
+import { CareersPageSettings } from './globals/CareersPageSettings'
+import { ProjectsPageSettings } from './globals/ProjectsPageSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -36,7 +40,11 @@ export default buildConfig({
     CommunityLinks,
   ],
   globals: [
+    GeneralSettings,
     SiteSettings,
+    EventsPageSettings,
+    CareersPageSettings,
+    ProjectsPageSettings,
   ],
   cors: [
     'https://localhostusak.com',

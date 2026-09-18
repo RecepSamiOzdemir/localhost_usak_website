@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { LinksProvider } from './context/LinksContext';
 import { SiteSettingsProvider } from './context/SiteSettingsContext';
+import { GeneralSettingsProvider } from './context/GeneralSettingsContext';
 import { WhatsAppModalProvider } from './context/WhatsAppModalContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
@@ -100,13 +101,15 @@ export const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <SiteSettingsProvider>
-          <LinksProvider>
-            <WhatsAppModalProvider>
-              <AppContent />
-            </WhatsAppModalProvider>
-          </LinksProvider>
-        </SiteSettingsProvider>
+        <GeneralSettingsProvider>
+          <SiteSettingsProvider>
+            <LinksProvider>
+              <WhatsAppModalProvider>
+                <AppContent />
+              </WhatsAppModalProvider>
+            </LinksProvider>
+          </SiteSettingsProvider>
+        </GeneralSettingsProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

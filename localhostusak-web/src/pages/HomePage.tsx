@@ -8,8 +8,19 @@ import { FlowSteps } from '../components/home/FlowSteps';
 import { SponsorsSection } from '../components/home/SponsorsSection';
 import { StatsSection } from '../components/home/StatsSection';
 import { BigCTA } from '../components/home/BigCTA';
+import { useGeneralSettings } from '../context/GeneralSettingsContext';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const HomePage: React.FC = () => {
+  const { settings } = useGeneralSettings();
+
+  usePageMeta({
+    title: settings?.meta?.siteTitle || "localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu",
+    description:
+      settings?.meta?.defaultDescription ||
+      "Uşak'taki yazılımcılar, tasarımcılar, remote çalışanlar ve öğrenciler için açık, samimi ve üretken teknoloji topluluğu. Kahveni al, laptopunu getir!",
+  });
+
   return (
     <main>
       {/* 1. Karşılama */}

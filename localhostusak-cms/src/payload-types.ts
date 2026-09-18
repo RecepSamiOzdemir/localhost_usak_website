@@ -100,10 +100,18 @@ export interface Config {
   };
   fallbackLocale: null;
   globals: {
+    'general-settings': GeneralSetting;
     'site-settings': SiteSetting;
+    'events-page-settings': EventsPageSetting;
+    'careers-page-settings': CareersPageSetting;
+    'projects-page-settings': ProjectsPageSetting;
   };
   globalsSelect: {
+    'general-settings': GeneralSettingsSelect<false> | GeneralSettingsSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'events-page-settings': EventsPageSettingsSelect<false> | EventsPageSettingsSelect<true>;
+    'careers-page-settings': CareersPageSettingsSelect<false> | CareersPageSettingsSelect<true>;
+    'projects-page-settings': ProjectsPageSettingsSelect<false> | ProjectsPageSettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -746,6 +754,31 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "general-settings".
+ */
+export interface GeneralSetting {
+  id: number;
+  meta: {
+    siteTitle: string;
+    defaultDescription: string;
+    keywords?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  header?: {
+    announcementActive?: boolean | null;
+    announcementText?: string | null;
+    announcementUrl?: string | null;
+  };
+  footer?: {
+    tagline?: string | null;
+    locationCoordinates?: string | null;
+    copyrightText?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".
  */
 export interface SiteSetting {
@@ -809,6 +842,115 @@ export interface SiteSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events-page-settings".
+ */
+export interface EventsPageSetting {
+  id: number;
+  hero: {
+    tag: string;
+    title: string;
+    highlightText: string;
+    description: string;
+  };
+  whatsappCta?: {
+    buttonText?: string | null;
+    overrideUrl?: string | null;
+  };
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers-page-settings".
+ */
+export interface CareersPageSetting {
+  id: number;
+  hero: {
+    tag: string;
+    title: string;
+    highlightText: string;
+    description: string;
+  };
+  whatsappCta?: {
+    buttonText?: string | null;
+    overrideUrl?: string | null;
+  };
+  careerResources?:
+    | {
+        icon: string;
+        title: string;
+        desc: string;
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects-page-settings".
+ */
+export interface ProjectsPageSetting {
+  id: number;
+  hero: {
+    tag: string;
+    title: string;
+    highlightText: string;
+    description: string;
+  };
+  whatsappCta?: {
+    buttonText?: string | null;
+    overrideUrl?: string | null;
+  };
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "general-settings_select".
+ */
+export interface GeneralSettingsSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        siteTitle?: T;
+        defaultDescription?: T;
+        keywords?: T;
+        ogImage?: T;
+      };
+  header?:
+    | T
+    | {
+        announcementActive?: T;
+        announcementText?: T;
+        announcementUrl?: T;
+      };
+  footer?:
+    | T
+    | {
+        tagline?: T;
+        locationCoordinates?: T;
+        copyrightText?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
@@ -864,6 +1006,102 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         desc?: T;
         tag?: T;
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events-page-settings_select".
+ */
+export interface EventsPageSettingsSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        tag?: T;
+        title?: T;
+        highlightText?: T;
+        description?: T;
+      };
+  whatsappCta?:
+    | T
+    | {
+        buttonText?: T;
+        overrideUrl?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers-page-settings_select".
+ */
+export interface CareersPageSettingsSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        tag?: T;
+        title?: T;
+        highlightText?: T;
+        description?: T;
+      };
+  whatsappCta?:
+    | T
+    | {
+        buttonText?: T;
+        overrideUrl?: T;
+      };
+  careerResources?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        desc?: T;
+        tag?: T;
+        id?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects-page-settings_select".
+ */
+export interface ProjectsPageSettingsSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        tag?: T;
+        title?: T;
+        highlightText?: T;
+        description?: T;
+      };
+  whatsappCta?:
+    | T
+    | {
+        buttonText?: T;
+        overrideUrl?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
       };
   updatedAt?: T;
   createdAt?: T;

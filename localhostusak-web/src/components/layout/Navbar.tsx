@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
+import { useGeneralSettings } from '../../context/GeneralSettingsContext';
 
 export const Navbar: React.FC = () => {
   const { theme, isCracking, toggleTheme, breachHits, hasBreached } = useTheme();
+  const { settings } = useGeneralSettings();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -34,8 +36,38 @@ export const Navbar: React.FC = () => {
     return false;
   };
 
+  const isAnnouncementVisible = Boolean(settings?.header?.announcementActive && settings?.header?.announcementText);
+
   return (
     <header className={`navbar-wrapper ${isScrolled ? 'nav-scrolled' : ''}`} id="main-nav">
+      {isAnnouncementVisible && (
+        <div
+          className="announcement-banner"
+          style={{
+            background: 'linear-gradient(90deg, #FF6600, #FF8533)',
+            color: '#080A0D',
+            padding: '0.4rem 1rem',
+            textAlign: 'center',
+            fontSize: '0.825rem',
+            fontWeight: 700,
+            fontFamily: 'var(--font-mono)',
+            letterSpacing: '0.02em',
+            borderBottom: '1px solid rgba(0,0,0,0.1)',
+          }}
+        >
+          {settings?.header?.announcementUrl ? (
+            <Link
+              to={settings.header.announcementUrl}
+              style={{ color: '#080A0D', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <span>{settings.header.announcementText}</span>
+              <span style={{ fontSize: '1rem', lineHeight: 1 }}>→</span>
+            </Link>
+          ) : (
+            <span>{settings?.header?.announcementText}</span>
+          )}
+        </div>
+      )}
       <div className="container nav-container">
         {/* Brand Logo */}
         <Link to="/" className="brand-logo" id="nav-brand-logo" aria-label="localhostusak Ana Sayfa">

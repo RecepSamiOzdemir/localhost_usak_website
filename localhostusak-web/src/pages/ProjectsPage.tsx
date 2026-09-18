@@ -8,7 +8,8 @@ import { EmptyState } from '../components/shared/EmptyState';
 import { ProjectItem } from '../types/project';
 import { useLinks } from '../context/LinksContext';
 
-import { fetchProjects, likeProject } from '../services/api';
+import { fetchProjects, likeProject, fetchProjectsPageSettings, ProjectsPageSettingsData } from '../services/api';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 // Static fallback
 import initialProjects from '../data/projects.json';
@@ -19,6 +20,15 @@ export const ProjectsPage: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedTech, setSelectedTech] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [settings, setSettings] = useState<ProjectsPageSettingsData | null>(null);
+
+  // SEO Meta
+  usePageMeta({
+    title: settings?.meta?.title || 'Projeler & Vitrin — localhostusak',
+    description:
+      settings?.meta?.description ||
+      "Uşak teknoloji topluluğu üyelerinin geliştirdiği projeler, açık kaynak depoları ve ekip arkadaşı arayan girişimler.",
+  });
 
   // Fetch from API with fallback
   useEffect(() => {
@@ -28,6 +38,14 @@ export const ProjectsPage: React.FC = () => {
       })
       .catch(() => {
         // Fallback to static data
+      });
+
+    fetchProjectsPageSettings()
+      .then((data) => {
+        if (data) setSettings(data);
+      })
+      .catch(() => {
+        // Fallback to static defaults
       });
   }, []);
 
@@ -75,12 +93,12 @@ export const ProjectsPage: React.FC = () => {
   return (
     <main>
       <PageHero
-        tag="// PROJE VİTRİNİ & AÇIK KAYNAK"
-        title="Uşak'ta Üretiliyor,"
-        highlightText="Dünyaya Açılıyor"
-        description="Topluluk üyelerimizin geliştirdiği açık kaynak projeler, erken aşama girişimler ve birlikte üretmek için ekip arkadaşı arayanlar."
-        whatsappUrl={links.whatsappProjects}
-        whatsappLabel="WhatsApp Projeler Grubuna Katıl"
+        tag={settings?.hero?.tag || "// PROJE VİTRİNİ & AÇIK KAYNAK"}
+        title={settings?.hero?.title || "Uşak'ta Üretiliyor,"}
+        highlightText={settings?.hero?.highlightText || "Dünyaya Açılıyor"}
+        description={settings?.hero?.description || "Topluluk üyelerimizin geliştirdiği açık kaynak projeler, erken aşama girişimler ve birlikte üretmek için ekip arkadaşı arayanlar."}
+        whatsappUrl={settings?.whatsappCta?.overrideUrl || links.whatsappProjects}
+        whatsappLabel={settings?.whatsappCta?.buttonText || "WhatsApp Projeler Grubuna Katıl"}
       />
 
       <div className="container" style={{ paddingBottom: '4rem' }}>

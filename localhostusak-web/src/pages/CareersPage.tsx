@@ -8,7 +8,8 @@ import { EmptyState } from '../components/shared/EmptyState';
 import { CareerItem } from '../types/career';
 import { useLinks } from '../context/LinksContext';
 
-import { fetchCareers } from '../services/api';
+import { fetchCareers, fetchCareersPageSettings, CareersPageSettingsData } from '../services/api';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 // Static fallback
 import initialCareers from '../data/careers.json';
@@ -19,6 +20,15 @@ export const CareersPage: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedWorkMode, setSelectedWorkMode] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [settings, setSettings] = useState<CareersPageSettingsData | null>(null);
+
+  // SEO Meta
+  usePageMeta({
+    title: settings?.meta?.title || 'Kariyer & İlanlar — localhostusak',
+    description:
+      settings?.meta?.description ||
+      "Uşak ve uzaktan çalışma olanakları; teknoloji, yazılım, staj ve freelance kariyer fırsatları panosu.",
+  });
 
   // Fetch from API with fallback
   useEffect(() => {
@@ -28,6 +38,14 @@ export const CareersPage: React.FC = () => {
       })
       .catch(() => {
         // Fallback to static data
+      });
+
+    fetchCareersPageSettings()
+      .then((data) => {
+        if (data) setSettings(data);
+      })
+      .catch(() => {
+        // Fallback to static defaults
       });
   }, []);
 
@@ -64,12 +82,12 @@ export const CareersPage: React.FC = () => {
   return (
     <main>
       <PageHero
-        tag="// KARİYER & FIRSAT PANOSU"
-        title="Uşak'tan Globale,"
-        highlightText="Doğru Fırsatı Yakala"
-        description="Topluluk üyelerinin paylaştığı iş ilanları, staj fırsatları, freelance projeler ve ücretsiz mentorluk eşleşmeleri."
-        whatsappUrl={links.whatsappCareers}
-        whatsappLabel="WhatsApp Kariyer Grubuna Katıl"
+        tag={settings?.hero?.tag || "// KARİYER & FIRSAT PANOSU"}
+        title={settings?.hero?.title || "Uşak'tan Globale,"}
+        highlightText={settings?.hero?.highlightText || "Doğru Fırsatı Yakala"}
+        description={settings?.hero?.description || "Topluluk üyelerinin paylaştığı iş ilanları, staj fırsatları, freelance projeler ve ücretsiz mentorluk eşleşmeleri."}
+        whatsappUrl={settings?.whatsappCta?.overrideUrl || links.whatsappCareers}
+        whatsappLabel={settings?.whatsappCta?.buttonText || "WhatsApp Kariyer Grubuna Katıl"}
       />
 
       <div className="container" style={{ paddingBottom: '4rem' }}>
@@ -116,7 +134,7 @@ export const CareersPage: React.FC = () => {
         )}
 
         {/* Career Resources Grid */}
-        <CareerResources />
+        <CareerResources items={settings?.careerResources} />
 
         {/* Career CTA */}
         <CareerCTA />
