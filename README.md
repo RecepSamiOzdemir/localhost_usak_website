@@ -4,12 +4,12 @@
 
 ### Uşak Teknoloji, Yazılım ve Tasarım Topluluğu Web Platformu
 
-[![React](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Payload CMS](https://img.shields.io/badge/Payload_CMS-3.89-000000?style=for-the-badge&logo=payloadcms&logoColor=white)](https://payloadcms.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.3-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Node.js](https://img.shields.io/badge/Node.js-22+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![SQLite](https://img.shields.io/badge/SQLite-Native_Sync-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://nodejs.org/api/sqlite.html)
-[![Swagger](https://img.shields.io/badge/OpenAPI-Swagger_UI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](http://localhost:3001/api/docs)
 [![License](https://img.shields.io/badge/License-MIT-orange?style=for-the-badge)](LICENSE)
 
 <br />
@@ -20,11 +20,11 @@
 
 <br />
 
-[⚡ Canlı Özellikler](#-öne-çıkan-özellikler) •
-[🌓 Çift Tema Mimarisi](#-ikili-tasarım-mimarisi-dual-theme-engine) •
-[🛠️ Kurulum & Çalıştırma](#-kurulum-ve-yerel-geliştirme) •
-[📁 Proje Mimarisi](#-proje-dizin-yapısı) •
-[🔌 API & Swagger](#-api-ve-veritabanı-mimarisi) •
+[⚡ Özellikler](#-öne-çıkan-özellikler) •
+[🏗️ Mimari](#%EF%B8%8F-mimari-genel-bakış) •
+[🛠️ Kurulum](#%EF%B8%8F-kurulum-ve-yerel-geliştirme) •
+[📁 Proje Yapısı](#-proje-dizin-yapısı) •
+[🚀 Canlıya Alma](#-canlıya-alma-vps-deploy) •
 [💬 Topluluk](#-topluluğa-katılın)
 
 </div>
@@ -35,81 +35,126 @@
 
 **localhost[uşak]**, Uşak ilindeki yazılımcılar, mühendisler, dijital tasarımcılar, remote/freelance çalışanlar, üniversite öğrencileri ve teknoloji meraklılarını bir araya getiren bağımsız yerel teknoloji topluluğunun resmi web platformudur.
 
-Bu platform; topluluk buluşmalarını organize etmek, Uşak ve uzaktan çalışma ekosistemindeki staj/iş fırsatlarını listelemek, üyelerin açık kaynak ve yerel projelerini vitrine taşımak ve topluluk içi etkileşimi güçlendirmek amacıyla geliştirilmektedir.
+Platform; topluluk buluşmalarını organize etmek, Uşak ve uzaktan çalışma ekosistemindeki staj/iş fırsatlarını listelemek, üyelerin açık kaynak ve yerel projelerini vitrine taşımak ve topluluk içi etkileşimi güçlendirmek amacıyla geliştirilmiştir.
 
 ---
 
-## 🚀 Güncel Durum ve Tamamlanan Özellikler
+## 🏗️ Mimari Genel Bakış
 
-Platform güncel olarak **Frontend (SPA)**, **Backend (REST API + SQLite)** ve **Yönetim Paneli (Admin CMS)** ile tam entegre çalışmaktadır.
+Proje, **monorepo** yapıda üç ana katmandan oluşur:
 
-### 🌟 1. Çift Tasarım Dili Motoru (Dual Theme Engine)
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    localhostusak.com                          │
+│                   ┌──────────┐                               │
+│    Kullanıcı  ──▶ │  Nginx   │ (Reverse Proxy + SSL + Gzip) │
+│                   └────┬─────┘                               │
+│              ┌─────────┴──────────┐                          │
+│              ▼                    ▼                           │
+│   ┌──────────────────┐  ┌─────────────────────┐             │
+│   │  localhostusak-  │  │  localhostusak-cms   │             │
+│   │      web         │  │  (Payload CMS v3)    │             │
+│   │  React 19 + Vite │  │  Next.js 16 + API    │             │
+│   │  Statik SPA      │  │  Port 3000 (PM2)     │             │
+│   │  /dist → Nginx   │  │         │            │             │
+│   └──────────────────┘  │         ▼            │             │
+│                         │  ┌──────────────┐    │             │
+│                         │  │ PostgreSQL   │    │             │
+│                         │  │   16         │    │             │
+│                         │  └──────────────┘    │             │
+│                         └─────────────────────┘             │
+└──────────────────────────────────────────────────────────────┘
+```
+
+| Katman | Teknoloji | Açıklama |
+|---|---|---|
+| **Frontend** | React 19 + Vite 6 + TypeScript | Kullanıcıya sunulan SPA. Build sonrası statik dosyalar Nginx üzerinden servis edilir |
+| **CMS & API** | Payload CMS v3 + Next.js 16 | Headless CMS admin paneli (`/admin`) ve REST/GraphQL API. PM2 ile ayakta |
+| **Veritabanı** | PostgreSQL 16 | Tüm içerik verisi, kullanıcılar ve medya metadata |
+| **Altyapı** | Nginx + PM2 + Certbot + UFW | Reverse proxy, SSL, süreç yönetimi, güvenlik duvarı |
+
+---
+
+## ⚡ Öne Çıkan Özellikler
+
+### 🌟 Çift Tasarım Dili Motoru (Dual Theme Engine)
 Platform, Uşak topluluğunun iki farklı ruhunu tek kod tabanında yaşatan interaktif bir tema motoruna sahiptir:
-- **Cyber HUD Mode (Modern):** Fütüristik koyu zemin, neon turuncu/camgöbeği detaylar, cam efekti (`glassmorphism`), terminal estetiği ve modern monospace tipografi.
+- **Cyber HUD Mode (Modern):** Fütüristik koyu zemin, neon turuncu/camgöbeği detaylar, cam efekti (`glassmorphism`), terminal estetiği ve monospace tipografi.
 - **Cozy Retro Mode (Pixel Art Kafe):** 8-bit / 16-bit nostaljik arcade estetiği, pikselli fontlar (*Press Start 2P*, *Silkscreen*), retro basmalı butonlar ve samimi kafe masası sıcaklığı.
-- **🕹️ "The Reality Fracture" (Glitch Easter Egg):** Kullanıcı navbar üzerindeki boyutsal çatlak/durum göstergesine 3 kez tıkladığında; ekran sarsıntısı, parazit efektleri ve yerleşik **Web Audio API** tarafından sentezlenen 8-bit sesler eşliğinde retro piksel evrenine geçiş gerçekleşir.
+- **🕹️ "The Reality Fracture" (Glitch Easter Egg):** Kullanıcı navbar üzerindeki boyutsal çatlak göstergesine 3 kez tıkladığında; ekran sarsıntısı, parazit efektleri ve **Web Audio API** ile sentezlenen 8-bit sesler eşliğinde retro piksel evrenine geçiş gerçekleşir.
 
-### 📅 2. Etkinlik Yönetimi & Geri Sayım (Events)
-- **Sıradaki Buluşma Odağı:** Canlı geri sayım sayacı, etkinlik tipi rozetleri, mekan/saat bilgisi ve harita yönlendirmesi.
-- **Takvim Entegrasyonu:** Google Calendar ve standart `.ics` formatında tek tıkla takvime ekleme.
-- **Etkinlik Filtreleme & Arşiv:** Kategori bazlı filtreleme (Code & Coffee, Tech Talk & Workshop, Hackathon, Networking) ve geçmiş etkinlik kayıtları.
+### 📅 Etkinlik Yönetimi & Geri Sayım
+- Canlı geri sayım sayacı, etkinlik tipi rozetleri, mekan/saat bilgisi ve harita yönlendirmesi.
+- Google Calendar ve `.ics` formatında tek tıkla takvime ekleme.
+- Kategori bazlı filtreleme (Code & Coffee, Tech Talk & Workshop, Hackathon, Networking) ve arşiv.
 
-### 💼 3. Kariyer & Staj Platformu (Careers)
-- Uşak yerelindeki teknoloji şirketleri ile remote çalışan ekiplerin staj ve iş ilanları.
-- Rol seviyesi (Junior, Mid, Senior, Stajyer) ve çalışma modeli (Remote, Hibrit, Yerinde) filtreleri.
+### 💼 Kariyer & Staj Platformu
+- Uşak yerelindeki teknoloji şirketleri ile remote ekiplerin staj ve iş ilanları.
+- Rol seviyesi, çalışma modeli ve departman filtreleri.
 - Başvuru linkleri, maaş/yan haklar şeffaflığı ve şirket detayları.
 
-### 💻 4. Topluluk Projeleri Vitrini (Showcase)
+### 💻 Topluluk Projeleri Vitrini
 - Uşak'taki geliştiricilerin ürettiği açık kaynak veya canlı ürünlerin sergilendiği vitrin.
-- Tech stack etiketleri, GitHub repo bağlantıları ve canlı demo yönlendirmeleri.
+- Tech stack etiketleri, GitHub repo bağlantıları, canlı demo yönlendirmeleri ve beğeni sistemi.
 
-### 🛡️ 5. Dinamik Admin Yönetim Paneli (`/admin`)
-- **Etkinlik Türleri (Event Types):** İkon, etiket ve tema rengi belirleyerek yeni etkinlik kategorileri tanımlama.
-- **Etkinlikler:** Yeni etkinlik oluşturma, tarih, yer, kontenjan düzenleme ve silme.
-- **Kariyer İlanları:** Yeni iş/staj ilanı yayınlama, etiketleme ve yönetme.
-- **Projeler:** Topluluk vitrinine yeni projeler ekleme ve güncelleme.
-- **WhatsApp & Topluluk Bağlantıları:** Genel topluluk, projeler, kariyer ve coworking WhatsApp grupları ile sosyal medya (Instagram, GitHub, X) linklerini kod yazmadan tek ekrandan düzenleme, test etme (`Test ↗`) ve kaydetme.
-- Canlı istatistik sayaçları ve anlık veri senkronizasyonu.
+### 🤝 Sponsorlar
+- Topluluğu destekleyen şirket ve kuruluşların logo ve bağlantılarıyla sergilendiği sponsor alanı.
 
-### ⚡ 6. Native SQLite & REST API Backend
-- **Node.js 22+ Native SQLite (`node:sqlite`):** Harici derleyicilere (`node-gyp`, Python vb.) gerek duymayan, sıfır bağımlılıklı modern ve ultra hızlı veritabanı.
-- **Swagger / OpenAPI 3.0 Entegrasyonu:** `/api/docs` üzerinden canlı olarak test edilebilen kapsamlı dokümantasyon arayüzü.
-- **Otomatik Schema & Seed:** İlk çalıştırmada şemayı ve başlangıç verilerini (`community_links` dahil) otomatik yükler.
-- **Graceful Offline Fallback:** Backend servisi çalışmasa dahi frontend, yerleşik JSON verileri ve `localStorage` ile kesintisiz çalışmayı sürdürür.
+### 📱 WhatsApp Topluluk Entegrasyonu
+- WhatsApp grup bağlantıları topluluk kurallarını gösteren onay modalı üzerinden sunulur.
+- Tüm grup linkleri CMS'den tek ekranda yönetilir; değişiklikler sitede anında yansır.
 
-### 💬 7. Sosyal & Topluluk Entegrasyonları (Merkezi Link Mimarisi)
-- **Merkezi Konfigürasyon (`src/constants/links.ts`):** Tüm WhatsApp çalışma grupları ve sosyal bağlantılar tek bir dosyadan veya Admin panelinden yönetilir.
-- **Canlı Senkronizasyon (`LinksContext`):** Linklerde yapılan değişiklikler sayfayı yenilemeye gerek kalmadan tüm sitede (Hero, Altbilgi, Floating CTA, Alt sayfalar) anında yansır.
-- Canlı WhatsApp Topluluk Grubu doğrudan katılım köprüsü.
-- Instagram ve GitHub topluluk sayfaları bağlantıları.
-- Sayfa altı ve sağ alt köşede her zaman erişilebilir dinamik CTA barı.
+### 🛡️ Payload CMS v3 Yönetim Paneli (`/admin`)
+Tüm içerik yönetimi kod yazmadan Payload CMS üzerinden yapılır:
+
+| CMS Koleksiyonları | CMS Global Ayarları |
+|---|---|
+| **Events** — Etkinlik CRUD | **SiteSettings** — Başlık, açıklama, SEO, sosyal linkler |
+| **EventTypes** — Etkinlik kategorileri | **GeneralSettings** — WhatsApp grupları ve genel ayarlar |
+| **Careers** — İş/staj ilanları | **EventsPageSettings** — Etkinlikler sayfası başlık/açıklama |
+| **Projects** — Topluluk projeleri | **CareersPageSettings** — Kariyer sayfası ayarları |
+| **Sponsors** — Sponsor yönetimi | **ProjectsPageSettings** — Projeler sayfası ayarları |
+| **CommunityLinks** — Topluluk bağlantıları | |
+| **Media** — Görsel/dosya yükleme | |
+| **Users** — Admin kullanıcıları | |
 
 ---
 
 ## 🛠️ Teknoloji Yığını
 
-### Frontend
-| Teknoloji | Sürüm | Kullanım Amacı |
+### Frontend (`localhostusak-web`)
+| Teknoloji | Sürüm | Kullanım |
 |---|---|---|
-| **React** | `^19.0.0` | Modern SPA mimarisi ve bileşen yapısı |
-| **TypeScript** | `~5.7.2` | Tip güvenliği ve ölçeklenebilir kod tabanı |
-| **Vite** | `^6.2.0` | Hızlı HMR, geliştirme sunucusu ve optimize derleme |
-| **React Router** | `^7.3.0` | SPA istemci tarafı sayfa yönlendirmeleri |
-| **Vanilla CSS / Custom Design System** | - | CSS Değişkenleri, Dual Theme motoru, Camgöbeği/Neon efektler, Responsive Grid |
-| **Web Audio API** | Native | Retro tema geçişinde prosedürel sentezlenen 8-bit ses efektleri |
+| **React** | `^19.0.0` | SPA bileşen mimarisi |
+| **TypeScript** | `~5.7.2` | Tip güvenliği |
+| **Vite** | `^6.2.0` | HMR, dev server, optimized build |
+| **React Router** | `^7.3.0` | İstemci tarafı yönlendirme |
+| **Vanilla CSS** | — | Dual Theme motoru, CSS değişkenleri, glassmorphism, responsive grid |
+| **Web Audio API** | Native | 8-bit prosedürel ses sentezi |
 
-### Backend
-| Teknoloji | Sürüm | Kullanım Amacı |
+### CMS & API Backend (`localhostusak-cms`)
+| Teknoloji | Sürüm | Kullanım |
 |---|---|---|
-| **Node.js** | `>= 22.0.0` | Modern ES Module JavaScript çalışma ortamı |
-| **Express** | `^4.21.2` | RESTful API servisi |
-| **node:sqlite (DatabaseSync)** | Native | Yerel, sıfır konfigürasyonlu SQLite veritabanı motoru |
-| **Bcrypt.js** | `^3.0.3` | Güvenli tek yönlü parola hashleme (SaltRounds=10) |
-| **JSON Web Token (JWT)** | `^9.0.2` | Stateless, imzalı 24 saatlik yönetici oturum tokenları |
-| **Helmet** | `^8.1.0` | HTTP güvenlik başlıkları (X-Frame-Options, HSTS, No-Sniff) |
-| **Express Rate Limit** | `^8.2.1` | Brute-force ve DoS kalkanı (Auth & API hız sınırlayıcı) |
-| **Swagger UI Express** | `^5.0.1` | İnteraktif OpenAPI 3.0 dokümantasyon arayüzü (`/api/docs`) |
-| **CORS** | `^2.8.5` | Origin Whitelist tabanlı sıkı erişim denetimi |
+| **Payload CMS** | `3.89.0` | Headless CMS, REST/GraphQL API, admin paneli |
+| **Next.js** | `16.3.3` | Payload'ın çalışma ortamı (SSR + API routes) |
+| **PostgreSQL** | `16` | İlişkisel veritabanı |
+| **Sharp** | `0.35.4` | Görsel işleme ve optimizasyon |
+| **Lexical Editor** | — | Zengin metin editörü |
+
+### Altyapı & DevOps (`deploy/`)
+| Teknoloji | Kullanım |
+|---|---|
+| **Nginx** | Reverse proxy, SSL termination, Gzip, rate limiting, SPA fallback |
+| **PM2** | Node.js süreç yöneticisi (auto-restart, log yönetimi) |
+| **Certbot** | Ücretsiz Let's Encrypt SSL sertifikası |
+| **UFW** | Güvenlik duvarı |
+| **pg_dump Cron** | Otomatik günlük PostgreSQL yedekleme |
+
+### Test Altyapısı
+| Teknoloji | Kullanım |
+|---|---|
+| **Vitest** | Birim testler |
+| **Playwright** | Uçtan uca (E2E) testler |
 
 ---
 
@@ -117,66 +162,82 @@ Platform, Uşak topluluğunun iki farklı ruhunu tek kod tabanında yaşatan int
 
 ```text
 localhost_usak_website/
-├── DESIGN_SYSTEM.md                    # Temel tasarım ilkeleri dokümantasyonu
-├── DESIGN_SYSTEM_MODERN.md             # Modern Cyber-HUD tema kuralları
-├── DESIGN_SYSTEM_PIXEL.md              # Cozy Retro Pixel tema kuralları
-├── WEBSITE_STRUCTURE_AND_BRAINSTORMING.md # Sayfa mimarisi ve beyin fırtınası notları
-├── References/                         # Topluluk afişleri, logolar ve grafik referansları
-└── localhostusak-web/                  # Ana Web Uygulaması (Client & Server)
-    ├── package.json                    # Frontend paket konfigürasyonu
-    ├── vite.config.ts                  # Vite + API Proxy yapılandırması
-    ├── index.html                      # Giriş HTML şablonu ve font bağlantıları
-    ├── src/
-    │   ├── main.tsx                    # React DOM giriş noktası
-    │   ├── App.tsx                     # Sayfa yönlendirmeleri ve Layout
-    │   ├── utils/
-    │   │   └── auth.ts                 # JWT Token yönetimi, Bearer header ve logout yardımcıları
-    │   ├── constants/
-    │   │   └── links.ts                # Merkezi WhatsApp ve sosyal link sabitleri
-    │   ├── context/
-    │   │   ├── ThemeContext.tsx        # Tema motoru, ses sentezleyici ve Glitch mekanizması
-    │   │   └── LinksContext.tsx        # Link durumu ve anlık canlı güncelleme motoru
-    │   ├── components/
-    │   │   ├── layout/                 # Navbar, Footer, FloatingCTA, PageHero
-    │   │   ├── home/                   # HeroSection, EventSpotlight, Bento, FlowSteps, Stats
-    │   │   ├── events/                 # Etkinlik listesi ve takvim kartları
-    │   │   ├── careers/                # İlan kartları ve filtreler
-    │   │   ├── projects/               # Proje vitrin kartları
-    │   │   └── shared/                 # Ortak UI bileşenleri (Button, Badge vb.)
-    │   ├── pages/
-    │   │   ├── HomePage.tsx            # Ana Karşılama Sayfası
-    │   │   ├── EventsPage.tsx          # Etkinlikler Sayfası (/etkinlikler)
-    │   │   ├── CareersPage.tsx         # Kariyer & Staj Sayfası (/kariyer)
-    │   │   ├── ProjectsPage.tsx        # Projeler Sayfası (/projeler)
-    │   │   └── AdminPage.tsx           # Yönetim Paneli (JWT Login Kartı + CMS Yönetimi)
-    │   ├── data/                       # Çevrimdışı ve başlangıç fallback JSON verileri
-    │   ├── styles/                     # CSS Modülleri (Modern, Pixel, Reset, Animasyonlar)
-    │   └── types/                      # TypeScript tip tanımları
-    └── server/
-        ├── package.json                # Backend sunucu bağımlılıkları
-        ├── index.js                    # Express API sunucusu (Güvenlik katmanları)
-        ├── swagger.json                # OpenAPI 3.0 API spesifikasyonu
-        ├── .env.example                # Ortam değişkenleri şablonu
-        ├── .env                        # Yerel ortam değişkenleri (Gizli)
-        ├── db/
-        │   ├── database.js             # node:sqlite bağlantı & otomatik migrasyon motoru
-        │   ├── schema.sql              # Tablo şemaları (admins, audit_logs dahil DDL)
-        │   └── seed.sql                # Başlangıç test verileri (bcrypt hash)
-        ├── middleware/
-        │   ├── authMiddleware.js       # JWT requireAuth yetkilendirme kalkanı
-        │   ├── rateLimiter.js          # Auth (10/15dk) & API (300/15dk) rate limiter
-        │   ├── validators.js           # XSS tag temizleme & veri doğrulama
-        │   └── auditLogger.js          # Admin işlemlerini SQLite'a kaydeden denetim günlüğü
-        ├── scripts/
-        │   ├── hashPassword.js         # Parola hashleme yardımcı scripti
-        │   └── setAdmin.js             # Admin kullanıcı/şifre güncelleme CLI aracı
-        └── routes/
-            ├── auth.js                 # /api/auth/login, verify & change-password
-            ├── events.js               # /api/events & korumalı admin uçları
-            ├── eventTypes.js           # /api/event-types & korumalı admin uçları
-            ├── careers.js              # /api/careers & korumalı admin uçları
-            ├── projects.js             # /api/projects & like cooldown kalkanı
-            └── links.js                # /api/links ve korumalı /api/admin/links uçları
+├── package.json                           # Monorepo root scripts (dev, cms, build)
+├── README.md
+├── DESIGN_SYSTEM.md                       # Temel tasarım ilkeleri
+├── DESIGN_SYSTEM_MODERN.md                # Cyber-HUD tema kuralları
+├── DESIGN_SYSTEM_PIXEL.md                 # Cozy Retro Pixel tema kuralları
+├── WEBSITE_STRUCTURE_AND_BRAINSTORMING.md # Sayfa mimarisi ve beyin fırtınası
+├── References/                            # Topluluk afişleri, logolar ve grafikler
+│
+├── localhostusak-web/                     # 🎨 Frontend SPA (React 19 + Vite)
+│   ├── package.json
+│   ├── vite.config.ts                     # Dev proxy (/api, /media → :3000)
+│   ├── index.html
+│   └── src/
+│       ├── main.tsx                       # React DOM giriş noktası
+│       ├── App.tsx                        # Sayfa yönlendirmeleri ve Layout
+│       ├── components/
+│       │   ├── home/                      # HeroSection, EventSpotlight, Bento, Stats
+│       │   ├── events/                    # Etkinlik kartları ve filtreleme
+│       │   ├── careers/                   # Kariyer kartları ve filtreler
+│       │   ├── projects/                  # Proje vitrin kartları
+│       │   ├── layout/                    # Navbar, Footer, FloatingCTA, PageHero
+│       │   └── shared/                    # Ortak UI bileşenleri
+│       ├── pages/
+│       │   ├── HomePage.tsx
+│       │   ├── EventsPage.tsx             # /etkinlikler
+│       │   ├── CareersPage.tsx            # /kariyer
+│       │   ├── ProjectsPage.tsx           # /projeler
+│       │   ├── AdminPage.tsx              # CMS'e yönlendirme
+│       │   └── NotFoundPage.tsx           # 404 sayfası
+│       ├── context/
+│       │   ├── ThemeContext.tsx            # Dual tema motoru ve Glitch mekanizması
+│       │   ├── SiteSettingsContext.tsx     # CMS site ayarları (SEO, sponsorlar)
+│       │   ├── GeneralSettingsContext.tsx  # CMS genel ayarları
+│       │   ├── LinksContext.tsx            # Topluluk linkleri state
+│       │   └── WhatsAppModalContext.tsx    # WhatsApp kurallar modalı
+│       ├── services/
+│       │   └── api.ts                     # Payload CMS REST API entegrasyonu
+│       ├── hooks/                         # useCountdown, usePageMeta, useTheme
+│       ├── styles/                        # CSS: tokens, themes, layout, animations
+│       ├── data/                          # Offline fallback JSON verileri
+│       ├── types/                         # TypeScript tip tanımları
+│       └── utils/                         # Yardımcı fonksiyonlar
+│
+├── localhostusak-cms/                     # ⚙️ Headless CMS (Payload v3 + Next.js)
+│   ├── package.json
+│   ├── Dockerfile                         # Container build
+│   ├── docker-compose.yml                 # CMS + PostgreSQL compose
+│   ├── next.config.ts
+│   ├── tsconfig.json
+│   └── src/
+│       ├── payload.config.ts              # Ana Payload konfigürasyonu
+│       ├── seed.ts                        # Başlangıç verileri (tsx ile çalıştırılır)
+│       ├── payload-types.ts               # Otomatik üretilen TypeScript tipleri
+│       ├── collections/
+│       │   ├── Users.ts                   # Admin kullanıcıları
+│       │   ├── Media.ts                   # Görsel/dosya yükleme
+│       │   ├── Events.ts                  # Etkinlikler
+│       │   ├── EventTypes.ts              # Etkinlik türleri
+│       │   ├── Careers.ts                 # İş/staj ilanları
+│       │   ├── Projects.ts                # Topluluk projeleri
+│       │   ├── Sponsors.ts                # Sponsorlar
+│       │   └── CommunityLinks.ts          # Topluluk bağlantıları
+│       ├── globals/
+│       │   ├── SiteSettings.ts            # Site geneli: başlık, SEO, sosyal
+│       │   ├── GeneralSettings.ts         # WhatsApp grupları, genel ayarlar
+│       │   ├── EventsPageSettings.ts      # Etkinlikler sayfası ayarları
+│       │   ├── CareersPageSettings.ts     # Kariyer sayfası ayarları
+│       │   └── ProjectsPageSettings.ts    # Projeler sayfası ayarları
+│       └── app/                           # Next.js App Router (CMS UI)
+│
+└── deploy/                                # 🚀 Production Altyapı
+    ├── DEPLOYMENT_GUIDE.md                # Adım adım VPS dağıtım rehberi
+    ├── ecosystem.config.cjs               # PM2 süreç konfigürasyonu
+    ├── backup-db.sh                       # Otomatik PostgreSQL yedekleme scripti
+    └── nginx/
+        └── localhostusak.conf             # Nginx reverse proxy konfigürasyonu
 ```
 
 ---
@@ -184,123 +245,136 @@ localhost_usak_website/
 ## 🛠️ Kurulum ve Yerel Geliştirme
 
 ### Gereksinimler
-- **Node.js:** `v22.0.0` veya üzeri önerilir (*native SQLite desteği için*).
-- **npm:** `v10.0.0` veya üzeri.
+- **Node.js:** `v20.9.0` veya üzeri (v22 LTS önerilir)
+- **PostgreSQL:** `16` (yerel kurulum veya Docker)
+- **npm:** `v10.0.0` veya üzeri
 
 ### 1. Repoyu Klonlayın
 ```bash
 git clone https://github.com/RecepSamiOzdemir/localhost_usak_website.git
-cd "localhost_usak_website/localhostusak-web"
+cd localhost_usak_website
 ```
 
-### 2. Bağımlılıkları Yükleyin
-Hem frontend hem backend bağımlılıklarını kurun:
+### 2. PostgreSQL Veritabanını Hazırlayın
+```bash
+# PostgreSQL shell'ine bağlanın
+psql -U postgres
+
+# Veritabanı oluşturun
+CREATE DATABASE localhostusak;
+\q
+```
+
+### 3. CMS'i Kurun ve Başlatın
 
 ```bash
-# Frontend paketlerini yükleyin
+cd localhostusak-cms
+
+# Bağımlılıkları yükleyin
 npm install
 
-# Backend paketlerini yükleyin
-npm --prefix server install
-```
+# .env dosyasını oluşturun
+cp .env.example .env
+# .env içinde DATABASE_URL ve PAYLOAD_SECRET ayarlayın
 
-### 3. Çevre Değişkenlerini (.env) Yapılandırın
-Backend dizininde `.env.example` dosyasını `.env` olarak kopyalayın:
+# Başlangıç verilerini yükleyin (opsiyonel)
+npm run seed
 
-```bash
-cp server/.env.example server/.env
-```
-
-> **Varsayılan Admin Giriş Bilgileri:**  
-> Kullanıcı Adı: `admin`  
-> Şifre: `admin123`  
-> *(Şifrenizi dilediğiniz an `node server/scripts/setAdmin.js admin YeniSifreniz` komutu ile değiştirebilirsiniz).*
-
-### 4. Geliştirme Sunucularını Başlatın
-
-İki ayrı terminal penceresinde frontend ve backend servislerini çalıştırabilirsiniz:
-
-#### Terminal 1 — Backend API & Veritabanı
-```bash
-npm run server
-```
-> Sunucu `http://localhost:3001` portunda ayağa kalkar.  
-> 📖 Canlı Swagger dokümantasyonu: `http://localhost:3001/api/docs`
-
-#### Terminal 2 — Frontend Geliştirme Sunucusu (Vite)
-```bash
+# CMS geliştirme sunucusunu başlatın
 npm run dev
 ```
-> Web sitesi `http://localhost:5173` adresinde açılır.  
-> Vite, `/api/*` isteklerini otomatik olarak arka plandaki `http://localhost:3001` servisine yönlendirir.
+> CMS Admin Paneli: `http://localhost:3000/admin`  
+> İlk girişte admin kullanıcınızı oluşturmanız istenecektir.
+
+### 4. Frontend'i Kurun ve Başlatın
+
+```bash
+cd localhostusak-web
+
+# Bağımlılıkları yükleyin
+npm install
+
+# Geliştirme sunucusunu başlatın
+npm run dev
+```
+> Web Sitesi: `http://localhost:5173`  
+> Vite, `/api/*` ve `/media/*` isteklerini otomatik olarak `http://localhost:3000` adresine yönlendirir.
+
+### 🚀 Root Kısayolları
+Monorepo kökünden her iki servisi ayrı terminallerde başlatabilirsiniz:
+```bash
+# Terminal 1 — CMS & API
+npm run cms
+
+# Terminal 2 — Frontend
+npm run dev
+```
 
 ---
 
-## 🛡️ Siber Güvenlik Mimarisi
+## 🚀 Canlıya Alma (VPS Deploy)
 
-Platform, kurumsal düzeyde 13 temel güvenlik açığına karşı tam koruma altına alınmıştır:
+Proje, **Ubuntu VPS** üzerinde production'a hazır bir altyapıyla birlikte gelir. Detaylı adımlar için [`deploy/DEPLOYMENT_GUIDE.md`](deploy/DEPLOYMENT_GUIDE.md) dosyasına bakın.
 
-1. **JWT Yetkilendirme & Giriş Kartı:** `/admin` rotası token kontrolüyle kilitlidir. 24 saat geçerli JWT token tarayıcıda yönetilir.
-2. **Backend Route Kilidi:** Tüm `/api/admin/*` ve veri değiştiren endpointler `requireAuth` middleware'i ile korunmaktadır.
-3. **Bcrypt Parola Güvenliği:** Parolalar veritabanında asla düz metin saklanmaz, `bcrypt` (10 salt round) ile hashlenir.
-4. **Sıkı CORS Whitelist:** Sadece izin verilen origin'lerden (`CORS_ORIGIN`) gelen isteklere izin verilir; yetkisiz erişimler `403 Forbidden` ile reddedilir.
-5. **Rate Limiting (Brute-Force Kalkanı):** `/api/auth/*` için 15 dakikada en fazla 10 istek; genel `/api/*` için 15 dakikada 300 istek sınırı.
-6. **XSS Sanitization & Input Validation:** İstemciden gelen zararlı `<script>` ve HTML etiketleri otomatik temizlenir.
-7. **DoS & Payload Flood Koruması:** İstek gövdesi maksimum 20KB ile sınırlandırılmıştır (`413 Payload Too Large`).
-8. **Güvenlik HTTP Başlıkları (Helmet):** Clickjacking (`X-Frame-Options`), MIME sniffing (`nosniff`) ve HSTS başlıkları devrededir.
-9. **Beğeni Spam Koruması:** Proje beğenme endpointinde IP + Proje ID bazlı 1 saatlik cooldown uygulanır (`429 Too Many Requests`).
-10. **Denetim Günlüğü (Audit Logging):** Tüm yönetici ekleme, düzenleme ve silme hareketleri `audit_logs` tablosuna kaydedilir.
-11. **Hata Bilgi Sızıntısı Engeli:** Sunucu içi dosya yolları ve SQL hataları gizlenerek istemciye jenerik güvenli mesajlar iletilir.
-12. **Swagger Prodüksiyon Gizleme:** Canlı ortamda (`NODE_ENV=production`) API dökümantasyonu otomatik olarak `404` döndürerek gizlenir.
+### Özet Mimari
+
+| Bileşen | Servis | Port/Yol |
+|---|---|---|
+| **Frontend SPA** | Nginx statik servis | `/dist → /` |
+| **CMS & API** | PM2 → Node.js | `:3000` |
+| **Admin Paneli** | Nginx proxy → PM2 | `/admin` |
+| **REST API** | Nginx proxy → PM2 (rate limited) | `/api/*` |
+| **Medya** | Nginx proxy → PM2 (cache 30d) | `/media/*` |
+| **SSL** | Certbot (Let's Encrypt) | HTTPS otomatik |
+| **Veritabanı** | PostgreSQL 16 | Yerel |
+| **Yedekleme** | Cron + pg_dump | Her gece 03:00 |
+
+### Deploy Dosyaları
+
+| Dosya | Açıklama |
+|---|---|
+| [`ecosystem.config.cjs`](deploy/ecosystem.config.cjs) | PM2 süreç konfigürasyonu (auto-restart, 2GB RAM limiti, log yolları) |
+| [`localhostusak.conf`](deploy/nginx/localhostusak.conf) | Nginx: reverse proxy, güvenlik başlıkları, Gzip, rate limiting, SPA fallback |
+| [`backup-db.sh`](deploy/backup-db.sh) | Günlük PostgreSQL yedekleme scripti (7 günden eski yedekleri temizler) |
 
 ---
 
-## 🔌 API ve Veritabanı Mimarisi
+## 🛡️ Güvenlik Mimarisi
 
-Backend servisi REST standartlarına uygun CRUD ve Kimlik Doğrulama uçları sunmaktadır:
-
-| Yöntem | Uç Nokta | Yetki | Açıklama |
-|---|---|---|---|
-| `GET` | `/api/health` | Herkese Açık | Sunucu sağlık durumu kontrolü |
-| `POST` | `/api/auth/login` | Rate Limited | Kullanıcı adı & şifre ile JWT token alma |
-| `GET` | `/api/auth/verify` | 🔒 Bearer Token | Mevcut JWT token geçerlilik kontrolü |
-| `POST` | `/api/auth/change-password`| 🔒 Bearer Token | Admin parolasını güncelleme |
-| `GET` | `/api/events` | Herkese Açık | Tüm etkinlikleri listeler |
-| `POST` | `/api/admin/events` | 🔒 Bearer Token | Yeni etkinlik oluşturur (XSS Filtreli) |
-| `DELETE` | `/api/admin/events/:id` | 🔒 Bearer Token | Etkinliği siler (Audit loglanır) |
-| `GET` | `/api/event-types` | Herkese Açık | Etkinlik türlerini listeler |
-| `POST` | `/api/admin/event-types` | 🔒 Bearer Token | Yeni etkinlik türü ekler |
-| `GET` | `/api/careers` | Herkese Açık | İş ve staj ilanlarını listeler |
-| `POST` | `/api/admin/careers` | 🔒 Bearer Token | Yeni ilan oluşturur |
-| `DELETE` | `/api/admin/careers/:id` | 🔒 Bearer Token | İlanı yayından kaldırır |
-| `GET` | `/api/projects` | Herkese Açık | Topluluk projelerini listeler |
-| `PATCH`| `/api/projects/:id/like` | Cooldown Korumalı | Projeyi beğenir (1 saatte 1 beğeni/IP) |
-| `POST` | `/api/admin/projects` | 🔒 Bearer Token | Yeni proje ekler |
-| `DELETE` | `/api/admin/projects/:id` | 🔒 Bearer Token | Projeyi siler |
-| `GET` | `/api/links` | Herkese Açık | Topluluk ve WhatsApp grup bağlantılarını listeler |
-| `PUT` | `/api/admin/links` | 🔒 Bearer Token | WhatsApp ve topluluk bağlantılarını günceller |
-| `GET` | `/api/docs` | Dev/Ops | İnteraktif Swagger UI arayüzü |
+| Katman | Koruma |
+|---|---|
+| **Nginx** | Rate limiting (20r/s + burst 30), Gzip, güvenlik başlıkları (HSTS, X-Frame-Options, nosniff, XSS Protection) |
+| **Payload CMS** | Yerleşik kimlik doğrulama, rol bazlı erişim kontrolü, CSRF koruması |
+| **CORS** | Origin whitelist (sadece `localhostusak.com` ve geliştirme portları) |
+| **SSL/TLS** | Certbot ile Let's Encrypt ücretsiz HTTPS sertifikası |
+| **Güvenlik Duvarı** | UFW: sadece SSH, HTTP (80), HTTPS (443) açık |
+| **Veritabanı** | PostgreSQL kullanıcı izolasyonu, şifreli bağlantı |
+| **Yedekleme** | Günlük otomatik `pg_dump`, 7 günlük rotasyon |
+| **Süreç Yönetimi** | PM2: auto-restart, 2GB bellek limiti, crash recovery |
 
 ---
 
 ## 🗺️ Yol Haritası (Roadmap)
 
-- [x] Temel sayfa mimarisinin kurulması (Ana Sayfa, Etkinlikler, Kariyer, Projeler).
-- [x] Çift tema motoru (Cyber-HUD & Cozy Pixel Kafe) ve ses efektli Glitch geçişi.
-- [x] Node.js 22 Native SQLite veritabanı entegrasyonu.
-- [x] İnteraktif Swagger UI API dokümantasyonu.
-- [x] Tam işlevsel Admin Yönetim Paneli (`/admin`).
-- [x] Offline fallback JSON veri katmanı.
-- [x] Merkezi WhatsApp ve Topluluk Linkleri Yönetimi (Admin Paneli & SQLite entegrasyonu).
-- [ ] Topluluk Üye Profilleri & "Buluşmadayım" QR check-in sistemi.
-- [ ] E-posta / WhatsApp etkinlik hatırlatma bildirimleri.
-- [ ] Blog / Yazılar bölümü (Topluluk üyelerinin teknik makaleleri için).
+- [x] Çift tema motoru (Cyber-HUD & Cozy Pixel Kafe) ve ses efektli Glitch geçişi
+- [x] Etkinlik yönetimi, geri sayım sayacı ve takvim entegrasyonu
+- [x] Kariyer & staj platformu (filtreler, başvuru linkleri)
+- [x] Topluluk projeleri vitrini ve beğeni sistemi
+- [x] Payload CMS v3 entegrasyonu (koleksiyonlar, globaller, medya)
+- [x] PostgreSQL veritabanı migrasyonu
+- [x] VPS deploy altyapısı (Nginx, PM2, SSL, yedekleme)
+- [x] Sponsor yönetimi
+- [x] WhatsApp topluluk kuralları onay modalı
+- [x] CMS'den yönetilebilir sayfa başlık/açıklama ayarları
+- [ ] Topluluk üye profilleri & "Buluşmadayım" QR check-in sistemi
+- [ ] E-posta / WhatsApp etkinlik hatırlatma bildirimleri
+- [ ] Blog / Yazılar bölümü (topluluk üyelerinin teknik makaleleri)
 
 ---
 
 ## 💬 Topluluğa Katılın
 
-Uşak'ta teknoloji üretiyor, öğreniyor ya da sadece samimi bir ortamda kahve eşliğinde sohbet etmek istiyorsanız aramıza davetlisiniz:
+Uşak'ta teknoloji üretiyor, öğreniyor ya da samimi bir ortamda kahve eşliğinde sohbet etmek istiyorsanız aramıza davetlisiniz:
 
 - 💬 **WhatsApp Topluluğu:** [Katılmak İçin Tıklayın](https://chat.whatsapp.com/G4lE8B7s1h696jM7q5hUfR)
 - 📸 **Instagram:** [@localhostusak](https://instagram.com/localhostusak)
