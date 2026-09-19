@@ -5,6 +5,7 @@ export const GeneralSettings: GlobalConfig = {
   label: 'Genel Site & SEO Ayarları',
   access: {
     read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
   },
   fields: [
     // 1. Genel SEO ve Meta Etiketleri

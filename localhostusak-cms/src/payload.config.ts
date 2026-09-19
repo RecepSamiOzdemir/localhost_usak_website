@@ -48,18 +48,25 @@ export default buildConfig({
   ],
   cors: [
     'https://localhostusak.com',
+    'https://www.localhostusak.com',
     'http://localhost:5173',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
   ],
   csrf: [
     'https://localhostusak.com',
+    'https://www.localhostusak.com',
     'http://localhost:5173',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
   ],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || 'dev_secret_localhostusak_payload_2026_x89a',
+  secret: process.env.PAYLOAD_SECRET || (() => {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('CRITICAL: PAYLOAD_SECRET environment variable is required in production!')
+    }
+    return 'dev_secret_localhostusak_payload_2026_x89a'
+  })(),
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

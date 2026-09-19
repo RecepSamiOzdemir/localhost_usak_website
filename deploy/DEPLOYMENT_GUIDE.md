@@ -31,9 +31,9 @@ sudo npm install -g pm2
 # PostgreSQL shell'ine bağlan
 sudo -u postgres psql
 
-# Veritabanı ve kullanıcıyı oluştur (Şifreyi güçlü belirle!)
+# Veritabanı ve kullanıcıyı oluştur (GÜÇLÜ bir parola belirleyin!)
 CREATE DATABASE localhostusak;
-CREATE USER localhostusak_user WITH ENCRYPTED PASSWORD 'GucluParola123!*';
+CREATE USER localhostusak_user WITH ENCRYPTED PASSWORD '<GUCLU_VERITABANI_PAROLANIZ>';
 GRANT ALL PRIVILEGES ON DATABASE localhostusak TO localhostusak_user;
 ALTER DATABASE localhostusak OWNER TO localhostusak_user;
 
@@ -66,10 +66,13 @@ cd /var/www/localhostusak/localhostusak-cms
 # Bağımlılıkları kur
 npm install
 
-# .env dosyasını oluştur
+# 64 karakterli güvenli bir rastgele PAYLOAD_SECRET üretmek için:
+# openssl rand -hex 32
+
+# .env dosyasını oluştur (Parolanızı ve ürettiğiniz secret'ı girin)
 cat << 'EOF' > .env
-DATABASE_URL=postgresql://localhostusak_user:GucluParola123!*@localhost:5432/localhostusak
-PAYLOAD_SECRET=d3f0a98b1c2e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a
+DATABASE_URL=postgresql://localhostusak_user:<GUCLU_VERITABANI_PAROLANIZ>@localhost:5432/localhostusak
+PAYLOAD_SECRET=<OPENSSL_ILE_URETTIGINIZ_64_KARAKTERLI_SECRET>
 PORT=3000
 NODE_ENV=production
 EOF

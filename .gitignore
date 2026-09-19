@@ -16,6 +16,7 @@ yarn-debug.log*
 # Environment & Secrets
 .env
 .env.*
+!.env.example
 *.env
 
 # SQLite Database files

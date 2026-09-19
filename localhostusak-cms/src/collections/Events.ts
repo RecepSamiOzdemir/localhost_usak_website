@@ -8,6 +8,9 @@ export const Events: CollectionConfig = {
   },
   access: {
     read: () => true, // Frontend can read events publicly
+    create: ({ req: { user } }) => Boolean(user),
+    update: ({ req: { user } }) => Boolean(user),
+    delete: ({ req: { user } }) => Boolean(user),
   },
   fields: [
     {

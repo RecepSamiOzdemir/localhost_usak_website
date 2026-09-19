@@ -13,10 +13,11 @@ module.exports = {
       instances: 1,
       autorestart: true,
       watch: false,
-      max_memory_restart: '600M',
+      max_memory_restart: '1G',
       env: {
         NODE_ENV: 'production',
         PORT: 3000,
+        NEXT_TELEMETRY_DISABLED: '1',
       },
       error_file: '/var/log/pm2/localhostusak-cms-err.log',
       out_file: '/var/log/pm2/localhostusak-cms-out.log',

@@ -5,6 +5,7 @@ export const CareersPageSettings: GlobalConfig = {
   label: 'Kariyer Sayfası Ayarları',
   access: {
     read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
   },
   fields: [
     // 1. Hero Bölümü

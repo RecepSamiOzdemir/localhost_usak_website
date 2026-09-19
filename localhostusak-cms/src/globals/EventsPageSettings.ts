@@ -5,6 +5,7 @@ export const EventsPageSettings: GlobalConfig = {
   label: 'Etkinlikler Sayfası Ayarları',
   access: {
     read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
   },
   fields: [
     // 1. Hero Bölümü

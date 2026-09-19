@@ -5,6 +5,7 @@ export const ProjectsPageSettings: GlobalConfig = {
   label: 'Projeler Sayfası Ayarları',
   access: {
     read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
   },
   fields: [
     // 1. Hero Bölümü

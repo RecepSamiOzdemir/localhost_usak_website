@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CommunityLinks, DEFAULT_COMMUNITY_LINKS } from '../constants/links';
-import { getAuthHeaders } from '../utils/auth';
-
 import { fetchCommunityLinks } from '../services/api';
 
 interface LinksContextType {
@@ -68,29 +66,10 @@ export const LinksProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
     } catch {}
 
-    try {
-      const res = await fetch('/api/admin/links', {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(newLinks),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.links) {
-          const finalLinks = { ...DEFAULT_COMMUNITY_LINKS, ...data.links };
-          setLinks(finalLinks);
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(finalLinks));
-          } catch {}
-        }
-        return { success: true, message: 'Bağlantılar başarıyla kaydedildi ve veritabanına işlendi.' };
-      } else {
-        return { success: true, message: 'Bağlantılar yerel olarak güncellendi (sunucu yanıt vermedi).' };
-      }
-    } catch (err: any) {
-      return { success: true, message: 'Bağlantılar tarayıcıda güncellendi (çevrimdışı mod).' };
-    }
+    return {
+      success: true,
+      message: 'Bağlantılar yerel olarak güncellendi. Kalıcı değişiklikler Payload CMS Admin panelinden (/admin) yapılmalıdır.',
+    };
   };
 
   const resetToDefaults = async (): Promise<void> => {

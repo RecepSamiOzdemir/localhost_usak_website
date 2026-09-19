@@ -8,6 +8,9 @@ export const Sponsors: CollectionConfig = {
   },
   access: {
     read: () => true, // Frontend can read sponsors publicly
+    create: ({ req: { user } }) => Boolean(user),
+    update: ({ req: { user } }) => Boolean(user),
+    delete: ({ req: { user } }) => Boolean(user),
   },
   fields: [
     {

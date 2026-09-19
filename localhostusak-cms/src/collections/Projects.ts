@@ -1,5 +1,30 @@
 import type { CollectionConfig } from 'payload'
 
+// In-memory rate limiting for project likes (IP + Project ID cooldown)
+const likeRateLimits = new Map<string, number>()
+const LIKE_COOLDOWN_MS = 60 * 1000 // 1 minute per project per IP
+
+function isRateLimited(ip: string, projectId: string): boolean {
+  const key = `${ip}:${projectId}`
+  const now = Date.now()
+  const lastLike = likeRateLimits.get(key)
+
+  if (likeRateLimits.size > 5000) {
+    for (const [k, timestamp] of likeRateLimits.entries()) {
+      if (now - timestamp > LIKE_COOLDOWN_MS * 5) {
+        likeRateLimits.delete(k)
+      }
+    }
+  }
+
+  if (lastLike && now - lastLike < LIKE_COOLDOWN_MS) {
+    return true
+  }
+
+  likeRateLimits.set(key, now)
+  return false
+}
+
 export const Projects: CollectionConfig = {
   slug: 'projects',
   admin: {
@@ -8,6 +33,9 @@ export const Projects: CollectionConfig = {
   },
   access: {
     read: () => true, // Frontend can read projects publicly
+    create: ({ req: { user } }) => Boolean(user),
+    update: ({ req: { user } }) => Boolean(user),
+    delete: ({ req: { user } }) => Boolean(user),
   },
   endpoints: [
     {
@@ -18,6 +46,27 @@ export const Projects: CollectionConfig = {
           const id = req.routeParams?.id as string
           if (!id) {
             return Response.json({ error: 'ID gereklidir' }, { status: 400 })
+          }
+
+          // Rate limit check
+          const getHeader = (name: string): string | null => {
+            if (!req.headers) return null
+            if (typeof (req.headers as any).get === 'function') {
+              return (req.headers as Headers).get(name)
+            }
+            return (req.headers as any)[name] || (req.headers as any)[name.toLowerCase()] || null
+          }
+
+          const clientIp =
+            getHeader('x-forwarded-for')?.split(',')[0]?.trim() ||
+            getHeader('x-real-ip') ||
+            'unknown'
+
+          if (isRateLimited(clientIp, id)) {
+            return Response.json(
+              { error: 'Çok fazla beğeni gönderdiniz. Lütfen 1 dakika sonra tekrar deneyin.' },
+              { status: 429 }
+            )
           }
 
           const project = await req.payload.findByID({

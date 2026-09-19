@@ -5,6 +5,7 @@ export const SiteSettings: GlobalConfig = {
   label: 'Ana Sayfa Ayarları',
   access: {
     read: () => true, // Frontend can read publicly
+    update: ({ req: { user } }) => Boolean(user),
   },
   fields: [
     // 1. Hero Bölümü
