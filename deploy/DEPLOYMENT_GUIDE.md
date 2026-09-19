@@ -143,6 +143,10 @@ sudo ufw enable
 ## 💾 Adım 7: Otomatik Günlük PostgreSQL Yedekleme (Cron)
 
 ```bash
+# Veritabanı parolasını cron için ~/.pgpass dosyasına kaydet (Güvenli izinlerle):
+echo "localhost:5432:localhostusak:localhostusak_user:<GUCLU_VERITABANI_PAROLANIZ>" > ~/.pgpass
+chmod 600 ~/.pgpass
+
 # Yedekleme scriptini çalıştırılabilir yap
 chmod +x /var/www/localhostusak/deploy/backup-db.sh
 

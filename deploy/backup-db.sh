@@ -19,6 +19,12 @@ RETENTION_DAYS=7
 # Gerekirse doğrudan buraya da yazılabilir: export PGPASSWORD="<PAROLANIZ>"
 export PGPASSWORD="${PGPASSWORD:-}"
 
+# Parola kontrolü: ~/.pgpass yoksa ve PGPASSWORD boşsa uyar ve durdur
+if [ -z "$PGPASSWORD" ] && [ ! -f "$HOME/.pgpass" ]; then
+    echo "[$(date)] HATA: PostgreSQL parolası bulunamadı! Lütfen ~/.pgpass dosyasını oluşturun veya PGPASSWORD ortam değişkenini tanımlayın." >&2
+    exit 1
+fi
+
 # Yedek dizinini oluştur
 mkdir -p "$BACKUP_DIR"
 
