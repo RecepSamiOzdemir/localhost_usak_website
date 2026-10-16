@@ -237,6 +237,93 @@ body {
   margin-left: 0.25rem;
 }
 
+/* Türk bayrağı + turuncu köşe parantezleri (logonun sağında, marka linkinin dışında).
+   Masaüstünde akıştan çıkarılır (absolute): grid'in 1fr sütunlarının min-content
+   genişliğini büyütmez, böylece ortadaki menü ve sağdaki butonlar kaymaz. */
+.nav-brand-wrapper {
+  position: relative;
+}
+
+.nav-flag {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.15rem;
+  padding: 4px 5px;
+  line-height: 0;
+}
+
+.nav-flag svg {
+  display: block;
+  width: 24px;
+  height: 16px;
+  overflow: visible;
+}
+
+/* Açık temada krem zeminde kaybolmasın diye ince kenar */
+.nav-flag .flag-edge {
+  stroke: rgba(0, 0, 0, 0.18);
+  stroke-width: 0.5;
+}
+
+[data-theme="modern"] .nav-flag .flag-edge {
+  stroke: rgba(255, 255, 255, 0.14);
+}
+
+/* Sol üst ve sağ alt köşe parantezleri (kod bloğu hissi) */
+.nav-flag::before,
+.nav-flag::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: 1.5px solid var(--accent-primary);
+  opacity: 0.85;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.nav-flag::before {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-top-left-radius: 2px;
+}
+
+.nav-flag::after {
+  bottom: 0;
+  right: 0;
+  border-left: 0;
+  border-top: 0;
+  border-bottom-right-radius: 2px;
+}
+
+/* Hover'da parantezler hafifçe açılır */
+.nav-flag:hover::before {
+  transform: translate(-1px, -1px);
+  opacity: 1;
+}
+
+.nav-flag:hover::after {
+  transform: translate(1px, 1px);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-flag::before,
+  .nav-flag::after {
+    transition: none;
+  }
+
+  .nav-flag:hover::before,
+  .nav-flag:hover::after {
+    transform: none;
+  }
+}
+
 /* Center Nav Links Column (Modern Glass Pill) */
 .nav-links {
   display: flex;
@@ -482,6 +569,19 @@ body {
 }
 
 @media (max-width: 900px) {
+  /* Mobilde (flex düzen) bayrak akışa döner; sağdaki butonlar yine uca yaslı kalır */
+  .nav-flag {
+    position: static;
+    transform: none;
+    flex-shrink: 0;
+  }
+
+  /* Mobilde bayrak küçülür */
+  .nav-flag svg {
+    width: 20px;
+    height: 13px;
+  }
+
   .nav-container {
     display: flex;
     justify-content: space-between;
@@ -560,5 +660,19 @@ body {
   }
   .spotlight-countdown-card {
     padding: 1rem 0.5rem !important;
+  }
+}
+
+/* Masaüstünde dar aralıkta (901-1119 px) bayrağa yer yok: menüyle çakışmasın diye gizlenir */
+@media (min-width: 901px) and (max-width: 1119px) {
+  .nav-flag {
+    display: none;
+  }
+}
+
+/* Çok dar ekranda (360 px altı) bayrak gizlenir */
+@media (max-width: 359px) {
+  .nav-flag {
+    display: none;
   }
 }

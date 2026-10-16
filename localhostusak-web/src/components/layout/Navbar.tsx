@@ -7,6 +7,20 @@ import { useGeneralSettings } from '../../context/GeneralSettingsContext';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 
+// Türk bayrağı: resmî 3:2 oran, ay-yıldız Wikimedia şemasından. Köşe parantezleri CSS ile çizilir (dekoratif).
+const TurkishFlag: React.FC = () => (
+  <span className="nav-flag" role="img" aria-label="Türk bayrağı" title="Türk bayrağı">
+    <svg viewBox="0 0 30 20" aria-hidden="true" focusable="false">
+      <rect width="30" height="20" rx="2.2" fill="#E30A17" />
+      <path
+        fill="#FBF8F4"
+        d="M13.917 10 18.44 8.531 15.645 12.378V7.622L18.44 11.469ZM14.225 12.674a5 5 0 1 1 0-5.348 4 4 0 1 0 0 5.348Z"
+      />
+      <rect className="flag-edge" width="30" height="20" rx="2.2" fill="none" />
+    </svg>
+  </span>
+);
+
 export const Navbar: React.FC = () => {
   const { theme, isCracking, toggleTheme, breachHits, hasBreached } = useTheme();
   const { settings } = useGeneralSettings();
@@ -105,6 +119,8 @@ export const Navbar: React.FC = () => {
               Localhost <span className="brand-highlight">Uşak</span>
             </span>
           </Link>
+          {/* Bayrak marka linkinin dışında: ana sayfa linkinin tıklanabilir alanını büyütmez */}
+          <TurkishFlag />
         </div>
 
         {/* Navigation Links Column (Centered Pill) */}
