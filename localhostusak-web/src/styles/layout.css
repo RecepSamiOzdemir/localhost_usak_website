@@ -238,19 +238,18 @@ body {
 }
 
 /* Türk bayrağı + turuncu köşe parantezleri (logonun sağında, marka linkinin dışında).
-   Masaüstünde akıştan çıkarılır (absolute): grid'in 1fr sütunlarının min-content
-   genişliğini büyütmez, böylece ortadaki menü ve sağdaki butonlar kaymaz. */
-.nav-brand-wrapper {
-  position: relative;
-}
-
+   Her genişlikte akışta ve açık sabit boyutlu (shrink-to-fit / left:100% hesabına bağlı değil;
+   Safari'de güvenilmez). position:relative şart: ::before/::after köşelerini bayrağa bağlar,
+   static olursa wrapper'a bağlanıp bayraktan kopar. ≥1120px'te marka sütunu + bayrak (≈242px)
+   1fr payından (≈276px) küçük kalır, ortadaki menü kaymaz. */
 .nav-flag {
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  transform: translateY(-50%);
+  position: relative;
+  flex: none;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 24px;
   margin-left: 0.15rem;
   padding: 4px 5px;
   line-height: 0;
@@ -258,6 +257,7 @@ body {
 
 .nav-flag svg {
   display: block;
+  flex: none;
   width: 24px;
   height: 16px;
   overflow: visible;
@@ -569,14 +569,12 @@ body {
 }
 
 @media (max-width: 900px) {
-  /* Mobilde (flex düzen) bayrak akışa döner; sağdaki butonlar yine uca yaslı kalır */
+  /* Mobilde bayrak küçülür (kutu 30×21; position:relative korunur, parantezler bayrağa bağlı kalır) */
   .nav-flag {
-    position: static;
-    transform: none;
-    flex-shrink: 0;
+    width: 30px;
+    height: 21px;
   }
 
-  /* Mobilde bayrak küçülür */
   .nav-flag svg {
     width: 20px;
     height: 13px;
