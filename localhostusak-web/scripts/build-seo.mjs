@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const pages = JSON.parse(await readFile(path.join(root, 'src/seo/pages.json'), 'utf8'));
-const site = 'https://localhostusak.tech';
+const site = process.env.VITE_SITE_URL || 'https://localhostusak.tech';
 const source = await readFile(path.join(root, 'dist/index.html'), 'utf8');
 const escape = value => value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 for (const [route, page] of Object.entries({...pages, '/admin': {title:'Yönetim Paneli | localhostusak',description:'CMS yönetim paneli.',lang:'tr',noindex:true}})) {

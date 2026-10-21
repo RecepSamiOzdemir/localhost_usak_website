@@ -43,6 +43,8 @@ next-env.d.ts
 .env
 
 /media
+# Geliştirme ortamı CV dosyaları (kişisel veri, asla commit'lenmez)
+/cv-applications
 
 # Playwright
 node_modules/

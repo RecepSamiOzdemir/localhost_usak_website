@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { HeroSection } from '../components/home/HeroSection';
 import { Manifesto } from '../components/home/Manifesto';
 import { ValuesBento } from '../components/home/ValuesBento';
@@ -8,6 +7,7 @@ import { EventSpotlight } from '../components/home/EventSpotlight';
 import { FlowSteps } from '../components/home/FlowSteps';
 import { SponsorsSection } from '../components/home/SponsorsSection';
 import { StatsSection } from '../components/home/StatsSection';
+import { InstagramFeed } from '../components/home/InstagramFeed';
 import { BigCTA } from '../components/home/BigCTA';
 import { useGeneralSettings } from '../context/GeneralSettingsContext';
 import seoPages from '../seo/pages.json';
@@ -27,12 +27,6 @@ export const HomePage: React.FC = () => {
       <HeroSection />
       {/* 2. Misyon Vizyon */}
       <Manifesto />
-      <section className="container" style={{ paddingBlock: '3rem', lineHeight: 1.8 }}>
-        <h2>Uşak'ta yazılım, mühendislik ve birlikte üretim</h2>
-        <p>Uşak teknoloji topluluğu localhostusak; yazılımcıları, mühendisleri, tasarımcıları ve öğrencileri aynı masada buluşturur. Deneyimini paylaşmak, yeni beceriler öğrenmek veya bir projeye ekip arkadaşı bulmak için aramıza katılabilirsin.</p>
-        <p><Link to="/etkinlikler">Uşak coworking ve teknoloji buluşmalarını</Link> takip et, <Link to="/projeler">açık kaynak yazılım projelerini</Link> keşfet veya <Link to="/kariyer">iş ilanları, staj ve kariyer paylaşımlarına</Link> göz at. Yeni içerikler topluluk tarafından eklendikçe bu sayfalarda görünür.</p>
-        <p lang="en"><Link to="/en">Meet the Usak technology and software developer community →</Link></p>
-      </section>
       {/* 3. Değerlerimiz */}
       <ValuesBento />
       {/* 4. Kimler Katılabilir */}
@@ -41,7 +35,9 @@ export const HomePage: React.FC = () => {
       <EventSpotlight />
       {/* 6. Buluşma Formatı */}
       <FlowSteps />
-      {/* 7. Sponsorlarımız */}
+      {/* 7. Instagram */}
+      <InstagramFeed />
+      {/* 8. Sponsorlarımız */}
       <SponsorsSection />
       {/* 8. Scoreboard */}
       <StatsSection />

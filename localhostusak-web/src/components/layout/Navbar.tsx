@@ -1,11 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
+import { WhatsAppIcon } from '../shared';
 import { useTheme } from '../../context/ThemeContext';
 import { useGeneralSettings } from '../../context/GeneralSettingsContext';
+import { useLinks } from '../../context/LinksContext';
+import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
+
+// Türk bayrağı: resmî 3:2 oran, ay-yıldız Wikimedia şemasından. Köşe parantezleri CSS ile çizilir (dekoratif).
+const TurkishFlag: React.FC = () => (
+  <span className="nav-flag" role="img" aria-label="Türk bayrağı" title="Türk bayrağı">
+    <svg viewBox="0 0 30 20" aria-hidden="true" focusable="false">
+      <rect width="30" height="20" rx="2.2" fill="#E30A17" />
+      <path
+        fill="#FBF8F4"
+        d="M13.917 10 18.44 8.531 15.645 12.378V7.622L18.44 11.469ZM14.225 12.674a5 5 0 1 1 0-5.348 4 4 0 1 0 0 5.348Z"
+      />
+      <rect className="flag-edge" width="30" height="20" rx="2.2" fill="none" />
+    </svg>
+  </span>
+);
 
 export const Navbar: React.FC = () => {
   const { theme, isCracking, toggleTheme, breachHits, hasBreached } = useTheme();
   const { settings } = useGeneralSettings();
+  const { links } = useLinks();
+  const { openWhatsAppWithRules } = useWhatsAppModal();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -18,10 +38,20 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on route change
+  // Close mobile menu on route change or desktop resize
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 900) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleThemeClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -38,19 +68,25 @@ export const Navbar: React.FC = () => {
 
   const isAnnouncementVisible = Boolean(settings?.header?.announcementActive && settings?.header?.announcementText);
 
+  // Sync fixed navbar height to document root so page content is never hidden
+  useEffect(() => {
+    const totalHeight = isAnnouncementVisible ? 108 : 72;
+    document.documentElement.style.setProperty('--navbar-total-height', `${totalHeight}px`);
+  }, [isAnnouncementVisible]);
+
   return (
     <header className={`navbar-wrapper ${isScrolled ? 'nav-scrolled' : ''}`} id="main-nav">
       {isAnnouncementVisible && (
         <div
           className="announcement-banner"
           style={{
-            background: 'linear-gradient(90deg, #FF6600, #FF8533)',
-            color: '#080A0D',
-            padding: '0.4rem 1rem',
+            background: 'linear-gradient(90deg, #E35D14, #E68A3C)',
+            color: '#FFFDFC',
+            padding: '0.45rem 1rem',
             textAlign: 'center',
             fontSize: '0.825rem',
-            fontWeight: 700,
-            fontFamily: 'var(--font-mono)',
+            fontWeight: 600,
+            fontFamily: 'var(--font-body)',
             letterSpacing: '0.02em',
             borderBottom: '1px solid rgba(0,0,0,0.1)',
           }}
@@ -58,7 +94,7 @@ export const Navbar: React.FC = () => {
           {settings?.header?.announcementUrl ? (
             <Link
               to={settings.header.announcementUrl}
-              style={{ color: '#080A0D', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+              style={{ color: '#FFFDFC', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
             >
               <span>{settings.header.announcementText}</span>
               <span style={{ fontSize: '1rem', lineHeight: 1 }}>→</span>
@@ -69,48 +105,77 @@ export const Navbar: React.FC = () => {
         </div>
       )}
       <div className="container nav-container">
-        {/* Brand Logo */}
-        <Link to="/" className="brand-logo" id="nav-brand-logo" aria-label="localhostusak Ana Sayfa">
-          <span>&gt;_</span>
-          <span>
-            localhost<span className="brand-highlight">[uşak]</span>
-          </span>
-        </Link>
+        {/* Brand Logo Column */}
+        <div className="nav-brand-wrapper">
+          <Link to="/" className="brand-logo" id="nav-brand-logo" aria-label="Localhost Uşak Ana Sayfa">
+            <img
+              src="/logo.png"
+              alt="Localhost Uşak"
+              className="brand-logo-img"
+              width={42}
+              height={42}
+            />
+            <span className="brand-logo-text">
+              Localhost <span className="brand-highlight">Uşak</span>
+            </span>
+          </Link>
+          {/* Bayrak marka linkinin dışında: ana sayfa linkinin tıklanabilir alanını büyütmez */}
+          <TurkishFlag />
+        </div>
 
-        {/* Navigation Links */}
+        {/* Navigation Links Column (Centered Pill) */}
         <nav className="nav-links" aria-label="Ana Menü">
           <Link
             to="/"
             id="nav-link-home"
-            style={{ color: isActive('/') ? 'var(--accent-primary)' : undefined, fontWeight: isActive('/') ? 700 : 400 }}
+            className={`nav-link ${isActive('/') ? 'active' : ''}`}
           >
-            // ana sayfa
+            Ana Sayfa
           </Link>
           <Link
             to="/etkinlikler"
             id="nav-link-events"
-            style={{ color: isActive('/etkinlikler') ? 'var(--accent-primary)' : undefined, fontWeight: isActive('/etkinlikler') ? 700 : 400 }}
+            className={`nav-link ${isActive('/etkinlikler') ? 'active' : ''}`}
           >
-            // etkinlikler
+            Etkinlikler
           </Link>
           <Link
             to="/kariyer"
             id="nav-link-careers"
-            style={{ color: isActive('/kariyer') ? 'var(--accent-primary)' : undefined, fontWeight: isActive('/kariyer') ? 700 : 400 }}
+            className={`nav-link ${isActive('/kariyer') ? 'active' : ''}`}
           >
-            // kariyer
+            Kariyer
           </Link>
           <Link
             to="/projeler"
             id="nav-link-projects"
-            style={{ color: isActive('/projeler') ? 'var(--accent-primary)' : undefined, fontWeight: isActive('/projeler') ? 700 : 400 }}
+            className={`nav-link ${isActive('/projeler') ? 'active' : ''}`}
           >
-            // projeler
+            Projeler
+          </Link>
+          <Link
+            to="/sponsorlar"
+            id="nav-link-sponsors"
+            className={`nav-link ${isActive('/sponsorlar') ? 'active' : ''}`}
+          >
+            Sponsorlar
           </Link>
         </nav>
 
-        {/* Action Buttons: Classic Theme Toggle Button with Crescent Moon / Sun & Eye-Catching Crack */}
+        {/* Action Buttons Column */}
         <div className="nav-actions">
+          {/* Topluluğa Katıl WhatsApp CTA */}
+          <button
+            type="button"
+            className="nav-cta-btn"
+            id="nav-btn-join"
+            onClick={() => openWhatsAppWithRules(links.whatsappGeneral || 'https://chat.whatsapp.com/I8eMGS58Gtz3dSn9J2mINa', 'Genel Topluluk Grubu')}
+            aria-label="WhatsApp Topluluğuna Katıl"
+          >
+            <WhatsAppIcon size={17} />
+            <span>Topluluğumuza Katıl</span>
+          </button>
+
           <button
             className={`theme-toggle-btn ${isCracking ? 'cracking' : ''} ${!hasBreached && breachHits === 1 ? 'crack-stage-1' : ''} ${!hasBreached && breachHits === 2 ? 'crack-stage-2' : ''}`}
             id="btn-theme-toggle"
@@ -213,10 +278,10 @@ export const Navbar: React.FC = () => {
           <button
             className="btn btn-sm btn-secondary mobile-menu-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{ display: 'none' }}
             aria-label="Menüyü Aç/Kapat"
+            style={{ padding: '0.4rem' }}
           >
-            {mobileMenuOpen ? '✕' : '☰'}
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
@@ -224,31 +289,119 @@ export const Navbar: React.FC = () => {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div
+          className="mobile-drawer"
           style={{
             background: 'var(--bg-card)',
             padding: '1.25rem 1.5rem',
             borderBottom: '1px solid var(--border-subtle)',
             display: 'flex',
             flexDirection: 'column',
-            gap: '1rem',
-            fontFamily: 'var(--font-mono)',
+            gap: '0.5rem',
+            fontFamily: 'var(--font-body)',
+            boxShadow: 'var(--shadow-card)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
           }}
         >
-          <Link to="/" style={{ color: isActive('/') ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
-            // ana sayfa
+          <Link
+            to="/"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              color: isActive('/') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+              minHeight: '44px',
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+              fontSize: '1.05rem',
+              fontWeight: isActive('/') ? 700 : 500,
+            }}
+          >
+            Ana Sayfa
           </Link>
-          <Link to="/etkinlikler" style={{ color: isActive('/etkinlikler') ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
-            // etkinlikler
+          <Link
+            to="/etkinlikler"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              color: isActive('/etkinlikler') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+              minHeight: '44px',
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+              fontSize: '1.05rem',
+              fontWeight: isActive('/etkinlikler') ? 700 : 500,
+            }}
+          >
+            Etkinlikler
           </Link>
-          <Link to="/kariyer" style={{ color: isActive('/kariyer') ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
-            // kariyer
+          <Link
+            to="/kariyer"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              color: isActive('/kariyer') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+              minHeight: '44px',
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+              fontSize: '1.05rem',
+              fontWeight: isActive('/kariyer') ? 700 : 500,
+            }}
+          >
+            Kariyer
           </Link>
-          <Link to="/projeler" style={{ color: isActive('/projeler') ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
-            // projeler
+          <Link
+            to="/projeler"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              color: isActive('/projeler') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+              minHeight: '44px',
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+              fontSize: '1.05rem',
+              fontWeight: isActive('/projeler') ? 700 : 500,
+            }}
+          >
+            Projeler
           </Link>
-          <Link to="/admin" style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-            // [admin paneli]
+          <Link
+            to="/sponsorlar"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              color: isActive('/sponsorlar') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+              minHeight: '44px',
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+              fontSize: '1.05rem',
+              fontWeight: isActive('/sponsorlar') ? 700 : 500,
+            }}
+          >
+            Sponsorlar
           </Link>
+
+          {/* Mobile WhatsApp CTA Button */}
+          <button
+            type="button"
+            className="btn btn-whatsapp btn-full"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              openWhatsAppWithRules(links.whatsappGeneral || 'https://chat.whatsapp.com/I8eMGS58Gtz3dSn9J2mINa', 'Genel Topluluk Grubu');
+            }}
+            style={{
+              marginTop: '0.75rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.55rem',
+              padding: '0.75rem 1rem',
+              borderRadius: 'var(--radius-full)',
+              fontWeight: 600,
+              fontSize: '0.95rem',
+            }}
+          >
+            <WhatsAppIcon size={16} />
+            <span>Topluluğumuza Katıl</span>
+          </button>
         </div>
       )}
     </header>

@@ -1,8 +1,12 @@
 import React from 'react';
+import { Calendar, MapPin, Download, ExternalLink } from 'lucide-react';
 import { EventItem, EventType } from '../../types/event';
+import { WhatsAppIcon } from '../shared';
 import { downloadICS } from '../../utils/calendarExport';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
+import { getEventDisplayStatus } from '../../utils/eventStatus';
+import { getMapHref } from '../../utils/mapLink';
 
 interface EventCardProps {
   event: EventItem;
@@ -12,9 +16,9 @@ interface EventCardProps {
 export const EventCard: React.FC<EventCardProps> = ({ event, eventType }) => {
   const { links } = useLinks();
   const { openWhatsAppWithRules } = useWhatsAppModal();
-  const isUpcoming = event.status === 'upcoming' && new Date(event.dateStart).getTime() >= Date.now();
-  const isCancelled = event.status === 'cancelled';
+  const statusInfo = getEventDisplayStatus(event);
   const startDate = new Date(event.dateStart);
+  const mapHref = getMapHref(event.mapUrl, event.location);
 
   const formattedDate = startDate.toLocaleDateString('tr-TR', {
     day: 'numeric',
@@ -36,8 +40,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event, eventType }) => {
   };
 
   return (
-    <article className="card event-card circuit-border">
-      <div>
+    <article className={`card event-card circuit-border${statusInfo.isPast ? ' is-past' : ''}`}>
+      <div className="event-card-body">
         <div className="event-card-header">
           <span
             className="event-card-type-tag"
@@ -47,11 +51,11 @@ export const EventCard: React.FC<EventCardProps> = ({ event, eventType }) => {
               border: `1px solid ${eventType ? eventType.colorModern : 'var(--accent-primary)'}`,
             }}
           >
-            {eventType?.icon || '📅'} {eventType?.label || event.typeId}
+            {eventType?.label || event.typeId}
           </span>
 
-          <span className={`badge ${isUpcoming ? 'badge-live' : 'badge-orange'}`}>
-            {isCancelled ? 'İPTAL EDİLDİ' : isUpcoming ? 'YAKLAŞAN' : 'TAMAMLANDI'}
+          <span className={`badge ${statusInfo.canRegister ? 'badge-live' : 'badge-orange'}`}>
+            {statusInfo.label}
           </span>
         </div>
 
@@ -72,35 +76,25 @@ export const EventCard: React.FC<EventCardProps> = ({ event, eventType }) => {
 
         <div className="event-card-meta">
           <div className="event-card-meta-item">
-            <span>📅</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}><Calendar size={14} /></span>
             <span>{formattedDate}</span>
           </div>
 
           <div className="event-card-meta-item">
-            <span>📍</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}><MapPin size={14} /></span>
             <span>{event.location}</span>
-            {event.mapUrl && (
+            {mapHref && (
               <a
-                href={event.mapUrl}
+                href={mapHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  color: 'var(--accent-secondary)',
-                  fontSize: '0.8rem',
-                  textDecoration: 'underline',
-                  marginLeft: '0.25rem',
-                }}
+                className="btn btn-secondary btn-sm"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
               >
-                (Harita)
+                <MapPin size={12} />
+                <span>Haritada Gör</span>
               </a>
             )}
-          </div>
-
-          <div className="event-card-meta-item">
-            <span>👥</span>
-            <span>
-              {event.attendees} Katılımcı {event.capacity ? `/ ${event.capacity} Kontenjan` : ''}
-            </span>
           </div>
         </div>
 
@@ -116,35 +110,53 @@ export const EventCard: React.FC<EventCardProps> = ({ event, eventType }) => {
       </div>
 
       <div className="event-card-footer">
-        {isUpcoming ? (
+        {statusInfo.canRegister ? (
           <>
             <button
               type="button"
               className="btn btn-secondary btn-sm"
               onClick={handleCalendar}
               title="Takvime Ekle (.ICS)"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
             >
               <span>Takvime Ekle</span>
-              <span>📥</span>
+              <Download size={14} />
             </button>
             {(event.whatsappLink || links.whatsappCoworking) && <a
               href={event.whatsappLink || links.whatsappCoworking}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-primary btn-sm"
+              className="btn btn-whatsapp btn-sm"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
               onClick={(e) => {
                 e.preventDefault();
                 openWhatsAppWithRules(event.whatsappLink || links.whatsappCoworking, 'Coworking Masası');
               }}
             >
+              <WhatsAppIcon size={14} />
               <span>Masada Yer Ayır</span>
-              <span>💬</span>
             </a>}
           </>
+        ) : statusInfo.displayStatus === 'closed' ? (
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Kontenjan doldu</span>
         ) : (
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            {isCancelled ? 'Etkinlik iptal edildi' : '✓ Etkinlik tamamlandı'}
-          </span>
+          <>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              {statusInfo.displayStatus === 'cancelled' ? 'Etkinlik iptal edildi' : 'Etkinlik tamamlandı'}
+            </span>
+            {event.recapUrl && (
+              <a
+                href={event.recapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary btn-sm"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+              >
+                <span>Etkinlik Özeti</span>
+                <ExternalLink size={14} />
+              </a>
+            )}
+          </>
         )}
       </div>
     </article>

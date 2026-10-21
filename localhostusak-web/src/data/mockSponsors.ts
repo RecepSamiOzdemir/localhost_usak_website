@@ -1,0 +1,128 @@
+import { SponsorItem } from '../types/sponsor';
+
+export const MOCK_SPONSORS: SponsorItem[] = [
+  // 🥇 Altın Sponsorlar (Gold Tier)
+  {
+    id: 1,
+    name: 'Uşak Teknopark',
+    tier: 'gold',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="52" viewBox="0 0 200 52"><rect width="200" height="52" rx="10" fill="%23D4AF37" fill-opacity="0.16"/><circle cx="30" cy="26" r="14" fill="%23D4AF37"/><polygon points="30,18 36,30 24,30" fill="%2311141B"/><text x="54" y="31" font-family="system-ui,sans-serif" font-size="13" font-weight="800" fill="%23D4AF37" letter-spacing="0.5">UŞAK TEKNOPARK</text></svg>',
+    websiteUrl: 'https://teknopark.usak.edu.tr',
+    sortOrder: 1,
+    isActive: true,
+  },
+  {
+    id: 2,
+    name: 'CloudPeak Systems',
+    tier: 'gold',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="52" viewBox="0 0 200 52"><rect width="200" height="52" rx="10" fill="%23E35D14" fill-opacity="0.16"/><path d="M24 30a6 6 0 0 1 1-11.8 8 8 0 0 1 15 2.8 5 5 0 0 1-2 9h-14z" fill="%23E35D14"/><text x="52" y="31" font-family="system-ui,sans-serif" font-size="13" font-weight="800" fill="%23E35D14" letter-spacing="0.5">CLOUDPEAK</text></svg>',
+    websiteUrl: 'https://cloudpeak.dev',
+    sortOrder: 2,
+    isActive: true,
+  },
+  {
+    id: 3,
+    name: 'Kanyon Dynamics',
+    tier: 'gold',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="52" viewBox="0 0 200 52"><rect width="200" height="52" rx="10" fill="%23B8860B" fill-opacity="0.16"/><polygon points="20,34 28,18 36,34 32,34 28,26 24,34" fill="%23B8860B"/><polygon points="30,34 35,24 40,34" fill="%23B8860B" fill-opacity="0.7"/><text x="52" y="31" font-family="system-ui,sans-serif" font-size="13" font-weight="800" fill="%23B8860B" letter-spacing="0.5">KANYON DYNAMICS</text></svg>',
+    websiteUrl: 'https://kanyondynamics.com',
+    sortOrder: 3,
+    isActive: true,
+  },
+
+  // 🥈 Gümüş Sponsorlar (Silver Tier)
+  {
+    id: 4,
+    name: 'Ege Yazılım & Mühendislik',
+    tier: 'silver',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="190" height="50" viewBox="0 0 190 50"><rect width="190" height="50" rx="10" fill="%239AA5B1" fill-opacity="0.16"/><rect x="20" y="17" width="16" height="16" rx="4" fill="%239AA5B1"/><text x="46" y="30" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="%239AA5B1">EGE YAZILIM</text></svg>',
+    websiteUrl: 'https://egeyazilim.com.tr',
+    sortOrder: 10,
+    isActive: true,
+  },
+  {
+    id: 5,
+    name: 'KodArt Bilişim',
+    tier: 'silver',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="50" viewBox="0 0 180 50"><rect width="180" height="50" rx="10" fill="%233B82F6" fill-opacity="0.16"/><polygon points="26,15 36,25 26,35 16,25" fill="%233B82F6"/><text x="44" y="30" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="%233B82F6">KODART</text></svg>',
+    websiteUrl: 'https://kodart.io',
+    sortOrder: 11,
+    isActive: true,
+  },
+  {
+    id: 6,
+    name: 'Nexus Data Labs',
+    tier: 'silver',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="185" height="50" viewBox="0 0 185 50"><rect width="185" height="50" rx="10" fill="%2364748B" fill-opacity="0.16"/><circle cx="22" cy="25" r="5" fill="%2364748B"/><circle cx="34" cy="18" r="4" fill="%2364748B"/><circle cx="34" cy="32" r="4" fill="%2364748B"/><line x1="22" y1="25" x2="34" y2="18" stroke="%2364748B" stroke-width="2"/><line x1="22" y1="25" x2="34" y2="32" stroke="%2364748B" stroke-width="2"/><text x="48" y="30" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="%2364748B">NEXUS LABS</text></svg>',
+    websiteUrl: 'https://nexuslabs.ai',
+    sortOrder: 12,
+    isActive: true,
+  },
+
+  // 🥉 Bronz Sponsorlar (Bronze Tier)
+  {
+    id: 7,
+    name: 'Kahve Fabrikası Uşak',
+    tier: 'bronze',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="48" viewBox="0 0 180 48"><rect width="180" height="48" rx="10" fill="%23B87333" fill-opacity="0.16"/><path d="M20 20h12v7a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5v-7z M32 22h3a2 2 0 0 1 0 4h-3v-4z" fill="%23B87333"/><text x="42" y="29" font-family="system-ui,sans-serif" font-size="11.5" font-weight="700" fill="%23B87333">KAHVE FABRİKASI</text></svg>',
+    websiteUrl: 'https://kahvefabrikasi.com',
+    sortOrder: 20,
+    isActive: true,
+  },
+  {
+    id: 8,
+    name: 'DevForge Labs',
+    tier: 'bronze',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="175" height="48" viewBox="0 0 175 48"><rect width="175" height="48" rx="10" fill="%23CD7F32" fill-opacity="0.16"/><polygon points="18,31 34,31 30,22 22,22" fill="%23CD7F32"/><text x="42" y="29" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="%23CD7F32">DEVFORGE</text></svg>',
+    websiteUrl: 'https://devforge.dev',
+    sortOrder: 21,
+    isActive: true,
+  },
+  {
+    id: 9,
+    name: 'PixelCraft Studio',
+    tier: 'bronze',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="175" height="48" viewBox="0 0 175 48"><rect width="175" height="48" rx="10" fill="%23B87333" fill-opacity="0.16"/><rect x="18" y="18" width="6" height="6" fill="%23B87333"/><rect x="26" y="18" width="6" height="6" fill="%23B87333" fill-opacity="0.6"/><rect x="18" y="26" width="6" height="6" fill="%23B87333" fill-opacity="0.6"/><rect x="26" y="26" width="6" height="6" fill="%23B87333"/><text x="42" y="29" font-family="system-ui,sans-serif" font-size="11.5" font-weight="700" fill="%23B87333">PIXELCRAFT</text></svg>',
+    websiteUrl: 'https://pixelcraft.design',
+    sortOrder: 22,
+    isActive: true,
+  },
+
+  // 🤝 Topluluk Destekçileri (Community Tier)
+  {
+    id: 10,
+    name: 'Uşak Genç Girişimciler',
+    tier: 'community',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="185" height="48" viewBox="0 0 185 48"><rect width="185" height="48" rx="10" fill="%23267A56" fill-opacity="0.16"/><circle cx="24" cy="24" r="7" fill="%23267A56"/><text x="40" y="29" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="%23267A56">GENÇ GİRİŞİMCİLER</text></svg>',
+    websiteUrl: 'https://usakgirisim.org',
+    sortOrder: 30,
+    isActive: true,
+  },
+  {
+    id: 11,
+    name: 'Terminal Studio',
+    tier: 'community',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="165" height="48" viewBox="0 0 165 48"><rect width="165" height="48" rx="10" fill="%23E35D14" fill-opacity="0.12"/><text x="18" y="30" font-family="monospace" font-size="14" font-weight="900" fill="%23E35D14">&gt;_</text><text x="40" y="29" font-family="system-ui,sans-serif" font-size="11.5" font-weight="700" fill="%23E35D14">TERMINAL</text></svg>',
+    websiteUrl: 'https://terminalstudio.dev',
+    sortOrder: 31,
+    isActive: true,
+  },
+  {
+    id: 12,
+    name: 'Anadolu Tech Network',
+    tier: 'community',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="175" height="48" viewBox="0 0 175 48"><rect width="175" height="48" rx="10" fill="%233B82F6" fill-opacity="0.14"/><circle cx="20" cy="24" r="4" fill="%233B82F6"/><circle cx="30" cy="20" r="3" fill="%233B82F6"/><line x1="20" y1="24" x2="30" y2="20" stroke="%233B82F6" stroke-width="1.5"/><text x="40" y="29" font-family="system-ui,sans-serif" font-size="11.5" font-weight="700" fill="%233B82F6">ANADOLU TECH</text></svg>',
+    websiteUrl: 'https://anadolutech.org',
+    sortOrder: 32,
+    isActive: true,
+  },
+  {
+    id: 13,
+    name: 'Açık Kaynak Türkiye',
+    tier: 'community',
+    logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="48" viewBox="0 0 180 48"><rect width="180" height="48" rx="10" fill="%236366F1" fill-opacity="0.14"/><circle cx="22" cy="24" r="8" stroke="%236366F1" stroke-width="2.5" fill="none"/><path d="M22 16 L22 24" stroke="%236366F1" stroke-width="2.5"/><text x="38" y="29" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="%236366F1">AÇIK KAYNAK TR</text></svg>',
+    websiteUrl: 'https://acikkaynak.org.tr',
+    sortOrder: 33,
+    isActive: true,
+  },
+];

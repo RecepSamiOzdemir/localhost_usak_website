@@ -1,17 +1,17 @@
 {
   "/": {
     "title": "Uşak Teknoloji ve Yazılım Topluluğu | localhostusak",
-    "description": "Uşak'ta yazılımcılar, mühendisler, tasarımcılar ve öğrenciler için teknoloji topluluğu. Coworking buluşmaları, açık kaynak projeleri ve kariyer paylaşımları.",
+    "description": "Uşak'ta yazılımcılar, mühendisler, tasarımcılar ve teknoloji meraklıları için teknoloji topluluğu. Coworking buluşmaları, açık kaynak projeleri ve kariyer paylaşımları.",
     "lang": "tr",
-    "legacyTitle": "localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu",
-    "legacyDescription": "Uşak'taki yazılımcılar, tasarımcılar, remote çalışanlar ve öğrenciler için açık, samimi ve üretken teknoloji topluluğu. Kahveni al, laptopunu getir!"
+    "legacyTitle": "localhostusak — Uşak Teknoloji ve Yazılım Topluluğu",
+    "legacyDescription": "Uşak'taki yazılımcılar, mühendisler, remote çalışanlar ve teknoloji meraklıları için açık, samimi ve üretken teknoloji topluluğu. Kahveni al, laptopunu getir!"
   },
   "/etkinlikler": {
     "title": "Uşak Teknoloji Etkinlikleri ve Coworking | localhostusak",
-    "description": "Uşak'ta yazılım, tasarım ve yapay zeka buluşmalarını keşfet. Topluluğun coworking günleri, atölyeleri ve teknoloji etkinlikleri burada duyurulur.",
+    "description": "Uşak'ta yazılım, teknoloji ve yapay zeka buluşmalarını keşfet. Topluluğun coworking günleri, atölyeleri ve teknoloji etkinlikleri burada duyurulur.",
     "lang": "tr",
     "legacyTitle": "Etkinlikler & Coworking — localhostusak",
-    "legacyDescription": "Uşak'taki yazılım, tasarım ve yapay zeka buluşmaları, coworking günleri ve workshop takvimi."
+    "legacyDescription": "Uşak'taki yazılım, teknoloji ve yapay zeka buluşmaları, coworking günleri ve workshop takvimi."
   },
   "/kariyer": {
     "title": "Uşak Yazılım İş İlanları, Staj ve Kariyer | localhostusak",
@@ -27,11 +27,18 @@
     "legacyTitle": "Projeler & Vitrin — localhostusak",
     "legacyDescription": "Uşak teknoloji topluluğu üyelerinin geliştirdiği projeler, açık kaynak depoları ve ekip arkadaşı arayan girişimler."
   },
-  "/en": {
-    "title": "Usak Technology & Software Developer Community | localhostusak",
-    "description": "Meet the technology community in Uşak, Turkey. Connect with software developers, engineers and designers through coworking, projects and career opportunities.",
-    "lang": "en",
-    "legacyTitle": "",
-    "legacyDescription": ""
+  "/sponsorlar": {
+    "title": "Topluluk Sponsorları ve Destekçilerimiz | localhostusak",
+    "description": "Uşak teknoloji ekosistemine güç katan değerli sponsorlarımız ve topluluk destekçilerimiz. Siz de sponsor olarak genç mühendislere ve açık kaynak projelerine destek olun.",
+    "lang": "tr",
+    "legacyTitle": "Sponsorlarımız & Destekçiler — localhostusak",
+    "legacyDescription": "Uşak teknoloji topluluğu sponsorları ve kurumsal destekçileri."
+  },
+  "/kvkk": {
+    "title": "KVKK Aydınlatma Metni ve Muvafakatname | localhostusak",
+    "description": "Localhost Uşak Teknoloji ve Yazılım Topluluğu 6698 sayılı KVKK kapsamındaki kişisel verilerin korunması aydınlatma metni ve etkinlik muvafakatnamesi.",
+    "lang": "tr",
+    "legacyTitle": "KVKK Aydınlatma Metni ve Muvafakatname — localhostusak",
+    "legacyDescription": "Localhost Uşak 6698 sayılı KVKK kişisel verilerin korunması aydınlatma metni."
   }
 }

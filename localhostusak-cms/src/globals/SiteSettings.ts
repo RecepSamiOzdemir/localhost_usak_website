@@ -24,26 +24,54 @@ export const SiteSettings: GlobalConfig = {
           name: 'title',
           type: 'text',
           label: 'Ana Başlık (1. Satır)',
-          defaultValue: "Uşak'ın Teknoloji ve",
+          defaultValue: "Uşak'ta Teknoloji",
         },
         {
           name: 'titleHighlight',
           type: 'text',
           label: 'Vurgulu Başlık (2. Satır Renkli)',
-          defaultValue: 'Tasarım Topluluğu',
+          defaultValue: 'Etrafında Buluş',
         },
         {
           name: 'subtitle',
           type: 'text',
           label: 'Terminal Sloganı',
-          defaultValue: 'connect • build • collaborate • grow',
+          defaultValue: 'CONNECT • BUILD • COLLABORATE • GROW',
         },
         {
           name: 'description',
           type: 'textarea',
           label: 'Açıklama Metni',
           defaultValue:
-            'Kahveni al, laptopunu getir, aramıza katıl. Deneyimli olmak şart değil; merakın ve öğrenme isteğin varsa masada sana da yer var.',
+            'Teknolojiye ilgi duyan, üreten ve gelişmek isteyen insanları bir araya getiren lokal topluluk. Kahveni al, laptopunu getir, masada yerini al.',
+        },
+      ],
+    },
+
+    // 1.5 Topluluk Vizyon Mesajları (Otomatik Dönen Vizyon Kartı)
+    {
+      name: 'visionMessages',
+      type: 'array',
+      label: '1.5 Topluluk Vizyon Mesajları (Otomatik Rotasyon)',
+      admin: {
+        description: 'Manifesto & Misyon kartında periyodik olarak otomatik değişen vizyon sözleri.',
+      },
+      fields: [
+        {
+          name: 'quote',
+          type: 'textarea',
+          label: 'Vizyon Mesajı / Söz',
+          required: true,
+        },
+        {
+          name: 'tag',
+          type: 'text',
+          label: 'Vurgu / Etiket (Örn: #Vizyonumuz veya Good Code, Better People)',
+        },
+        {
+          name: 'author',
+          type: 'text',
+          label: 'Kaynak / İbare (Opsiyonel)',
         },
       ],
     },

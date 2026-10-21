@@ -22,7 +22,7 @@
     "type": "internship",
     "workMode": "hybrid",
     "schedule": "parttime",
-    "description": "Üniversite 3. veya 4. sınıf öğrencileri ya da yeni mezunlar için yapay zeka entegrasyonları ve web servisleri üzerine uygulamalı staj programı. Mentorluk ve yemek imkanı.",
+    "description": "Üniversite son sınıf adayları ya da yeni mezunlar için yapay zeka entegrasyonları ve web servisleri üzerine uygulamalı staj programı. Mentorluk ve yemek imkanı.",
     "technologies": ["Python", "FastAPI", "PostgreSQL", "Docker", "Git"],
     "applyUrl": "https://example.com/apply/internship",
     "contact": "staj@cloudlab.com.tr",

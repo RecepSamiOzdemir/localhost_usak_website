@@ -1,25 +1,23 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { AlertTriangle, Loader2, FolderGit2 } from 'lucide-react';
 import { PageHero } from '../components/layout/PageHero';
 import { FilterBar, FilterOption } from '../components/shared/FilterBar';
 import { ProjectSpotlight } from '../components/projects/ProjectSpotlight';
 import { ProjectCard } from '../components/projects/ProjectCard';
-import { ProjectCTA } from '../components/projects/ProjectCTA';
 import { EmptyState } from '../components/shared/EmptyState';
 import { ProjectItem } from '../types/project';
-import { useLinks } from '../context/LinksContext';
 
-import { fetchProjects, likeProject, fetchProjectsPageSettings, ProjectsPageSettingsData } from '../services/api';
+import { fetchProjects, likeProject, fetchProjectsPageSettings, getCachedProjectsPageSettings, ProjectsPageSettingsData } from '../services/api';
 import seoPages from '../seo/pages.json';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useCmsCollection } from '../hooks/useCmsCollection';
 
 export const ProjectsPage: React.FC = () => {
-  const { links } = useLinks();
   const { items: projects, isLoading, error, retry } = useCmsCollection<ProjectItem>(fetchProjects);
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedTech, setSelectedTech] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [settings, setSettings] = useState<ProjectsPageSettingsData | null>(null);
+  const [settings, setSettings] = useState<ProjectsPageSettingsData | null>(getCachedProjectsPageSettings);
 
   // SEO Meta
   usePageMeta({
@@ -42,10 +40,10 @@ export const ProjectsPage: React.FC = () => {
   };
 
   const primaryOptions: FilterOption[] = [
-    { id: 'all', label: 'Tüm Projeler', icon: '⚡' },
-    { id: 'showcase', label: 'Vitrin', icon: '🚀' },
-    { id: 'seeking_team', label: 'Ekip Arıyor', icon: '🤝' },
-    { id: 'opensource', label: 'Açık Kaynak', icon: '🐙' },
+    { id: 'all', label: 'Tüm Projeler' },
+    { id: 'showcase', label: 'Vitrin' },
+    { id: 'seeking_team', label: 'Ekip Arıyor' },
+    { id: 'opensource', label: 'Açık Kaynak' },
   ];
 
   const secondaryOptions: FilterOption[] = [
@@ -82,11 +80,9 @@ export const ProjectsPage: React.FC = () => {
     <main>
       <PageHero
         tag={settings?.hero?.tag || "// PROJE VİTRİNİ & AÇIK KAYNAK"}
-        title={settings?.hero?.title || "Uşak Yazılım Projeleri,"}
-        highlightText={settings?.hero?.highlightText || "Birlikte Üretiyoruz"}
+        title={settings?.hero?.title || "Uşak'ta Üretiliyor,"}
+        highlightText={settings?.hero?.highlightText || "Dünyaya Açılıyor"}
         description={settings?.hero?.description || "Topluluk üyelerimizin geliştirdiği açık kaynak projeler, erken aşama girişimler ve birlikte üretmek için ekip arkadaşı arayanlar."}
-        whatsappUrl={settings?.whatsappCta?.overrideUrl || links.whatsappProjects}
-        whatsappLabel={settings?.whatsappCta?.buttonText || "WhatsApp Projeler Grubuna Katıl"}
       />
 
       <div className="container" style={{ paddingBottom: '4rem' }}>
@@ -117,12 +113,22 @@ export const ProjectsPage: React.FC = () => {
         </div>
 
         {isLoading ? (
-          <EmptyState icon="⏳" title="Projeler Yükleniyor" description="Güncel projeler getiriliyor." />
+          <EmptyState
+            icon={<Loader2 size={40} style={{ animation: 'spin 1.5s linear infinite', color: 'var(--text-muted)' }} />}
+            title="Projeler Yükleniyor"
+            description="Güncel projeler getiriliyor."
+          />
         ) : error ? (
-          <EmptyState icon="⚠️" title="Projelere Ulaşılamadı" description="İçerik şu anda yüklenemiyor. Biraz sonra tekrar deneyebilirsin." actionText="Tekrar Dene" onAction={retry} />
+          <EmptyState
+            icon={<AlertTriangle size={40} style={{ color: '#FF6600' }} />}
+            title="Projelere Ulaşılamadı"
+            description="İçerik şu anda yüklenemiyor. Biraz sonra tekrar deneyebilirsin."
+            actionText="Tekrar Dene"
+            onAction={retry}
+          />
         ) : filteredProjects.length === 0 ? (
           <EmptyState
-            icon="🚀"
+            icon={<FolderGit2 size={40} style={{ color: 'var(--text-muted)' }} />}
             title={projects.length === 0 ? 'Henüz Proje Yok' : 'Proje Bulunamadı'}
             description={projects.length === 0 ? 'Topluluk projeleri eklendiğinde burada görünecek.' : 'Arama kriterlerine uygun proje bulunmuyor. Filtreleri temizleyerek tüm projeleri listeleyebilirsin.'}
             actionText={projects.length === 0 ? undefined : 'Filtreleri Sıfırla'}
@@ -139,9 +145,6 @@ export const ProjectsPage: React.FC = () => {
             ))}
           </div>
         )}
-
-        {/* Project CTA */}
-        <ProjectCTA />
       </div>
     </main>
   );

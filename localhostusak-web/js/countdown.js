@@ -56,7 +56,7 @@
       `DTSTART:${startStr}`,
       `DTEND:${endStr}`,
       'SUMMARY:localhostusak Buluşması #3',
-      'DESCRIPTION:Uşak teknoloji ve tasarım topluluğu buluşması. Kahveni al, laptopunu getir!',
+      'DESCRIPTION:Uşak teknoloji topluluğu buluşması. Kahveni al, laptopunu getir!',
       'LOCATION:Coff The Story / Treehouse Cafe, Uşak',
       'STATUS:CONFIRMED',
       'END:VEVENT',

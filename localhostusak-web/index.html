@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- Early System Theme Detection -->
+  <!-- Early Theme Detection: Always dark (modern) unless user manually switched this session -->
   <script>
     (function() {
       try {
@@ -12,8 +12,7 @@
         localStorage.removeItem('localhostusak_theme_manual');
         var manual = sessionStorage.getItem('localhostusak_theme_manual');
         var saved = sessionStorage.getItem('localhostusak_theme');
-        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var theme = (manual === 'true' && saved) ? saved : (prefersDark ? 'modern' : 'pixel');
+        var theme = (manual === 'true' && (saved === 'modern' || saved === 'pixel')) ? saved : 'modern';
         document.documentElement.setAttribute('data-theme', theme);
       } catch (e) {}
     })();
@@ -22,7 +21,7 @@
   <!-- Primary Meta Tags -->
   <title>Uşak Teknoloji ve Yazılım Topluluğu | localhostusak</title>
   <meta name="title" content="Uşak Teknoloji ve Yazılım Topluluğu | localhostusak">
-  <meta name="description" content="Uşak'ta yazılımcılar, mühendisler, tasarımcılar ve öğrenciler için teknoloji topluluğu. Coworking buluşmaları, açık kaynak projeleri ve kariyer paylaşımları.">
+  <meta name="description" content="Uşak'ta yazılımcılar, mühendisler, tasarımcılar ve teknoloji meraklıları için teknoloji topluluğu. Coworking buluşmaları, açık kaynak projeleri ve kariyer paylaşımları.">
   <meta name="author" content="localhostusak Topluluğu">
   <meta name="theme-color" content="#FF6600">
 
@@ -32,21 +31,22 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://localhostusak.tech/">
   <meta property="og:title" content="Uşak Teknoloji ve Yazılım Topluluğu | localhostusak">
-  <meta property="og:description" content="Uşak'ta yazılımcılar, mühendisler, tasarımcılar ve öğrenciler için teknoloji topluluğu. Coworking buluşmaları, açık kaynak projeleri ve kariyer paylaşımları.">
-  <meta property="og:image" content="https://localhostusak.tech/assets/images/og-cover.jpg">
+  <meta property="og:description" content="Uşak'ta yazılımcılar, mühendisler ve teknoloji meraklıları için açık topluluk. Coworking buluşmaları, açık kaynak projeleri ve kariyer paylaşımları.">
+  <meta property="og:image" content="https://localhostusak.tech/logo.png">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@localhostusak">
   <meta name="twitter:creator" content="@localhostusak">
   <meta name="twitter:title" content="Uşak Teknoloji ve Yazılım Topluluğu | localhostusak">
-  <meta name="twitter:description" content="Uşak'ta yazılımcılar, mühendisler, tasarımcılar ve öğrenciler için teknoloji topluluğu. Coworking buluşmaları, açık kaynak projeleri ve kariyer paylaşımları.">
-  <meta name="twitter:image" content="https://localhostusak.tech/assets/images/og-cover.jpg">
+  <meta name="twitter:description" content="Uşak'ta yazılımcılar, mühendisler ve teknoloji meraklıları için açık topluluk. Coworking buluşmaları, açık kaynak projeleri ve kariyer paylaşımları.">
+  <meta name="twitter:image" content="https://localhostusak.tech/logo.png">
 
   <meta property="og:site_name" content="localhostusak">
-  <script type="application/ld+json" id="site-schema">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://localhostusak.tech/#organization","name":"localhostusak","alternateName":"localhost[uşak]","url":"https://localhostusak.tech/","description":"Uşak'ta yazılım, teknoloji ve tasarımla ilgilenenleri bir araya getiren bağımsız topluluk.","address":{"@type":"PostalAddress","addressLocality":"Uşak","addressCountry":"TR"}},{"@type":"WebSite","@id":"https://localhostusak.tech/#website","url":"https://localhostusak.tech/","name":"localhostusak","publisher":{"@id":"https://localhostusak.tech/#organization"}}]}</script>
+  <script type="application/ld+json" id="site-schema">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://localhostusak.tech/#organization","name":"localhostusak","alternateName":"Localhost Uşak","url":"https://localhostusak.tech/","logo":"https://localhostusak.tech/logo.png","description":"Uşak'ta yazılım ve teknolojiyle ilgilenenleri bir araya getiren bağımsız topluluk.","address":{"@type":"PostalAddress","addressLocality":"Uşak","addressCountry":"TR"}},{"@type":"WebSite","@id":"https://localhostusak.tech/#website","url":"https://localhostusak.tech/","name":"localhostusak","publisher":{"@id":"https://localhostusak.tech/#organization"}}]}</script>
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23080A0D'/><text y='68' x='50' font-size='60' text-anchor='middle' fill='%23FF6600' font-family='monospace' font-weight='bold'>&gt;_</text></svg>">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/logo.png">
 
   <!-- Google Fonts Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">

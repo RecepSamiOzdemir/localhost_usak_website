@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sparkles } from 'lucide-react';
 import { useCountdown } from '../../hooks/useCountdown';
 
 interface CountdownTimerProps {
@@ -17,9 +18,14 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) =>
           fontFamily: 'var(--font-mono)',
           color: 'var(--accent-primary)',
           fontWeight: 700,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '0.5rem',
         }}
       >
-        🎉 Etkinlik Başladı veya Tamamlandı!
+        <Sparkles size={18} />
+        <span>Etkinlik Başladı veya Tamamlandı</span>
       </div>
     );
   }

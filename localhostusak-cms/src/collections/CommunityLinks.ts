@@ -19,7 +19,7 @@ export const CommunityLinks: CollectionConfig = {
       required: true,
       unique: true,
       admin: {
-        description: 'Benzersiz anahtar (Örn: whatsapp_coworking, whatsapp_projects, whatsapp_careers)',
+        description: 'Benzersiz anahtar (Örn: whatsapp_general, whatsapp_careers, whatsapp_projects, whatsapp_coworking, instagram, github, x)',
       },
     },
     {

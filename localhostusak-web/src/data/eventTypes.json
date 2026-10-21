@@ -2,7 +2,7 @@
   {
     "id": "cowork",
     "label": "Cowork",
-    "icon": "☕",
+    "icon": "coffee",
     "colorModern": "#FF6600",
     "colorPixel": "#EE6C19",
     "isDefault": true,
@@ -11,7 +11,7 @@
   {
     "id": "workshop",
     "label": "Workshop",
-    "icon": "🛠️",
+    "icon": "wrench",
     "colorModern": "#00E5FF",
     "colorPixel": "#3A86FF",
     "isDefault": true,
@@ -20,7 +20,7 @@
   {
     "id": "talk",
     "label": "Talk",
-    "icon": "🎤",
+    "icon": "mic",
     "colorModern": "#8B5CF6",
     "colorPixel": "#7C3AED",
     "isDefault": true,

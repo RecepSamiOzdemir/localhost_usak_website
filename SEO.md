@@ -22,9 +22,9 @@ Boş kariyer veya etkinlik sayfaları sırf anahtar kelimeyle rekabet edemez. Ge
 
 ## Yayın sonrası
 
-1. Branch'i yerelde test edip PR ile `main`'e birleştirin; Coolify dağıtımı tamamlandığında `/`, `/etkinlikler/`, `/kariyer/`, `/projeler/`, `/en/` için HTML ve canonical'ı kontrol edin.
-2. Google Search Console'da `localhostusak.tech` Domain mülkünü doğrulayın. Google'ın verdiği TXT değerini DNS'e eklemek gerekir; bu çalışma hesap doğrulaması yapmaz.
-3. `https://localhostusak.tech/sitemap.xml` adresini Search Console'a gönderin. URL Denetleme ile ana sayfa ve önemli sayfalarda canlı test yapın.
+1. Branch'i yerelde test edip PR ile `main`'e birleştirin; Coolify dağıtımı tamamlandığında `/`, `/etkinlikler/`, `/kariyer/`, `/projeler/`, `/sponsorlar/` için HTML ve canonical'ı kontrol edin.
+2. Google Search Console'da `localhostusak.com` Domain mülkünü doğrulayın. Google'ın verdiği TXT değerini DNS'e eklemek gerekir; bu çalışma hesap doğrulaması yapmaz.
+3. `https://localhostusak.com/sitemap.xml` adresini Search Console'a gönderin. URL Denetleme ile ana sayfa ve önemli sayfalarda canlı test yapın.
 4. Rich Results Test ile yapılandırılmış veriyi kontrol edin. Geçerli schema, zengin sonuç veya sıralama garantisi değildir.
 5. Search Console Performans raporunda Türkçe/İngilizce sorguları, gösterim, tıklama ve sayfa bazındaki gelişimi takip edin. Yerel topluluk/üniversite/etkinlik iş birliklerinden gerçek, ilgili bağlantılar kazanın.
 

@@ -1,19 +1,26 @@
 import React from 'react';
+import { Calendar, MapPin, Download } from 'lucide-react';
 import { EventItem, EventType } from '../../types/event';
-import { CountdownTimer } from '../shared/CountdownTimer';
+import { CountdownTimer, WhatsAppIcon } from '../shared';
 import { downloadICS, openGoogleCalendar } from '../../utils/calendarExport';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
+import { getEventDisplayStatus } from '../../utils/eventStatus';
+import { getMapHref } from '../../utils/mapLink';
 
 interface EventSpotlightCardProps {
   event: EventItem;
   eventType?: EventType;
+  /** Geri sayım bölümünü göster/gizle. Sadece listedeki en yakın (ilk iptal olmayan) etkinlikte true olmalı. */
+  showCountdown?: boolean;
 }
 
-export const EventSpotlightCard: React.FC<EventSpotlightCardProps> = ({ event, eventType }) => {
+export const EventSpotlightCard: React.FC<EventSpotlightCardProps> = ({ event, eventType, showCountdown = true }) => {
   const { links } = useLinks();
   const { openWhatsAppWithRules } = useWhatsAppModal();
+  const statusInfo = getEventDisplayStatus(event);
   const startDate = new Date(event.dateStart);
+  const mapHref = getMapHref(event.mapUrl, event.location);
 
   const formattedDate = startDate.toLocaleDateString('tr-TR', {
     day: 'numeric',
@@ -45,7 +52,7 @@ export const EventSpotlightCard: React.FC<EventSpotlightCardProps> = ({ event, e
   return (
     <div
       className="spotlight-card card circuit-border"
-      style={{ padding: '3rem 2.5rem', position: 'relative', marginBottom: '3rem' }}
+      style={{ marginBottom: '3rem' }}
     >
       <span className="hud-corner-tl" aria-hidden="true" />
       <span className="hud-corner-tr" aria-hidden="true" />
@@ -63,7 +70,10 @@ export const EventSpotlightCard: React.FC<EventSpotlightCardProps> = ({ event, e
                 border: `1px solid ${eventType ? eventType.colorModern : 'var(--accent-primary)'}`,
               }}
             >
-              {eventType?.icon} {eventType?.label || event.typeId}
+              {eventType?.label || event.typeId}
+            </span>
+            <span className={`badge ${statusInfo.canRegister ? 'badge-live' : 'badge-orange'}`}>
+              {statusInfo.label}
             </span>
             <span className="badge badge-blue">YÜZ YÜZE</span>
             <span className="badge badge-live">KATILIM ÜCRETSİZ</span>
@@ -79,36 +89,15 @@ export const EventSpotlightCard: React.FC<EventSpotlightCardProps> = ({ event, e
 
           <div className="meetup-meta-list">
             <div className="meetup-meta-item">
-              <span className="meta-icon">📅</span>
+              <span className="meta-icon"><Calendar size={18} /></span>
               <div>
                 <strong>Tarih:</strong> {formattedDate}
               </div>
             </div>
             <div className="meetup-meta-item">
-              <span className="meta-icon">📍</span>
+              <span className="meta-icon"><MapPin size={18} /></span>
               <div>
                 <strong>Mekan:</strong> {event.location}
-                {event.mapUrl && (
-                  <a
-                    href={event.mapUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'var(--accent-secondary)',
-                      fontSize: '0.85rem',
-                      marginLeft: '0.5rem',
-                      textDecoration: 'underline',
-                    }}
-                  >
-                    (Haritada Gör ↗)
-                  </a>
-                )}
-              </div>
-            </div>
-            <div className="meetup-meta-item">
-              <span className="meta-icon">👥</span>
-              <div>
-                <strong>Kontenjan & Katılım:</strong> {event.attendees} Kişi Masada (Kapasite: {event.capacity || 'Sınırsız'})
               </div>
             </div>
           </div>
@@ -124,60 +113,81 @@ export const EventSpotlightCard: React.FC<EventSpotlightCardProps> = ({ event, e
           )}
         </div>
 
-        <div
-          style={{
-            background: 'var(--surface-elevated)',
-            padding: '2rem',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--border-circuit)',
-            textAlign: 'center',
-          }}
-        >
-          <div
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
-              color: 'var(--accent-primary)',
-              fontWeight: 700,
-              marginBottom: '1rem',
-              textTransform: 'uppercase',
-            }}
-          >
-            ⏳ BULUŞMAYA KALAN SÜRE
-          </div>
+        <div className="spotlight-countdown-card">
+          {showCountdown && (
+            <>
+              <div
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.85rem',
+                  color: 'var(--accent-primary)',
+                  fontWeight: 700,
+                  marginBottom: '1rem',
+                  textTransform: 'uppercase',
+                }}
+              >
+                BULUŞMAYA KALAN SÜRE
+              </div>
 
-          <CountdownTimer targetDate={event.dateStart} />
+              <CountdownTimer targetDate={event.dateStart} />
+            </>
+          )}
 
-          <div style={{ marginTop: '1.75rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+          <div style={{ marginTop: showCountdown ? '1.75rem' : 0, display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             <button
               type="button"
               className="btn btn-primary btn-full"
               onClick={handleDownloadICS}
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
               <span>Takvime Ekle (.ICS)</span>
-              <span>📥</span>
+              <Download size={16} />
             </button>
             <button
               type="button"
               className="btn btn-secondary btn-full"
               onClick={handleGoogleCalendar}
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
               <span>Google Takvim'e Kaydet</span>
-              <span>📅</span>
+              <Calendar size={16} />
             </button>
-            {(event.whatsappLink || links.whatsappCoworking) && <a
-              href={event.whatsappLink || links.whatsappCoworking}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-whatsapp btn-full"
-              onClick={(e) => {
-                e.preventDefault();
-                openWhatsAppWithRules(event.whatsappLink || links.whatsappCoworking, 'WhatsApp Coworking Masası');
-              }}
-            >
-              <span>WhatsApp Coworking Masasına Katıl</span>
-              <span>💬</span>
-            </a>}
+            {mapHref && (
+              <a
+                href={mapHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary btn-full"
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+              >
+                <span>Haritada Gör</span>
+                <MapPin size={16} />
+              </a>
+            )}
+            {statusInfo.canRegister ? (
+              (event.whatsappLink || links.whatsappCoworking) && <a
+                href={event.whatsappLink || links.whatsappCoworking}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-whatsapp btn-full"
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.55rem' }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  openWhatsAppWithRules(event.whatsappLink || links.whatsappCoworking, 'WhatsApp Coworking Masası');
+                }}
+              >
+                <WhatsAppIcon size={18} />
+                <span>WhatsApp Coworking Masasına Katıl</span>
+              </a>
+            ) : statusInfo.displayStatus === 'cancelled' ? (
+              <span style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                Etkinlik iptal edildi
+              </span>
+            ) : statusInfo.displayStatus === 'closed' ? (
+              <span style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                Kontenjan doldu
+              </span>
+            ) : null}
           </div>
         </div>
       </div>

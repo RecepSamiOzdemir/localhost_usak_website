@@ -6,7 +6,7 @@ const sitemap=await readFile(new URL('dist/sitemap.xml',root),'utf8');
 const titles=new Set();
 for(const [route,page] of Object.entries(pages)) {
   const html=await readFile(new URL(`dist/${route==='/'?'':route.slice(1)+'/'}index.html`,root),'utf8');
-  const url='https://localhostusak.tech'+(route==='/'?'/':route+'/');
+  const url=(process.env.VITE_SITE_URL || 'https://localhostusak.tech')+(route==='/'?'/':route+'/');
   assert.equal((html.match(/rel="canonical"/g)||[]).length,1);
   assert(html.includes(`rel="canonical" href="${url}"`));
   assert(html.includes(`og:url" content="${url}"`));

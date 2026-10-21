@@ -1,0 +1,59 @@
+/* ==========================================================================
+   Classic & Ultra-Smooth Mobile Pull-to-Refresh Indicator
+   ========================================================================== */
+
+.ptr-badge-wrapper {
+  position: fixed;
+  top: 72px; /* Positioned directly underneath sticky navbar */
+  left: 50%;
+  transform: translate3d(-50%, -60px, 0);
+  z-index: 999; /* Behind navbar (z-index: 1000) so it drops down smoothly */
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform, opacity;
+}
+
+.ptr-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-card, #131722);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.12));
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 1px rgba(0, 0, 0, 0.4);
+  color: var(--text-primary, #F8FAFC);
+  transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  pointer-events: none;
+}
+
+.ptr-badge.ready {
+  border-color: var(--accent-primary, #E35D14);
+  color: var(--accent-primary, #E35D14);
+  box-shadow: 0 4px 24px rgba(227, 93, 20, 0.4);
+}
+
+.ptr-badge.refreshing {
+  border-color: var(--accent-primary, #E35D14);
+  color: var(--accent-primary, #E35D14);
+}
+
+/* Spinner Icon */
+.ptr-icon {
+  width: 18px;
+  height: 18px;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.ptr-badge.refreshing .ptr-icon {
+  animation: ptr-spin 0.75s linear infinite !important;
+}
+
+@keyframes ptr-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

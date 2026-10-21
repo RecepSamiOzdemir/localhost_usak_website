@@ -1,14 +1,16 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-export function useCmsCollection<T>(load: () => Promise<T[]>) {
-  const [items, setItems] = useState<T[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+// initialItems: önbellekte hazır veri varsa verilir; yükleme durumu hiç açılmaz (skeleton/spinner yanıp sönmez)
+export function useCmsCollection<T>(load: () => Promise<T[]>, initialItems?: T[]) {
+  const [items, setItems] = useState<T[]>(initialItems ?? []);
+  const [isLoading, setIsLoading] = useState(initialItems === undefined);
+  const hadInitialItems = useRef(initialItems !== undefined);
   const [error, setError] = useState(false);
   const [revision, setRevision] = useState(0);
 
   useEffect(() => {
     let active = true;
-    setIsLoading(true);
+    if (!hadInitialItems.current || revision > 0) setIsLoading(true);
     setError(false);
     load()
       .then((data) => {

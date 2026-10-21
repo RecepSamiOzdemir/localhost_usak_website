@@ -18,7 +18,7 @@ export const GeneralSettings: GlobalConfig = {
           name: 'siteTitle',
           type: 'text',
           label: 'Varsayılan Site Başlığı',
-          defaultValue: "localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu",
+          defaultValue: 'Uşak Teknoloji ve Yazılım Topluluğu | localhostusak',
           required: true,
         },
         {
@@ -26,7 +26,7 @@ export const GeneralSettings: GlobalConfig = {
           type: 'textarea',
           label: 'Varsayılan Meta Açıklama',
           defaultValue:
-            "Uşak'taki yazılımcılar, tasarımcılar, remote çalışanlar ve öğrenciler için açık, samimi ve üretken teknoloji topluluğu. Kahveni al, laptopunu getir!",
+            "Uşak'ta yazılımcılar, mühendisler ve teknoloji meraklıları için açık topluluk. Coworking buluşmaları, açık kaynak projeleri ve kariyer paylaşımları.",
           required: true,
         },
         {
@@ -83,7 +83,7 @@ export const GeneralSettings: GlobalConfig = {
           type: 'textarea',
           label: 'Marka Sloganı / Açıklaması',
           defaultValue:
-            "Uşak'ın yerel teknoloji, yazılım ve tasarım ekosistemini büyüten açık ve bağımsız topluluk.",
+            "Uşak'ın yerel teknoloji ve yazılım ekosistemini büyüten açık ve bağımsız topluluk.",
         },
         {
           name: 'locationCoordinates',
@@ -95,7 +95,7 @@ export const GeneralSettings: GlobalConfig = {
           name: 'copyrightText',
           type: 'text',
           label: 'Telif Hakkı Metni',
-          defaultValue: "© 2026 localhostusak • Uşak'ta sevgiyle kodlandı 🧡",
+          defaultValue: "© 2026 localhostusak • Uşak'ta geliştirildi",
         },
       ],
     },

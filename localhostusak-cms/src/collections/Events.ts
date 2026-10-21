@@ -32,9 +32,11 @@ export const Events: CollectionConfig = {
       type: 'select',
       defaultValue: 'upcoming',
       options: [
-        { label: 'Yaklaşan (Upcoming)', value: 'upcoming' },
-        { label: 'Tamamlandı (Completed)', value: 'completed' },
-        { label: 'İptal Edildi (Cancelled)', value: 'cancelled' },
+        { label: 'Yaklaşan Etkinlik', value: 'upcoming' },
+        { label: 'Kayıtlar Devam Ediyor', value: 'open' },
+        { label: 'Dolu / Kayıt Kapandı', value: 'closed' },
+        { label: 'Tamamlandı (Geçmiş)', value: 'completed' },
+        { label: 'İptal Edildi', value: 'cancelled' },
       ],
       required: true,
     },
@@ -72,13 +74,21 @@ export const Events: CollectionConfig = {
       },
     },
     {
+      // Admin isteğiyle panelden gizlendi; veritabanındaki kolon ve mevcut değerler korunur.
       name: 'capacity',
       type: 'number',
+      admin: {
+        hidden: true,
+      },
     },
     {
+      // Admin isteğiyle panelden gizlendi; veritabanındaki kolon ve mevcut değerler korunur.
       name: 'attendees',
       type: 'number',
       defaultValue: 0,
+      admin: {
+        hidden: true,
+      },
     },
     {
       name: 'coverImage',
@@ -100,6 +110,14 @@ export const Events: CollectionConfig = {
       type: 'text',
       admin: {
         description: 'Etkinlik / Topluluk WhatsApp grup linki',
+      },
+    },
+    {
+      name: 'recapUrl',
+      type: 'text',
+      label: 'Etkinlik Özeti Linki',
+      admin: {
+        description: 'Fotoğraf albümü, sunum veya özet yazısı linki (etkinlik sonrası)',
       },
     },
     {

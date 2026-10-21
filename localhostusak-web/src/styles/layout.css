@@ -82,18 +82,24 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-xl);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-lg);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-md);
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Bento Grid */
@@ -101,14 +107,16 @@
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: var(--space-lg);
+  min-width: 0;
+  max-width: 100%;
 }
 
-.bento-span-12 { grid-column: span 12; }
-.bento-span-8  { grid-column: span 8; }
-.bento-span-7  { grid-column: span 7; }
-.bento-span-6  { grid-column: span 6; }
-.bento-span-5  { grid-column: span 5; }
-.bento-span-4  { grid-column: span 4; }
+.bento-span-12 { grid-column: span 12; min-width: 0; }
+.bento-span-8  { grid-column: span 8; min-width: 0; }
+.bento-span-7  { grid-column: span 7; min-width: 0; }
+.bento-span-6  { grid-column: span 6; min-width: 0; }
+.bento-span-5  { grid-column: span 5; min-width: 0; }
+.bento-span-4  { grid-column: span 4; min-width: 0; }
 
 /* Responsive Layout */
 @media (max-width: 1024px) {
@@ -138,65 +146,276 @@
    Specific Layout Enhancements for Navbar, Hero, Spotlight & Footer
    -------------------------------------------------------------------------- */
 .navbar-wrapper {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
+  width: 100%;
   transition: all var(--transition-normal);
+}
+
+body {
+  padding-top: var(--navbar-total-height, var(--nav-height, 72px));
 }
 
 .navbar-wrapper.nav-scrolled {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 
 .nav-container {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: var(--nav-height);
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding-left: var(--container-padding, 2rem);
+  padding-right: var(--container-padding, 2rem);
+  box-sizing: border-box;
+}
+
+/* Left Brand Logo Column */
+.nav-brand-wrapper {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: var(--nav-height);
+  justify-self: start;
 }
 
 .brand-logo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 1.35rem;
+  gap: 0.65rem;
+  font-family: var(--font-body);
+  font-size: 1.25rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   text-decoration: none;
   color: var(--text-primary);
+  padding: 0.35rem 0.5rem;
+  margin-left: -0.5rem;
+  border-radius: var(--radius-md);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.brand-logo:hover {
+  opacity: 0.9;
+  transform: translateY(-0.5px);
+}
+
+.brand-logo-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform var(--transition-fast);
+}
+
+.brand-logo:hover .brand-logo-img {
+  transform: scale(1.05);
+}
+
+.brand-logo-text {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1;
 }
 
 .brand-logo .brand-highlight {
   color: var(--accent-primary);
+  font-weight: 800;
+  margin-left: 0.25rem;
 }
 
+/* Türk bayrağı + turuncu köşe parantezleri (logonun sağında, marka linkinin dışında).
+   Her genişlikte akışta ve açık sabit boyutlu (shrink-to-fit / left:100% hesabına bağlı değil;
+   Safari'de güvenilmez). position:relative şart: ::before/::after köşelerini bayrağa bağlar,
+   static olursa wrapper'a bağlanıp bayraktan kopar. ≥1120px'te marka sütunu + bayrak (≈242px)
+   1fr payından (≈276px) küçük kalır, ortadaki menü kaymaz. */
+.nav-flag {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 24px;
+  margin-left: 0.15rem;
+  padding: 4px 5px;
+  line-height: 0;
+}
+
+.nav-flag svg {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 16px;
+  overflow: visible;
+}
+
+/* Açık temada krem zeminde kaybolmasın diye ince kenar */
+.nav-flag .flag-edge {
+  stroke: rgba(0, 0, 0, 0.18);
+  stroke-width: 0.5;
+}
+
+[data-theme="modern"] .nav-flag .flag-edge {
+  stroke: rgba(255, 255, 255, 0.14);
+}
+
+/* Sol üst ve sağ alt köşe parantezleri (kod bloğu hissi) */
+.nav-flag::before,
+.nav-flag::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: 1.5px solid var(--accent-primary);
+  opacity: 0.85;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.nav-flag::before {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-top-left-radius: 2px;
+}
+
+.nav-flag::after {
+  bottom: 0;
+  right: 0;
+  border-left: 0;
+  border-top: 0;
+  border-bottom-right-radius: 2px;
+}
+
+/* Hover'da parantezler hafifçe açılır */
+.nav-flag:hover::before {
+  transform: translate(-1px, -1px);
+  opacity: 1;
+}
+
+.nav-flag:hover::after {
+  transform: translate(1px, 1px);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-flag::before,
+  .nav-flag::after {
+    transition: none;
+  }
+
+  .nav-flag:hover::before,
+  .nav-flag:hover::after {
+    transform: none;
+  }
+}
+
+/* Center Nav Links Column (Modern Glass Pill) */
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1.75rem;
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
+  justify-self: center;
+  gap: 0.25rem;
+  padding: 0.3rem 0.4rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.nav-links a {
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1;
   color: var(--text-secondary);
-  transition: color var(--transition-fast);
-  position: relative;
+  border-radius: var(--radius-full);
   text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  border: 1px solid transparent;
 }
 
-.nav-links a:hover {
+.nav-link:hover {
+  color: var(--text-primary);
+  background: var(--surface-hover);
+}
+
+.nav-link.active {
   color: var(--accent-primary);
+  background: rgba(227, 93, 20, 0.12);
+  border: 1px solid rgba(227, 93, 20, 0.25);
+  font-weight: 600;
 }
 
+/* Right Nav Actions Column */
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-self: end;
+  gap: 0.75rem;
+}
+
+.nav-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1.05rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-medium);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.nav-cta-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(227, 93, 20, 0.22);
+}
+
+.nav-cta-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.mobile-menu-toggle {
+  display: none !important;
+}
+
+@media (min-width: 901px) {
+  .mobile-drawer {
+    display: none !important;
+  }
 }
 
 .hero-section {
@@ -226,11 +445,39 @@
   pointer-events: auto;
 }
 
+.spotlight-card {
+  position: relative;
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 .spotlight-inner {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   gap: 2.5rem;
   align-items: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.spotlight-inner > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.spotlight-countdown-card {
+  background: var(--surface-elevated);
+  padding: 2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-circuit);
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .spotlight-badges {
@@ -253,11 +500,19 @@
   gap: 0.75rem;
   font-size: 1.05rem;
   color: var(--text-primary);
+  min-width: 0;
+  word-break: break-word;
+}
+
+.meetup-meta-item > div {
+  min-width: 0;
+  word-break: break-word;
 }
 
 .meetup-meta-item .meta-icon {
   font-size: 1.25rem;
   color: var(--accent-primary);
+  flex-shrink: 0;
 }
 
 .agenda-tags {
@@ -295,11 +550,6 @@
   padding: 4.5rem 0 2.5rem 0;
 }
 
-[data-theme="pixel"] .footer-wrapper {
-  border-top: 3px solid var(--pixel-black);
-  background-color: #F5EBDC;
-}
-
 .footer-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
@@ -313,25 +563,64 @@
   justify-content: space-between;
   padding-top: 2rem;
   border-top: 1px solid var(--border-subtle);
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.85rem;
   color: var(--text-muted);
 }
 
-[data-theme="pixel"] .footer-bottom {
-  border-top: 2px dashed var(--pixel-black);
-  color: var(--coffee-brown);
-}
-
 @media (max-width: 900px) {
-  .spotlight-inner {
-    grid-template-columns: 1fr;
+  /* Mobilde bayrak küçülür (kutu 30×21; position:relative korunur, parantezler bayrağa bağlı kalır) */
+  .nav-flag {
+    width: 30px;
+    height: 21px;
   }
+
+  .nav-flag svg {
+    width: 20px;
+    height: 13px;
+  }
+
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: var(--container-padding, 1.25rem);
+    padding-right: var(--container-padding, 1.25rem);
+  }
+
   .nav-links {
-    display: none;
+    display: none !important;
   }
+
+  .nav-cta-btn {
+    display: none !important;
+  }
+
   .mobile-menu-toggle {
     display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-medium);
+    background: var(--surface-elevated);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .mobile-menu-toggle:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+  }
+  .spotlight-inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .spotlight-card {
+    padding: 2rem 1.5rem;
   }
   .footer-grid {
     grid-template-columns: 1fr;
@@ -341,5 +630,47 @@
     flex-direction: column;
     gap: 1rem;
     text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .spotlight-card {
+    padding: 1.5rem 1rem !important;
+  }
+  .spotlight-countdown-card {
+    padding: 1.25rem 0.75rem !important;
+  }
+  .spotlight-badges {
+    gap: 0.4rem;
+  }
+  .meetup-meta-list {
+    gap: 0.75rem;
+    margin: 1.25rem 0;
+  }
+  .meetup-meta-item {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .spotlight-card {
+    padding: 1.25rem 0.6rem !important;
+  }
+  .spotlight-countdown-card {
+    padding: 1rem 0.5rem !important;
+  }
+}
+
+/* Masaüstünde dar aralıkta (901-1119 px) bayrağa yer yok: menüyle çakışmasın diye gizlenir */
+@media (min-width: 901px) and (max-width: 1119px) {
+  .nav-flag {
+    display: none;
+  }
+}
+
+/* Çok dar ekranda (360 px altı) bayrak gizlenir */
+@media (max-width: 359px) {
+  .nav-flag {
+    display: none;
   }
 }

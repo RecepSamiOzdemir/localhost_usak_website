@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
+import { WhatsAppIcon } from '../shared';
 
 interface FloatingCTAProps {
   whatsappUrl?: string;
@@ -11,12 +13,15 @@ export const FloatingCTA: React.FC<FloatingCTAProps> = ({
   whatsappUrl,
   label = "WhatsApp'a Katıl",
 }) => {
+  const location = useLocation();
   const { links } = useLinks();
   const { openWhatsAppWithRules } = useWhatsAppModal();
   const effectiveUrl = whatsappUrl || links.whatsappGeneral;
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    if (location.pathname !== '/') return;
+
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
@@ -50,9 +55,10 @@ export const FloatingCTA: React.FC<FloatingCTAProps> = ({
     handleScroll(); // Initial check
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
 
-  if (!effectiveUrl) return null;
+  // Only show FloatingCTA on the home page
+  if (location.pathname !== '/' || !effectiveUrl) return null;
 
   return (
     <a
@@ -67,7 +73,9 @@ export const FloatingCTA: React.FC<FloatingCTAProps> = ({
         openWhatsAppWithRules(effectiveUrl, label);
       }}
     >
-      <span className="floating-cta-icon">💬</span>
+      <span className="floating-cta-icon" style={{ display: 'inline-flex', alignItems: 'center' }}>
+        <WhatsAppIcon size={18} />
+      </span>
       <span>{label}</span>
     </a>
   );

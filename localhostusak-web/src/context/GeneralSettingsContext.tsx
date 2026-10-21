@@ -11,14 +11,14 @@ const DEFAULT_GENERAL_SETTINGS: GeneralSettingsData = {
   },
   header: {
     announcementActive: false,
-    announcementText: '🎉 Yeni buluşma takvimimiz açıklandı! Detaylar etkinlikler sayfasında.',
+    announcementText: 'Yeni buluşma takvimimiz açıklandı! Detaylar etkinlikler sayfasında.',
     announcementUrl: '/etkinlikler',
   },
   footer: {
     tagline:
       "Uşak'ın yerel teknoloji, yazılım ve tasarım ekosistemini büyüten açık ve bağımsız topluluk.",
     locationCoordinates: '38.6823° N, 29.4082° E',
-    copyrightText: "© 2026 localhostusak • Uşak'ta sevgiyle kodlandı 🧡",
+    copyrightText: "© 2026 localhostusak • Uşak'ta geliştirildi",
   },
 };
 

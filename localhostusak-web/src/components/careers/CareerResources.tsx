@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSiteSettings } from '../../context/SiteSettingsContext';
 import { SiteCareerResource } from '../../services/api';
+import { renderCleanIcon } from '../../utils/cleanIcon';
 
 interface CareerResourcesProps {
   items?: SiteCareerResource[];
@@ -12,9 +13,9 @@ export const CareerResources: React.FC<CareerResourcesProps> = ({ items }) => {
   if (resources.length === 0) return null;
 
   return (
-    <section style={{ margin: '3.5rem 0' }}>
+    <section className="career-resources-section">
       <div className="section-header" style={{ marginBottom: '2rem' }}>
-        <span className="section-tag">// KAYNAKLAR & REHBERLER</span>
+        <span className="section-tag">KAYNAKLAR & REHBERLER</span>
         <h2 className="section-title">Kariyerini Güçlendirecek Araçlar</h2>
         <p className="section-desc">
           Topluluk üyelerimizin deneyimleriyle hazırlanan ücretsiz kaynaklar ve ipuçları.
@@ -24,7 +25,9 @@ export const CareerResources: React.FC<CareerResourcesProps> = ({ items }) => {
       <div className="grid-4">
         {resources.map((res, i) => (
           <div key={i} className="card card-interactive" style={{ padding: '1.75rem', height: '100%' }}>
-            <div style={{ fontSize: '2.25rem', marginBottom: '1rem' }}>{res.icon}</div>
+            <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+              {renderCleanIcon(res.icon, 32)}
+            </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.5rem' }}>
               {res.title}
             </h3>

@@ -2,7 +2,10 @@ import { EventItem, EventType } from '../types/event';
 import { CareerItem } from '../types/career';
 import { ProjectItem } from '../types/project';
 import { SponsorItem } from '../types/sponsor';
-import { CommunityLinks } from '../constants/links';
+import { MOCK_SPONSORS } from '../data/mockSponsors';
+import { isUpcomingGroup } from '../utils/eventStatus';
+import { CommunityLinks, normalizeCommunityLinkKey } from '../constants/links';
+import type { ApplicationFormSettings, SubmitResult } from '../types/application';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
@@ -18,7 +21,7 @@ function configuredUrl(url: unknown): url is string {
 }
 
 function absoluteMediaUrl(url: string): string {
-  if (/^https?:\/\//i.test(url)) return url;
+  if (/^(https?|data):/i.test(url)) return url;
   return new URL(url, new URL(API_BASE, window.location.origin)).toString();
 }
 
@@ -49,10 +52,9 @@ export function normalizeEventDoc(doc: any): EventItem {
     dateEnd: doc.dateEnd,
     location: doc.location || '',
     mapUrl: doc.mapUrl,
-    capacity: doc.capacity,
-    attendees: doc.attendees || 0,
     imageUrl: normalizeMediaUrl(doc.coverImage, doc.imageUrl),
     whatsappLink: configuredUrl(doc.whatsappLink) ? doc.whatsappLink : undefined,
+    recapUrl: configuredUrl(doc.recapUrl) ? doc.recapUrl : undefined,
     tags: Array.isArray(doc.tags) ? doc.tags.map((t: any) => (typeof t === 'string' ? t : t.tag || t.name)) : [],
     createdAt: doc.createdAt || new Date().toISOString(),
   };
@@ -67,16 +69,18 @@ export async function fetchEvents(): Promise<EventItem[]> {
   const items = docs.map(normalizeEventDoc);
 
   // Sıralama mantığı:
-  // 1. Önce yaklaşan (upcoming) etkinlikler, tarihi EN YAKIN olan en başta (ASC)
-  // 2. Ardından tamamlanan (completed) etkinlikler, EN SON yapılan en başta (DESC)
+  // 1. Önce "yaklaşan grup" (upcoming/open/closed, tarihi gelmemiş), tarihi EN YAKIN olan en başta (ASC)
+  // 2. Ardından geri kalanlar (tamamlanan/iptal/tarihi geçmiş), EN SON yapılan en başta (DESC)
   return items.sort((a: EventItem, b: EventItem) => {
-    if (a.status === 'upcoming' && b.status !== 'upcoming') return -1;
-    if (a.status !== 'upcoming' && b.status === 'upcoming') return 1;
+    const aUpcoming = isUpcomingGroup(a);
+    const bUpcoming = isUpcomingGroup(b);
+    if (aUpcoming && !bUpcoming) return -1;
+    if (!aUpcoming && bUpcoming) return 1;
 
     const timeA = new Date(a.dateStart).getTime();
     const timeB = new Date(b.dateStart).getTime();
 
-    if (a.status === 'upcoming' && b.status === 'upcoming') {
+    if (aUpcoming && bUpcoming) {
       return timeA - timeB; // En yakın tarih ilk sırada
     }
     return timeB - timeA; // Geçmişte en son yapılan ilk sırada
@@ -105,7 +109,7 @@ export async function fetchEventTypes(): Promise<EventType[]> {
   return docs.map((doc: any) => ({
     id: doc.slug || String(doc.id),
     label: doc.label,
-    icon: doc.icon || '☕',
+    icon: doc.icon || 'coffee',
     colorModern: doc.colorModern || '#FF6600',
     colorPixel: doc.colorPixel || '#EE6C19',
     isDefault: doc.isDefault,
@@ -154,6 +158,10 @@ export async function fetchProjects(): Promise<ProjectItem[]> {
     teamMax: doc.teamMax,
     rolesNeeded: Array.isArray(doc.rolesNeeded) ? doc.rolesNeeded.map((r: any) => (typeof r === 'string' ? r : r.role)) : [],
     githubUrl: doc.githubUrl,
+    // FAZ5: açık kaynak projeleri için ek alanlar (hepsi opsiyonel)
+    contributingGuideUrl: configuredUrl(doc.contributingGuideUrl) ? doc.contributingGuideUrl : undefined,
+    projectStatus: doc.projectStatus || undefined,
+    difficultyLevel: doc.difficultyLevel || undefined,
     demoUrl: doc.demoUrl,
     imageUrl: normalizeMediaUrl(doc.coverImage, doc.imageUrl),
     likes: doc.likes || 0,
@@ -176,20 +184,57 @@ export async function likeProject(id: number | string): Promise<number | null> {
   }
 }
 
-export async function fetchSponsors(): Promise<SponsorItem[]> {
-  const res = await fetch(`${API_BASE}/sponsors?limit=100&where[isActive][equals]=true&sort=sortOrder`);
-  if (!res.ok) throw new Error('Sponsors could not be fetched');
-  const data = await res.json();
-  const docs = Array.isArray(data) ? data : data.docs || [];
+// Sponsor listesi için modül önbelleği: sayfalar arası geçişte tekrar istek/spinner olmasın
+const SPONSORS_CACHE_TTL_MS = 5 * 60 * 1000;
+let sponsorsCache: { items: SponsorItem[]; at: number } | null = null;
+let sponsorsRequest: Promise<SponsorItem[]> | null = null;
 
-  return docs.map((doc: any) => ({
-    id: doc.id,
-    name: doc.name,
-    logoUrl: normalizeMediaUrl(doc.logo, doc.logoUrl),
-    websiteUrl: doc.websiteUrl,
-    sortOrder: doc.sortOrder || 0,
-    isActive: doc.isActive !== false,
-  }));
+// Geçerli önbellek varsa senkron döner (ilk render'da skeleton'u atlamak için)
+export function getCachedSponsors(): SponsorItem[] | undefined {
+  if (sponsorsCache && Date.now() - sponsorsCache.at < SPONSORS_CACHE_TTL_MS) {
+    return sponsorsCache.items;
+  }
+  return undefined;
+}
+
+export function fetchSponsors(): Promise<SponsorItem[]> {
+  const cached = getCachedSponsors();
+  if (cached) return Promise.resolve(cached);
+  // Aynı anda gelen çağrılar (anasayfa + sponsor sayfası) tek isteği paylaşır
+  if (!sponsorsRequest) {
+    sponsorsRequest = loadSponsors().finally(() => {
+      sponsorsRequest = null;
+    });
+  }
+  return sponsorsRequest;
+}
+
+async function loadSponsors(): Promise<SponsorItem[]> {
+  try {
+    const res = await fetch(`${API_BASE}/sponsors?limit=100&where[isActive][equals]=true&sort=sortOrder`);
+    if (!res.ok) return MOCK_SPONSORS;
+    const data = await res.json();
+    const docs = Array.isArray(data) ? data : data.docs || [];
+
+    if (docs.length === 0) {
+      return MOCK_SPONSORS;
+    }
+
+    const items: SponsorItem[] = docs.map((doc: any) => ({
+      id: doc.id,
+      name: doc.name,
+      tier: doc.tier || 'community',
+      logoUrl: normalizeMediaUrl(doc.logo, doc.logoUrl),
+      websiteUrl: doc.websiteUrl,
+      sortOrder: doc.sortOrder || 0,
+      isActive: doc.isActive !== false,
+    }));
+    // Sadece gerçek API yanıtı önbelleğe alınır; mock yedekler alınmaz (hata sonrası düzelme şansı kalsın)
+    sponsorsCache = { items, at: Date.now() };
+    return items;
+  } catch {
+    return MOCK_SPONSORS;
+  }
 }
 
 export async function fetchCommunityLinks(): Promise<Partial<CommunityLinks> | null> {
@@ -199,13 +244,17 @@ export async function fetchCommunityLinks(): Promise<Partial<CommunityLinks> | n
     const data = await res.json();
     const docs = Array.isArray(data) ? data : data.docs || [];
 
-    const linkMap: Record<string, string> = {};
+    const linkMap: Partial<CommunityLinks> & Record<string, string> = {};
     for (const doc of docs) {
       if (doc.key && configuredUrl(doc.url)) {
+        const normalizedKey = normalizeCommunityLinkKey(doc.key);
+        if (normalizedKey) {
+          linkMap[normalizedKey] = doc.url;
+        }
         linkMap[doc.key] = doc.url;
       }
     }
-    return linkMap as Partial<CommunityLinks>;
+    return linkMap;
   } catch {
     return null;
   }
@@ -253,8 +302,16 @@ export interface SiteCareerResource {
   tag?: string;
 }
 
+export interface SiteVisionMessageItem {
+  id?: string;
+  quote: string;
+  tag?: string;
+  author?: string;
+}
+
 export interface SiteSettingsData {
   hero?: SiteHeroSettings;
+  visionMessages?: SiteVisionMessageItem[];
   stats?: SiteStatItem[];
   values?: SiteValueItem[];
   personas?: SitePersonaItem[];
@@ -322,12 +379,20 @@ export interface EventsPageSettingsData {
   };
 }
 
+let eventsPageSettingsCache: EventsPageSettingsData | null = null;
+
+export function getCachedEventsPageSettings(): EventsPageSettingsData | null {
+  return eventsPageSettingsCache;
+}
+
 export async function fetchEventsPageSettings(): Promise<EventsPageSettingsData | null> {
+  if (eventsPageSettingsCache) return eventsPageSettingsCache;
   try {
     const res = await fetch(`${API_BASE}/globals/events-page-settings`);
     if (!res.ok) return null;
     const data = await res.json();
-    return data as EventsPageSettingsData;
+    eventsPageSettingsCache = data as EventsPageSettingsData;
+    return eventsPageSettingsCache;
   } catch {
     return null;
   }
@@ -350,16 +415,70 @@ export interface CareersPageSettingsData {
     title?: string;
     description?: string;
   };
+  applicationForm?: ApplicationFormSettings;
+}
+
+let careersPageSettingsCache: CareersPageSettingsData | null = null;
+
+export function getCachedCareersPageSettings(): CareersPageSettingsData | null {
+  return careersPageSettingsCache;
 }
 
 export async function fetchCareersPageSettings(): Promise<CareersPageSettingsData | null> {
+  if (careersPageSettingsCache) return careersPageSettingsCache;
   try {
     const res = await fetch(`${API_BASE}/globals/careers-page-settings`);
     if (!res.ok) return null;
     const data = await res.json();
-    return data as CareersPageSettingsData;
+    careersPageSettingsCache = data as CareersPageSettingsData;
+    return careersPageSettingsCache;
   } catch {
     return null;
+  }
+}
+
+// --- CV Havuzu Başvurusu (FAZ 6) ---
+
+// Başvuru tarayıcıdan DOĞRUDAN CMS'e gider; frontend sunucusu/proxy üzerinden geçerse CMS tüm
+// başvuruları tek IP'den görür ve günlük IP sınırı herkesi engeller. Production derlemesinde
+// VITE_API_URL mutlak (https://cms…/api) olmalıdır; göreli ise form gösterilmez.
+// (Geliştirmede göreli '/api' Vite proxy'sine gider; yalnızca yerel deneme içindir.)
+export function isDirectCmsApi(): boolean {
+  return !import.meta.env.PROD || /^https?:\/\//i.test(API_BASE);
+}
+
+const APPLY_TIMEOUT_MS = 60_000;
+const NETWORK_ERROR_MESSAGE = 'Bağlantı kurulamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.';
+const UNEXPECTED_ERROR_MESSAGE = 'Başvurunuz şu anda gönderilemedi. Lütfen daha sonra tekrar deneyin.';
+
+// FormData'nın Content-Type başlığı (multipart sınırı) tarayıcı tarafından konur; elle eklenmez.
+// credentials: 'omit' — başvuru anonimdir, oturum çerezi gönderilmez.
+export async function submitJobApplication(form: FormData): Promise<SubmitResult> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), APPLY_TIMEOUT_MS);
+  try {
+    const res = await fetch(`${API_BASE}/job-applications/apply`, {
+      method: 'POST',
+      body: form,
+      credentials: 'omit',
+      signal: controller.signal,
+    });
+    if (res.ok) return { ok: true };
+
+    // CMS hata gövdesi: { success:false, code, message, fields? }; mesaj olduğu gibi gösterilir
+    let body: { message?: unknown; fields?: unknown } | null = null;
+    try {
+      body = await res.json();
+    } catch {
+      // JSON değil (ör. ters proxy hata sayfası)
+    }
+    const message = typeof body?.message === 'string' && body.message ? body.message : UNEXPECTED_ERROR_MESSAGE;
+    const fields = Array.isArray(body?.fields) ? body.fields.filter((f): f is string => typeof f === 'string') : [];
+    return { ok: false, message, fields };
+  } catch {
+    return { ok: false, message: NETWORK_ERROR_MESSAGE, fields: [] };
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -381,13 +500,90 @@ export interface ProjectsPageSettingsData {
   };
 }
 
+let projectsPageSettingsCache: ProjectsPageSettingsData | null = null;
+
+export function getCachedProjectsPageSettings(): ProjectsPageSettingsData | null {
+  return projectsPageSettingsCache;
+}
+
 export async function fetchProjectsPageSettings(): Promise<ProjectsPageSettingsData | null> {
+  if (projectsPageSettingsCache) return projectsPageSettingsCache;
   try {
     const res = await fetch(`${API_BASE}/globals/projects-page-settings`);
     if (!res.ok) return null;
     const data = await res.json();
-    return data as ProjectsPageSettingsData;
+    projectsPageSettingsCache = data as ProjectsPageSettingsData;
+    return projectsPageSettingsCache;
   } catch {
     return null;
   }
+}
+
+// --- KVKK & Hukuki Ayarlar ---
+export interface KvkkSectionData {
+  id: string;
+  num: string;
+  title: string;
+  content?: string;
+}
+
+export interface KvkkSettingsData {
+  hero?: {
+    tag?: string;
+    title?: string;
+    highlightText?: string;
+    description?: string;
+  };
+  documentMeta?: {
+    badgeText?: string;
+    lastUpdated?: string;
+    version?: string;
+    contactEmail?: string;
+  };
+  leadText?: string;
+  callouts?: {
+    photoVideoTitle?: string;
+    photoVideoText?: string;
+    intellectualPropertyTitle?: string;
+    intellectualPropertyText?: string;
+  };
+  consent?: {
+    badge?: string;
+    declarationText?: string;
+    dateNote?: string;
+    dataControllerName?: string;
+  };
+  sections?: KvkkSectionData[];
+}
+
+export async function fetchKvkkSettings(): Promise<KvkkSettingsData | null> {
+  try {
+    const res = await fetch(`${API_BASE}/globals/kvkk-settings`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data as KvkkSettingsData;
+  } catch {
+    return null;
+  }
+}
+
+// ─── Instagram ─────────────────────────────────────────────────────────────
+
+export interface InstagramPost {
+  id: string;
+  media_type: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM';
+  media_url: string;
+  thumbnail_url?: string;
+  permalink: string;
+  caption?: string;
+  timestamp: string;
+}
+
+export async function fetchInstagramPosts(): Promise<InstagramPost[]> {
+  const base = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+  const url = `${base}/instagram/posts`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Instagram fetch failed');
+  const json = await res.json();
+  return (json.posts ?? []) as InstagramPost[];
 }

@@ -1,7 +1,8 @@
 import React from 'react';
+import { Search } from 'lucide-react';
 
 interface EmptyStateProps {
-  icon?: string;
+  icon?: React.ReactNode;
   title: string;
   description: string;
   actionText?: string;
@@ -9,7 +10,7 @@ interface EmptyStateProps {
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
-  icon = '🔍',
+  icon,
   title,
   description,
   actionText,
@@ -17,7 +18,9 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <div className="empty-state-box">
-      <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>{icon}</div>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', color: 'var(--text-muted)' }}>
+        {icon || <Search size={44} />}
+      </div>
       <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem', fontWeight: 800 }}>{title}</h3>
       <p style={{ color: 'var(--text-secondary)', maxWidth: '440px', margin: '0 auto 1.5rem auto' }}>
         {description}

@@ -1,0 +1,539 @@
+/* ==========================================================================
+   Kariyer — CV havuzu başvuru formu (FAZ 6)
+   Yalnızca token'lar kullanılır; Modern (koyu) ve Pixel (açık) temalarda çalışır.
+   ========================================================================== */
+
+.application-section {
+  margin-top: var(--space-3xl);
+  scroll-margin-top: calc(var(--nav-height) + 1rem);
+}
+
+.application-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.application-toggle:hover {
+  border-color: var(--accent-primary);
+}
+
+.application-toggle:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.application-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.application-toggle-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.application-toggle-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.application-toggle-icon {
+  flex-shrink: 0;
+}
+
+.application-toggle[aria-expanded='true'] .application-toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Açılır-kapanır panel: geçişsiz, anında aç/kapa (yükseklik animasyonu uzun formda takılıyordu).
+   Kapalıyken display:none: alanlara odak girmez, düzen hesabına katılmaz. Form DOM'da kalır, değerler korunur. */
+.application-collapse {
+  display: none;
+}
+
+.application-collapse[data-open='true'] {
+  display: block;
+  padding: 1.25rem 4px 0; /* odak halkaları ve gölgeler kırpılmasın */
+}
+
+.application-intro {
+  max-width: 820px;
+  margin: 0 auto 1rem;
+}
+
+.application-form {
+  position: relative;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.application-required-note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.application-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.application-form .form-control {
+  width: 100%;
+  min-height: 2.75rem; /* dokunma hedefi */
+  font-size: 1rem; /* iOS odakta yakınlaştırmasın */
+}
+
+.application-form .form-group label,
+.application-fieldset legend {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.required-mark {
+  color: var(--accent-primary);
+}
+
+/* Odak halkası (form-control temel stilinde outline kapalı) */
+.application-form .form-control:focus-visible,
+.application-form input[type='checkbox']:focus-visible,
+.application-form .dropzone-remove:focus-visible,
+.application-form .btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.application-form .form-control[aria-invalid='true'] {
+  border-color: var(--accent-primary);
+}
+
+.application-form .form-control:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.field-error {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+/* İlgi alanları */
+.application-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.application-fieldset legend {
+  padding: 0;
+  margin-bottom: 0.4rem;
+}
+
+.application-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.application-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  min-height: 2.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.application-check:hover,
+.application-check:has(input:checked) {
+  border-color: var(--accent-primary);
+}
+
+.application-form input[type='checkbox'] {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+  accent-color: var(--accent-primary);
+  cursor: pointer;
+}
+
+/* Dosya alanı */
+.dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Görsel olarak gizli ama odaklanabilir gerçek girdi */
+.dropzone-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.dropzone-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1.75rem 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  border: 2px dashed var(--border-medium);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.dropzone-label:hover,
+.dropzone.is-dragging .dropzone-label {
+  border-color: var(--accent-primary);
+  background: var(--bg-tag);
+}
+
+.dropzone-input:focus-visible + .dropzone-label {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-color: var(--accent-primary);
+}
+
+.dropzone.is-invalid .dropzone-label {
+  border-color: var(--accent-primary);
+}
+
+.dropzone.is-disabled .dropzone-label {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.dropzone-title {
+  font-size: 0.95rem;
+}
+
+.dropzone-link {
+  color: var(--accent-primary);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.dropzone-file {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.dropzone-file-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropzone-file-size {
+  flex: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.dropzone-remove {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.dropzone-remove:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+}
+
+/* Aydınlatma metni pop-up'ı (PrivacyModal). Geçiş/animasyon yok: anında açılır. */
+.application-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100; /* üst menünün (1000) üstünde */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.application-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: min(640px, 100%);
+  max-height: min(90vh, 90dvh);
+  padding: 1.25rem;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-card);
+}
+
+.application-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.application-modal-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.application-modal-close {
+  display: inline-flex;
+  padding: 0.35rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.application-modal-close:hover {
+  color: var(--text-primary);
+}
+
+.application-modal-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+}
+
+.application-modal-scroll p {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.application-modal-scroll p:last-child {
+  margin-bottom: 0;
+}
+
+.application-modal-close:focus-visible,
+.application-modal-scroll:focus-visible,
+.application-modal .btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.application-modal-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.application-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Pasif görünüm: aria-disabled düğme odaklanabilir kalır ama tıklama etkisizdir */
+.application-modal .btn[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.application-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .application-modal-backdrop {
+    padding: 0.5rem;
+  }
+
+  .application-modal {
+    padding: 1rem;
+    max-height: 94dvh;
+  }
+
+  .application-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .application-modal-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Açık rıza */
+.application-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.application-consent input[type='checkbox'] {
+  margin-top: 0.2rem;
+}
+
+.application-form .application-consent label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--text-primary);
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+/* Bot tuzağı: ekran dışı (display:none değil; basit botlar doldursun) */
+.application-hp {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Sonuç mesajı */
+.application-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.application-result p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.application-result svg {
+  flex: none;
+  margin-top: 0.1rem;
+}
+
+.application-result.is-success {
+  border-color: var(--accent-success);
+}
+
+.application-result.is-success svg {
+  color: var(--accent-success);
+}
+
+.application-result.is-error {
+  border-color: var(--accent-primary);
+}
+
+.application-result.is-error svg {
+  color: var(--accent-primary);
+}
+
+.application-result:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Gönder düğmesi */
+.application-form .btn:disabled {
+  opacity: 0.7;
+  cursor: progress;
+  transform: none;
+}
+
+@keyframes application-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.application-spinner {
+  animation: application-spin 1.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .application-spinner {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .application-form {
+    padding: 1.25rem;
+  }
+
+  .application-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

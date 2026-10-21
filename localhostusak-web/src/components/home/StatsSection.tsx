@@ -79,22 +79,6 @@ export const StatsSection: React.FC = () => {
             </div>
           ))}
         </div>
-
-        {/* 8-Bit Pixel People Chain in Pixel Mode */}
-        {theme === 'pixel' && (
-          <div
-            className="pixel-people-line"
-            aria-hidden="true"
-            style={{
-              textAlign: 'center',
-              fontSize: '1.75rem',
-              marginTop: '3rem',
-              letterSpacing: '0.4rem',
-            }}
-          >
-            🧍‍♂️ 🧍‍♀️ ☕ 💻 🧍‍♂️ 🧡 🧍‍♀️ 🎮 🧍‍♂️
-          </div>
-        )}
       </div>
     </section>
   );

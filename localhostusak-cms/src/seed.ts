@@ -207,7 +207,41 @@ async function seed() {
     }
   }
 
-  // 6. Site Settings (Global)
+  // 6. Sponsors
+  const sponsorsDataPath = path.resolve(dirname, '../../localhostusak-web/src/data/sponsors.json')
+  if (fs.existsSync(sponsorsDataPath)) {
+    const sponsorsData = JSON.parse(fs.readFileSync(sponsorsDataPath, 'utf-8'))
+    for (const s of sponsorsData) {
+      const existing = await payload.find({
+        collection: 'sponsors',
+        where: {
+          name: {
+            equals: s.name,
+          },
+        },
+        limit: 1,
+      })
+
+      if (existing.docs.length === 0) {
+        await payload.create({
+          collection: 'sponsors',
+          data: {
+            name: s.name,
+            tier: s.tier || 'community',
+            logoUrl: s.logoUrl,
+            websiteUrl: s.websiteUrl,
+            sortOrder: s.sortOrder ?? 0,
+            isActive: s.isActive !== false,
+          },
+        })
+        console.log(`  ✓ Sponsor eklendi: [${s.tier}] ${s.name}`)
+      } else {
+        console.log(`  - Sponsor zaten mevcut: ${s.name}`)
+      }
+    }
+  }
+
+  // 7. Site Settings (Global)
   console.log('  -> Site Ayarları (Global) kontrol ediliyor...')
   try {
     await payload.updateGlobal({
@@ -215,12 +249,34 @@ async function seed() {
       data: {
         hero: {
           cityCoordinates: '38.6823° N, 29.4082° E',
-          title: "Uşak'ın Teknoloji ve",
-          titleHighlight: 'Tasarım Topluluğu',
-          subtitle: 'connect • build • collaborate • grow',
+          title: "Uşak'ta Teknoloji",
+          titleHighlight: 'Etrafında Buluş',
+          subtitle: 'CONNECT • BUILD • COLLABORATE • GROW',
           description:
-            'Kahveni al, laptopunu getir, aramıza katıl. Deneyimli olmak şart değil; merakın ve öğrenme isteğin varsa masada sana da yer var.',
+            'Teknolojiye ilgi duyan, üreten ve gelişmek isteyen insanları bir araya getiren lokal topluluk. Kahveni al, laptopunu getir, masada yerini al.',
         },
+        visionMessages: [
+          {
+            quote: "Uşak'ta sürdürülebilir, samimi ve profesyonel bir teknoloji ekosistemi oluşturmak.",
+            tag: 'YOL HARİTAMIZ & VİZYONUMUZ',
+            author: 'Localhost Uşak',
+          },
+          {
+            quote: 'Kahveni al, masaya otur. Birlikte düşündüğümüzde ve ürettiğimizde çok daha güçlüyüz.',
+            tag: 'GOOD CODE, BETTER PEOPLE',
+            author: 'Açık Masa Felsefesi',
+          },
+          {
+            quote: "Büyük şehirlerdeki teknoloji ve girişimcilik enerjisini Uşak'ın üretken yetenekleriyle buluşturuyoruz.",
+            tag: 'YEREL DAYANIŞMA, KÜRESEL VİZYON',
+            author: 'Ekosistem',
+          },
+          {
+            quote: 'Unvanlar ve kurumsal hiyerarşiler kapıda kalır. Yeni başlayandan kıdemli mühendise herkes aynı masada eşittir.',
+            tag: 'SIFIR HİYERARŞİ & EŞİT MASA',
+            author: 'Temel İlke',
+          },
+        ],
         stats: [
           { target: 150, prefix: '', suffix: '+', label: 'Topluluk Üyesi' },
           { target: 3, prefix: '#', suffix: '', label: 'Başarılı Buluşma' },
@@ -232,7 +288,7 @@ async function seed() {
             icon: '🧡',
             title: 'Resmiyetten Uzak, Samimi Bir Masa',
             description:
-              'Buluşmalarımız kurumsal konferans formatında değil. Kimse kravat takmıyor, kimse unvan satmıyor. En tecrübeli yazılımcı da yeni başlayan öğrenci de aynı masada yan yana kahvesini yudumluyor.',
+              'Buluşmalarımız kurumsal konferans formatında değil. Kimse kravat takmıyor, kimse unvan satmıyor. En tecrübeli yazılımcı da yeni başlayan da aynı masada yan yana kahvesini yudumluyor.',
             tags: '#Samimiyet, #Eşitlik, #Yardımlaşma',
           },
           {
@@ -348,9 +404,9 @@ async function seed() {
       slug: 'general-settings',
       data: {
         meta: {
-          siteTitle: "localhostusak — Uşak'ın Teknoloji ve Tasarım Topluluğu",
+          siteTitle: 'Uşak Teknoloji ve Yazılım Topluluğu | localhostusak',
           defaultDescription:
-            "Uşak'taki yazılımcılar, tasarımcılar, remote çalışanlar ve öğrenciler için açık, samimi ve üretken teknoloji topluluğu. Kahveni al, laptopunu getir!",
+            "Uşak'ta yazılımcılar, mühendisler ve teknoloji meraklıları için açık topluluk. Coworking buluşmaları, açık kaynak projeleri ve kariyer paylaşımları.",
           keywords:
             'Uşak yazılım, Uşak teknoloji, localhostusak, developer community, UI UX Uşak, Uşak meetup, remote çalışma, coworking',
         },
@@ -361,9 +417,9 @@ async function seed() {
         },
         footer: {
           tagline:
-            "Uşak'ın yerel teknoloji, yazılım ve tasarım ekosistemini büyüten açık ve bağımsız topluluk.",
+            "Uşak'ın yerel teknoloji ve yazılım ekosistemini büyüten açık ve bağımsız topluluk.",
           locationCoordinates: '38.6823° N, 29.4082° E',
-          copyrightText: "© 2026 localhostusak • Uşak'ta sevgiyle kodlandı 🧡",
+          copyrightText: "© 2026 localhostusak • Uşak'ta geliştirildi",
         },
       },
     })

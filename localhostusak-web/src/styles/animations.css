@@ -92,8 +92,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 9999;
 }
@@ -102,8 +102,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background: #FFFFFF;
   opacity: 0;
   pointer-events: none;
@@ -308,3 +308,8 @@
   animation: crack-line-expand 0.45s ease forwards;
 }
 
+
+/* Sponsor logo shimmer (yükleme placeholder'ı) */
+@keyframes sponsor-shimmer {
+  100% { transform: translateX(100%); }
+}

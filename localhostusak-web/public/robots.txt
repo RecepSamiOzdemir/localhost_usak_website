@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin
 Disallow: /api/
 
 Sitemap: https://localhostusak.tech/sitemap.xml

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSiteSettings } from '../../context/SiteSettingsContext';
+import { renderCleanIcon } from '../../utils/cleanIcon';
 
 export const PersonaCards: React.FC = () => {
   const { settings } = useSiteSettings();
@@ -10,7 +11,7 @@ export const PersonaCards: React.FC = () => {
     <section className="section" id="personas">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">// MASADA KİMLER VAR?</span>
+          <span className="section-tag">MASADA KİMLER VAR?</span>
           <h2 className="section-title">Kimler Katılabilir?</h2>
           <p className="section-desc">
             Teknolojiye merakı olan herkese kapımız açık. Masadaki yerini seç!
@@ -26,7 +27,7 @@ export const PersonaCards: React.FC = () => {
             return (
               <article key={index} className="card card-interactive persona-card">
                 <div className="persona-icon-box" aria-hidden="true">
-                  {persona.icon}
+                  {renderCleanIcon(persona.icon, 28)}
                 </div>
                 <h3 className="persona-title">{persona.title}</h3>
                 <p className="persona-desc">{persona.description}</p>

@@ -2,7 +2,7 @@
 
 # 🌐 localhost[uşak]
 
-### Uşak Teknoloji, Yazılım ve Tasarım Topluluğu Web Platformu
+### Uşak Teknoloji ve Yazılım Topluluğu Web Platformu
 
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Payload CMS](https://img.shields.io/badge/Payload_CMS-3.89-000000?style=for-the-badge&logo=payloadcms&logoColor=white)](https://payloadcms.com/)

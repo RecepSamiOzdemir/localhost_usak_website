@@ -2,6 +2,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { Home, Calendar } from 'lucide-react';
 
 export const NotFoundPage: React.FC = () => {
   usePageMeta({ noindex: true, title: "Sayfa Bulunamadı | localhostusak" });
@@ -38,7 +39,7 @@ export const NotFoundPage: React.FC = () => {
             letterSpacing: '0.1em',
           }}
         >
-          // ERROR 404: SIGNAL_LOST
+          ERROR 404: SIGNAL LOST
         </div>
 
         <h1
@@ -92,13 +93,13 @@ export const NotFoundPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link to="/" className="btn btn-primary">
+          <Link to="/" className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Home size={16} />
             <span>Anasayfaya Dön</span>
-            <span>🏠</span>
           </Link>
-          <Link to="/etkinlikler" className="btn btn-secondary">
+          <Link to="/etkinlikler" className="btn btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Calendar size={16} />
             <span>Etkinliklere Göz At</span>
-            <span>📅</span>
           </Link>
         </div>
       </div>

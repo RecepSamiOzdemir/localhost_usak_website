@@ -62,7 +62,7 @@ export function initConsoleEasterEgg(): void {
   try {
     (window as unknown as { topluluk?: () => string }).topluluk = () => {
       window.open('https://chat.whatsapp.com/G4lE8B7s1h696jM7q5hUfR', '_blank');
-      return '🚀 WhatsApp grubuna yönlendiriliyorsun... Hoş geldin! 🎉';
+      return 'WhatsApp grubuna yönlendiriliyorsun... Hoş geldin!';
     };
   } catch {
     // Tarayıcı güvenlik kısıtlaması durumunda sessizce geç

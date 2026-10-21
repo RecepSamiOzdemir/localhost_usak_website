@@ -169,6 +169,45 @@ export const Projects: CollectionConfig = {
         description: 'GitHub repo bağlantısı',
       },
     },
+    // FAZ5: açık kaynak projeleri için ek alanlar (hepsi opsiyonel, mevcut kayıtları etkilemez)
+    {
+      name: 'contributingGuideUrl',
+      type: 'text',
+      label: 'Katkı Rehberi Linki',
+      admin: {
+        description: 'CONTRIBUTING.md veya katkı rehberi bağlantısı (açık kaynak projeler için)',
+        condition: (data) => data?.type === 'opensource',
+      },
+    },
+    {
+      name: 'projectStatus',
+      type: 'select',
+      label: 'Proje Durumu',
+      required: false,
+      options: [
+        { label: 'Fikir Aşamasında', value: 'idea' },
+        { label: 'Geliştiriliyor', value: 'development' },
+        { label: 'Canlıda / Bakımda', value: 'active' },
+      ],
+      admin: {
+        description: 'Opsiyonel. Proje kartında durum rozeti olarak gösterilir.',
+      },
+    },
+    {
+      name: 'difficultyLevel',
+      type: 'select',
+      label: 'Zorluk Seviyesi',
+      required: false,
+      options: [
+        { label: 'Başlangıç (Good First Issue)', value: 'beginner' },
+        { label: 'Orta', value: 'intermediate' },
+        { label: 'İleri', value: 'advanced' },
+      ],
+      admin: {
+        description: 'Opsiyonel. Açık kaynak projelerde katkı seviyesini gösterir.',
+        condition: (data) => data?.type === 'opensource',
+      },
+    },
     {
       name: 'demoUrl',
       type: 'text',

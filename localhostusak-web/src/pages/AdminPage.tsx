@@ -1,5 +1,6 @@
 import { usePageMeta } from '../hooks/usePageMeta';
 import React, { useEffect } from 'react';
+import { Settings, ExternalLink } from 'lucide-react';
 
 const configuredApi = import.meta.env.VITE_API_URL;
 const adminUrl = configuredApi && /^https?:\/\//.test(configuredApi)
@@ -29,7 +30,9 @@ export const AdminPage: React.FC = () => {
           border: '1px solid var(--border-color)',
         }}
       >
-        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚙️</div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
+          <Settings size={48} style={{ color: 'var(--accent-primary)' }} />
+        </div>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.75rem' }}>
           Payload CMS Yönetim Paneli
         </h2>
@@ -39,7 +42,7 @@ export const AdminPage: React.FC = () => {
 
         <a href={adminUrl} className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
           <span>Yönetim Paneline Git</span>
-          <span>↗</span>
+          <ExternalLink size={16} />
         </a>
       </div>
     </main>

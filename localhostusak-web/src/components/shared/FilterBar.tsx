@@ -1,4 +1,5 @@
 import React from 'react';
+import { Search } from 'lucide-react';
 
 export interface FilterOption {
   id: string;
@@ -15,7 +16,7 @@ interface FilterBarProps {
   secondaryLabel?: string;
   secondaryOptions?: FilterOption[];
   selectedSecondary?: string;
-  onSelectSecondary?: (id: string) => void;
+  onSelectSecondary: (id: string) => void;
 
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
@@ -41,7 +42,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     <div className="filter-bar-wrapper">
       {/* Primary Category Group */}
       <div className="filter-group">
-        <span className="filter-label">// {primaryLabel}:</span>
+        <span className="filter-label">{primaryLabel}:</span>
         {primaryOptions.map((opt) => (
           <button
             key={opt.id}
@@ -58,7 +59,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       {/* Secondary Filter Group (if provided) */}
       {secondaryOptions && onSelectSecondary && (
         <div className="filter-group">
-          {secondaryLabel && <span className="filter-label">// {secondaryLabel}:</span>}
+          {secondaryLabel && <span className="filter-label">{secondaryLabel}:</span>}
           {secondaryOptions.map((opt) => (
             <button
               key={opt.id}
@@ -76,7 +77,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       {/* Search Input (if provided) */}
       {onSearchChange !== undefined && (
         <div className="search-input-box">
-          <span className="search-icon-pos">🔍</span>
+          <Search size={16} className="search-icon-pos" style={{ color: 'var(--text-muted)' }} />
           <input
             type="text"
             className="search-input"

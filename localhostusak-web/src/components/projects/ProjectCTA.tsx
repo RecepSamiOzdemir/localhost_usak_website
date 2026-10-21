@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
+import { WhatsAppIcon } from '../shared';
 
 export const ProjectCTA: React.FC = () => {
   const { links } = useLinks();
@@ -17,7 +18,7 @@ export const ProjectCTA: React.FC = () => {
       }}
     >
       <span className="section-tag" style={{ marginBottom: '1rem', display: 'inline-block' }}>
-        // SEN DE ÜRETİYOR MUSUN?
+        SEN DE ÜRETİYOR MUSUN?
       </span>
       <h3 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 900, marginBottom: '1rem' }}>
         Side-Project'ini Topluluk Vitrinine Ekle
@@ -40,12 +41,14 @@ export const ProjectCTA: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-whatsapp btn-lg"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem' }}
           onClick={(e) => {
             e.preventDefault();
             openWhatsAppWithRules(links.whatsappProjects, 'Projeler Grubu');
           }}
         >
-          <span>💬 WhatsApp Projeler Grubuna Katıl</span>
+          <WhatsAppIcon size={20} />
+          <span>WhatsApp Projeler Grubuna Katıl</span>
         </a>
       </div>
     </div>

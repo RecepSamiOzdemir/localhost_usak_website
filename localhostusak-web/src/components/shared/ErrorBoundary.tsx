@@ -1,4 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle, RotateCcw } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
@@ -50,7 +51,9 @@ export class ErrorBoundary extends Component<Props, State> {
               border: '1px solid var(--border-color)',
             }}
           >
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
+              <AlertTriangle size={48} style={{ color: '#FF6600' }} />
+            </div>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.75rem' }}>
               Beklenmeyen Bir Hata Oluştu
             </h2>
@@ -76,9 +79,13 @@ export class ErrorBoundary extends Component<Props, State> {
               </pre>
             )}
 
-            <button onClick={this.handleReload} className="btn btn-primary">
+            <button
+              onClick={this.handleReload}
+              className="btn btn-primary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <RotateCcw size={16} />
               <span>Anasayfaya Dön</span>
-              <span>🔄</span>
             </button>
           </div>
         </div>

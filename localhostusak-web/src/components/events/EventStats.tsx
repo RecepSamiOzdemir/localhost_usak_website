@@ -2,10 +2,9 @@ import React from 'react';
 
 interface EventStatsProps {
   totalEvents: number;
-  totalAttendees: number;
 }
 
-export const EventStats: React.FC<EventStatsProps> = ({ totalEvents, totalAttendees }) => {
+export const EventStats: React.FC<EventStatsProps> = ({ totalEvents }) => {
   return (
     <div
       className="card circuit-border"
@@ -24,15 +23,6 @@ export const EventStats: React.FC<EventStatsProps> = ({ totalEvents, totalAttend
         </div>
         <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
           TOPLAM BULUŞMA
-        </div>
-      </div>
-
-      <div>
-        <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--accent-secondary)' }}>
-          {totalAttendees}+
-        </div>
-        <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
-          MASADAKİ SANDALYE
         </div>
       </div>
 

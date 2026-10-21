@@ -2,6 +2,8 @@ import React from 'react';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 import { useSiteSettings } from '../../context/SiteSettingsContext';
+import { renderCleanIcon } from '../../utils/cleanIcon';
+import { WhatsAppIcon } from '../shared';
 
 export const ValuesBento: React.FC = () => {
   const { links } = useLinks();
@@ -11,10 +13,10 @@ export const ValuesBento: React.FC = () => {
   if (values.length === 0) return null;
 
   return (
-    <section className="section" id="values" style={{ background: 'var(--bg-secondary)' }}>
+    <section className="section values-section" id="values">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">// DEĞERLERİMİZ</span>
+          <span className="section-tag">DEĞERLERİMİZ</span>
           <h2 className="section-title">Neden Gelmelisin?</h2>
           <p className="section-desc">
             Uşak'ta teknolojiyle ilgilenen herkes için güvenli, üretken ve samimi bir liman.
@@ -33,7 +35,7 @@ export const ValuesBento: React.FC = () => {
               >
                 <div>
                   <div className="bento-icon" aria-hidden="true">
-                    {val.icon}
+                    {renderCleanIcon(val.icon, 32)}
                   </div>
                   <h3 style={{ fontSize: isWide ? '1.6rem' : '1.35rem', marginBottom: '0.75rem' }}>
                     {val.title}
@@ -66,14 +68,15 @@ export const ValuesBento: React.FC = () => {
                       href={links.whatsappGeneral}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn btn-primary btn-sm"
+                      className="btn btn-whatsapp btn-sm"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
                       onClick={(e) => {
                         e.preventDefault();
                         openWhatsAppWithRules(links.whatsappGeneral, 'Genel Topluluk Grubu');
                       }}
                     >
+                      <WhatsAppIcon size={14} />
                       <span>İlk Adımı At: WhatsApp'a Katıl</span>
-                      <span>→</span>
                     </a>
                   </div>
                 )}

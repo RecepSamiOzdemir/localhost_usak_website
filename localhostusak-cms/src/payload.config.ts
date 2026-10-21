@@ -12,12 +12,15 @@ import { Events } from './collections/Events'
 import { Careers } from './collections/Careers'
 import { Projects } from './collections/Projects'
 import { Sponsors } from './collections/Sponsors'
+import { TeamMembers } from './collections/TeamMembers'
 import { CommunityLinks } from './collections/CommunityLinks'
+import { JobApplications } from './collections/JobApplications'
 import { SiteSettings } from './globals/SiteSettings'
 import { GeneralSettings } from './globals/GeneralSettings'
 import { EventsPageSettings } from './globals/EventsPageSettings'
 import { CareersPageSettings } from './globals/CareersPageSettings'
 import { ProjectsPageSettings } from './globals/ProjectsPageSettings'
+import { KvkkSettings } from './globals/KvkkSettings'
 import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
@@ -38,7 +41,9 @@ export default buildConfig({
     Careers,
     Projects,
     Sponsors,
+    TeamMembers,
     CommunityLinks,
+    JobApplications,
   ],
   globals: [
     GeneralSettings,
@@ -46,8 +51,11 @@ export default buildConfig({
     EventsPageSettings,
     CareersPageSettings,
     ProjectsPageSettings,
+    KvkkSettings,
   ],
   cors: [
+    'https://localhostusak.com',
+    'https://www.localhostusak.com',
     'https://localhostusak.tech',
     'https://www.localhostusak.tech',
     'http://rwqqhpeag4mw5peahi5ru5s6.31.77.112.167.sslip.io',

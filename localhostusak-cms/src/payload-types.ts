@@ -74,7 +74,9 @@ export interface Config {
     careers: Career;
     projects: Project;
     sponsors: Sponsor;
+    'team-members': TeamMember;
     'community-links': CommunityLink;
+    'job-applications': JobApplication;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -89,7 +91,9 @@ export interface Config {
     careers: CareersSelect<false> | CareersSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     'community-links': CommunityLinksSelect<false> | CommunityLinksSelect<true>;
+    'job-applications': JobApplicationsSelect<false> | JobApplicationsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -105,6 +109,7 @@ export interface Config {
     'events-page-settings': EventsPageSetting;
     'careers-page-settings': CareersPageSetting;
     'projects-page-settings': ProjectsPageSetting;
+    'kvkk-settings': KvkkSetting;
   };
   globalsSelect: {
     'general-settings': GeneralSettingsSelect<false> | GeneralSettingsSelect<true>;
@@ -112,6 +117,7 @@ export interface Config {
     'events-page-settings': EventsPageSettingsSelect<false> | EventsPageSettingsSelect<true>;
     'careers-page-settings': CareersPageSettingsSelect<false> | CareersPageSettingsSelect<true>;
     'projects-page-settings': ProjectsPageSettingsSelect<false> | ProjectsPageSettingsSelect<true>;
+    'kvkk-settings': KvkkSettingsSelect<false> | KvkkSettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -228,7 +234,7 @@ export interface Event {
    * Etkinlik türü seçin
    */
   type: number | EventType;
-  status: 'upcoming' | 'completed' | 'cancelled';
+  status: 'upcoming' | 'open' | 'closed' | 'completed' | 'cancelled';
   dateStart: string;
   dateEnd?: string | null;
   /**
@@ -253,6 +259,10 @@ export interface Event {
    * Etkinlik / Topluluk WhatsApp grup linki
    */
   whatsappLink?: string | null;
+  /**
+   * Fotoğraf albümü, sunum veya özet yazısı linki (etkinlik sonrası)
+   */
+  recapUrl?: string | null;
   /**
    * Etiketler (Örn: #WebDev, #AIAgents)
    */
@@ -366,6 +376,18 @@ export interface Project {
    */
   githubUrl?: string | null;
   /**
+   * CONTRIBUTING.md veya katkı rehberi bağlantısı (açık kaynak projeler için)
+   */
+  contributingGuideUrl?: string | null;
+  /**
+   * Opsiyonel. Proje kartında durum rozeti olarak gösterilir.
+   */
+  projectStatus?: ('idea' | 'development' | 'active') | null;
+  /**
+   * Opsiyonel. Açık kaynak projelerde katkı seviyesini gösterir.
+   */
+  difficultyLevel?: ('beginner' | 'intermediate' | 'advanced') | null;
+  /**
    * Canlı demo bağlantısı
    */
   demoUrl?: string | null;
@@ -424,12 +446,37 @@ export interface Sponsor {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  name: string;
+  category: 'founder' | 'core' | 'contributor';
+  title?: string | null;
+  avatar?: (number | null) | Media;
+  bio?: string | null;
+  github?: string | null;
+  linkedin?: string | null;
+  x?: string | null;
+  /**
+   * Sıralama önceliği (Küçük sayılar önce çıkar)
+   */
+  sortOrder?: number | null;
+  /**
+   * Kişinin yayın izni alındıktan sonra işaretleyin.
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "community-links".
  */
 export interface CommunityLink {
   id: number;
   /**
-   * Benzersiz anahtar (Örn: whatsapp_coworking, whatsapp_projects, whatsapp_careers)
+   * Benzersiz anahtar (Örn: whatsapp_general, whatsapp_careers, whatsapp_projects, whatsapp_coworking, instagram, github, x)
    */
   key: string;
   /**
@@ -447,6 +494,47 @@ export interface CommunityLink {
   isActive?: boolean | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Kariyer sayfasından gelen başvurular ve CV dosyaları. Kişisel veri içerir (KVKK): yalnızca gerektiği kadar açın, otomatik silme yoktur; saklama süresi dolanlar elle silinir.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "job-applications".
+ */
+export interface JobApplication {
+  id: number;
+  candidateName: string;
+  email: string;
+  phone?: string | null;
+  linkedinUrl?: string | null;
+  githubUrl?: string | null;
+  experienceLevel: 'intern' | 'junior' | 'mid' | 'senior';
+  fieldsOfInterest: ('frontend' | 'backend' | 'mobile' | 'devops' | 'uiux' | 'other')[];
+  /**
+   * Arşivlemek silmek değildir; CV dosyası arşivde de saklanır.
+   */
+  status: 'new' | 'reviewed' | 'contacted' | 'archived';
+  /**
+   * Yalnızca ekip içi notlar; adaya veya herkese açık API yanıtlarına dönmez.
+   */
+  notes?: string | null;
+  consentGiven: boolean;
+  /**
+   * Saklama süresi bu tarihten itibaren hesaplanır.
+   */
+  consentAt: string;
+  consentTextVersion: string;
+  scanEngines?: string | null;
+  ipHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -501,8 +589,16 @@ export interface PayloadLockedDocument {
         value: number | Sponsor;
       } | null)
     | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
+      } | null)
+    | ({
         relationTo: 'community-links';
         value: number | CommunityLink;
+      } | null)
+    | ({
+        relationTo: 'job-applications';
+        value: number | JobApplication;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -619,6 +715,7 @@ export interface EventsSelect<T extends boolean = true> {
   coverImage?: T;
   imageUrl?: T;
   whatsappLink?: T;
+  recapUrl?: T;
   tags?:
     | T
     | {
@@ -678,6 +775,9 @@ export interface ProjectsSelect<T extends boolean = true> {
         id?: T;
       };
   githubUrl?: T;
+  contributingGuideUrl?: T;
+  projectStatus?: T;
+  difficultyLevel?: T;
   demoUrl?: T;
   coverImage?: T;
   imageUrl?: T;
@@ -703,6 +803,24 @@ export interface SponsorsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  category?: T;
+  title?: T;
+  avatar?: T;
+  bio?: T;
+  github?: T;
+  linkedin?: T;
+  x?: T;
+  sortOrder?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "community-links_select".
  */
 export interface CommunityLinksSelect<T extends boolean = true> {
@@ -713,6 +831,35 @@ export interface CommunityLinksSelect<T extends boolean = true> {
   isActive?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "job-applications_select".
+ */
+export interface JobApplicationsSelect<T extends boolean = true> {
+  candidateName?: T;
+  email?: T;
+  phone?: T;
+  linkedinUrl?: T;
+  githubUrl?: T;
+  experienceLevel?: T;
+  fieldsOfInterest?: T;
+  status?: T;
+  notes?: T;
+  consentGiven?: T;
+  consentAt?: T;
+  consentTextVersion?: T;
+  scanEngines?: T;
+  ipHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -792,6 +939,17 @@ export interface SiteSetting {
     subtitle?: string | null;
     description?: string | null;
   };
+  /**
+   * Manifesto & Misyon kartında periyodik olarak otomatik değişen vizyon sözleri.
+   */
+  visionMessages?:
+    | {
+        quote: string;
+        tag?: string | null;
+        author?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Ana sayfadaki sayaç kartları (Örn: 150+ Topluluk Üyesi)
    */
@@ -894,6 +1052,31 @@ export interface CareersPageSetting {
     title?: string | null;
     description?: string | null;
   };
+  applicationForm?: {
+    /**
+     * docs/KARIYER_MERGE_ONCESI_ADMIN_KONTROL.md tamamlanmadan (volume, CV_STORAGE_DIR, CV_IP_HASH_SECRET, yanlış pozitif testi) açmayın.
+     */
+    enabled?: boolean | null;
+    title?: string | null;
+    intro?: string | null;
+    /**
+     * ⚠ Hukuki inceleme gerekir: Bu metin taslaktır; hukuki onay alınmadan form açılmamalıdır. {{retentionYears}} ifadesi formda saklama süresiyle değiştirilir. Bu metni değiştirirseniz "Rıza / Aydınlatma Metni Sürümü" alanını da değiştirin.
+     */
+    privacyNotice?: string | null;
+    /**
+     * ⚠ Hukuki inceleme gerekir: Bu metin taslaktır. Onay kutusu önceden işaretli gösterilmez; etkinlik/fotoğraf muvafakatiyle birleştirilmez. Bu metni değiştirirseniz "Rıza / Aydınlatma Metni Sürümü" alanını MUTLAKA değiştirin.
+     */
+    consentText?: string | null;
+    /**
+     * Açık rıza metni, aydınlatma metni veya saklama süresi değiştiğinde bu değer de MUTLAKA değiştirilmelidir (örn. cv-v1 → cv-v2). Her başvuruya bu değer kaydedilir; hangi adayın hangi metne onay verdiği buradan anlaşılır.
+     */
+    consentVersion?: string | null;
+    /**
+     * Rıza tarihinden itibaren en fazla bu kadar yıl saklanır. Otomatik silme YOKTUR: süresi dolan CV’ler İş Başvuruları listesinde uyarı olarak gösterilir ve elle silinir. Değiştirirseniz aydınlatma/rıza metinleri de değişmiş sayılır; sürüm alanını güncelleyin.
+     */
+    retentionYears?: number | null;
+    successMessage?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -917,6 +1100,48 @@ export interface ProjectsPageSetting {
     title?: string | null;
     description?: string | null;
   };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kvkk-settings".
+ */
+export interface KvkkSetting {
+  id: number;
+  hero: {
+    tag: string;
+    title: string;
+    highlightText: string;
+    description: string;
+  };
+  documentMeta: {
+    badgeText?: string | null;
+    lastUpdated?: string | null;
+    version?: string | null;
+    contactEmail: string;
+  };
+  leadText: string;
+  callouts?: {
+    photoVideoTitle?: string | null;
+    photoVideoText?: string | null;
+    intellectualPropertyTitle?: string | null;
+    intellectualPropertyText?: string | null;
+  };
+  consent: {
+    badge?: string | null;
+    declarationText: string;
+    dateNote?: string | null;
+    dataControllerName?: string | null;
+  };
+  sections?:
+    | {
+        id: string;
+        num: string;
+        title: string;
+        content?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -964,6 +1189,14 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         titleHighlight?: T;
         subtitle?: T;
         description?: T;
+      };
+  visionMessages?:
+    | T
+    | {
+        quote?: T;
+        tag?: T;
+        author?: T;
+        id?: T;
       };
   stats?:
     | T
@@ -1076,6 +1309,18 @@ export interface CareersPageSettingsSelect<T extends boolean = true> {
         title?: T;
         description?: T;
       };
+  applicationForm?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        intro?: T;
+        privacyNotice?: T;
+        consentText?: T;
+        consentVersion?: T;
+        retentionYears?: T;
+        successMessage?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1104,6 +1349,56 @@ export interface ProjectsPageSettingsSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kvkk-settings_select".
+ */
+export interface KvkkSettingsSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        tag?: T;
+        title?: T;
+        highlightText?: T;
+        description?: T;
+      };
+  documentMeta?:
+    | T
+    | {
+        badgeText?: T;
+        lastUpdated?: T;
+        version?: T;
+        contactEmail?: T;
+      };
+  leadText?: T;
+  callouts?:
+    | T
+    | {
+        photoVideoTitle?: T;
+        photoVideoText?: T;
+        intellectualPropertyTitle?: T;
+        intellectualPropertyText?: T;
+      };
+  consent?:
+    | T
+    | {
+        badge?: T;
+        declarationText?: T;
+        dateNote?: T;
+        dataControllerName?: T;
+      };
+  sections?:
+    | T
+    | {
+        id?: T;
+        num?: T;
+        title?: T;
+        content?: T;
       };
   updatedAt?: T;
   createdAt?: T;

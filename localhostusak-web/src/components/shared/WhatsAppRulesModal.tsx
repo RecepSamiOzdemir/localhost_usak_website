@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Users, ShieldAlert, MessageSquare, Compass, Handshake, ScrollText, Check } from 'lucide-react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 export interface WhatsAppRulesModalProps {
   isOpen: boolean;
@@ -12,7 +14,7 @@ interface RuleItem {
   id: number;
   title: string;
   desc: string;
-  icon: string;
+  icon: React.ReactNode;
   badge?: string;
   isHighlight?: boolean;
 }
@@ -22,35 +24,35 @@ const RULES: RuleItem[] = [
     id: 1,
     title: 'Topluluğa Saygı',
     desc: 'Tüm üyelerin kendini rahat hissettiği, güvenli ve destekleyici bir ortam için birbirimize saygılı olalım.',
-    icon: '👥',
+    icon: <Users size={20} />,
     badge: '01',
   },
   {
     id: 2,
     title: 'Özelden Toplu Mesaj',
     desc: 'Topluluktaki üyelere toplu şekilde özelden ulaşıp iş, proje veya müşteri toplamaya çalışılması kesinlikle doğru bulmadığımız bir yaklaşımdır.',
-    icon: '🚫',
+    icon: <ShieldAlert size={20} />,
     badge: '02 // ÖNEMLİ',
   },
   {
     id: 3,
     title: 'Paylaşımlar İçin Doğru Grup',
     desc: 'Proje, iş birliği veya ekip ihtiyacı varsa lütfen ilgili grubumuzda paylaşın.',
-    icon: '💬',
+    icon: <MessageSquare size={20} />,
     badge: '03',
   },
   {
     id: 4,
     title: 'Yönlendirme Bizden',
     desc: 'Gerekli durumlarda doğru kişileri ve ekipleri biz yönlendireceğiz.',
-    icon: '🧭',
+    icon: <Compass size={20} />,
     badge: '04',
   },
   {
     id: 5,
     title: 'Birlikte Daha Güçlüyüz',
     desc: 'Üyelerimizin rahatlığı ve topluluğun güven ortamı bizim için önemli. Birlikte çalışalım, birlikte üretelim ve fırsatları şeffaf şekilde birlikte büyütelim.',
-    icon: '🤝',
+    icon: <Handshake size={20} />,
     badge: '05 // DAYANIŞMA',
     isHighlight: true,
   },
@@ -271,7 +273,10 @@ export const WhatsAppRulesModal: React.FC<WhatsAppRulesModalProps> = ({
             className="wa-rules-scroll-indicator"
             onClick={handleScrollToBottomClick}
           >
-            <span>📜 Tüm kuralları görmek için aşağı kaydırın</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+              <ScrollText size={16} />
+              <span>Tüm kuralları görmek için aşağı kaydırın</span>
+            </span>
             <span className="bounce-arrow">↓</span>
           </button>
         )}
@@ -300,8 +305,9 @@ export const WhatsAppRulesModal: React.FC<WhatsAppRulesModalProps> = ({
                     (Onaylamak için lütfen kuralları sonuna kadar okuyup kaydırın)
                   </span>
                 ) : (
-                  <span className="wa-rules-unlocked-hint">
-                    ✓ Tüm kuralları incelediniz, kutuyu işaretleyerek devam edebilirsiniz.
+                  <span className="wa-rules-unlocked-hint" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <Check size={14} />
+                    <span>Tüm kuralları incelediniz, kutuyu işaretleyerek devam edebilirsiniz.</span>
                   </span>
                 )}
               </div>
@@ -324,11 +330,34 @@ export const WhatsAppRulesModal: React.FC<WhatsAppRulesModalProps> = ({
               onClick={onConfirm}
               id="wa-rules-confirm-button"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.159.57 4.185 1.564 5.938l-1.564 5.719 5.873-1.541c1.707.95 3.666 1.484 5.727 1.484 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z" />
-              </svg>
+              <WhatsAppIcon size={18} />
               <span>Onayla ve Gruba Katıl</span>
             </button>
+          </div>
+
+          <div
+            style={{
+              marginTop: '0.65rem',
+              textAlign: 'center',
+              fontSize: '0.75rem',
+              color: 'var(--text-muted)',
+              lineHeight: 1.4,
+            }}
+          >
+            <span>Topluluğumuza katılarak </span>
+            <a
+              href="/kvkk"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: 'var(--accent-primary)',
+                textDecoration: 'underline',
+                textUnderlineOffset: '2px',
+              }}
+            >
+              KVKK Aydınlatma Metni ve Muvafakatnamesi
+            </a>
+            <span> şartlarını kabul etmiş sayılırsınız.</span>
           </div>
         </div>
       </div>

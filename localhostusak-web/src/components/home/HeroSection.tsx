@@ -1,187 +1,73 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext';
+import { Calendar, MapPin } from 'lucide-react';
+import { WhatsAppIcon } from '../shared';
 import { useLinks } from '../../context/LinksContext';
 import { useWhatsAppModal } from '../../context/WhatsAppModalContext';
 import { useSiteSettings } from '../../context/SiteSettingsContext';
+import { SiteVisionMessageItem } from '../../services/api';
+
+const DEFAULT_HERO_VISION: SiteVisionMessageItem[] = [
+  {
+    quote: 'Resmiyetten uzak, samimi bir masa. Good Code, Better People.',
+    tag: 'TOPLULUK VİZYONU',
+  },
+  {
+    quote: "Uşak'ta sürdürülebilir, samimi ve profesyonel bir teknoloji ekosistemi oluşturmak.",
+    tag: 'YOL HARİTAMIZ & VİZYONUMUZ',
+  },
+  {
+    quote: 'Kahveni al, masaya otur. Birlikte düşündüğümüzde ve ürettiğimizde çok daha güçlüyüz.',
+    tag: 'GOOD CODE, BETTER PEOPLE',
+  },
+  {
+    quote: "Büyük şehirlerdeki teknoloji enerjisini Uşak'ın üretken yetenekleriyle buluşturuyoruz.",
+    tag: 'YEREL DAYANIŞMA, KÜRESEL VİZYON',
+  },
+];
 
 export const HeroSection: React.FC = () => {
-  const { theme } = useTheme();
   const { links } = useLinks();
   const { openWhatsAppWithRules } = useWhatsAppModal();
   const { settings } = useSiteSettings();
   const hero = settings.hero;
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const visionList =
+    settings.visionMessages && settings.visionMessages.length > 0
+      ? settings.visionMessages
+      : DEFAULT_HERO_VISION;
+
+  const [activeVisionIdx, setActiveVisionIdx] = useState(0);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (visionList.length <= 1) return;
+    const timer = setInterval(() => {
+      setActiveVisionIdx((prev) => (prev + 1) % visionList.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [visionList.length]);
 
-    let width: number, height: number;
-    let animationFrameId: number;
-    const particleCount = 45;
-    const mouse: { x: number | null; y: number | null; radius: number } = {
-      x: null,
-      y: null,
-      radius: 140,
-    };
-
-    class Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      radius: number;
-      isBlue: boolean;
-
-      constructor() {
-        this.x = Math.random() * (width || 800);
-        this.y = Math.random() * (height || 600);
-        this.vx = (Math.random() - 0.5) * 0.8;
-        this.vy = (Math.random() - 0.5) * 0.8;
-        this.radius = Math.random() * 2 + 1.5;
-        this.isBlue = Math.random() > 0.75;
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x < 0 || this.x > width) this.vx *= -1;
-        if (this.y < 0 || this.y > height) this.vy *= -1;
-
-        if (mouse.x !== null && mouse.y !== null) {
-          const dx = mouse.x - this.x;
-          const dy = mouse.y - this.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < mouse.radius) {
-            const force = (mouse.radius - dist) / mouse.radius;
-            this.x -= (dx / dist) * force * 3;
-            this.y -= (dy / dist) * force * 3;
-          }
-        }
-      }
-
-      draw(isPixel: boolean) {
-        if (!ctx) return;
-        ctx.beginPath();
-        if (isPixel) {
-          ctx.fillStyle = this.isBlue ? '#3A86FF' : '#EE6C19';
-          ctx.fillRect(this.x - 2, this.y - 2, 4, 4);
-        } else {
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-          ctx.fillStyle = this.isBlue ? '#00E5FF' : '#FF6600';
-          ctx.shadowBlur = 8;
-          ctx.shadowColor = this.isBlue ? '#00E5FF' : '#FF6600';
-          ctx.fill();
-        }
-      }
-    }
-
-    let particles: Particle[] = [];
-
-    const resize = () => {
-      if (!canvas || !canvas.parentElement) return;
-      const rect = canvas.parentElement.getBoundingClientRect();
-      width = canvas.width = rect.width;
-      height = canvas.height = rect.height;
-      particles = [];
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-      }
-    };
-
-    const animate = () => {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, width, height);
-      const isPixel = theme === 'pixel';
-
-      // Draw connection lines
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 110) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-
-            if (isPixel) {
-              ctx.strokeStyle = `rgba(92, 61, 46, ${0.15 * (1 - dist / 110)})`;
-              ctx.lineWidth = 1;
-            } else {
-              ctx.strokeStyle = `rgba(255, 102, 0, ${0.25 * (1 - dist / 110)})`;
-              ctx.lineWidth = 0.8;
-            }
-            ctx.stroke();
-          }
-        }
-      }
-
-      particles.forEach((p) => {
-        p.update();
-        p.draw(isPixel);
-      });
-
-      animationFrameId = requestAnimationFrame(animate);
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      if (
-        e.clientX >= rect.left &&
-        e.clientX <= rect.right &&
-        e.clientY >= rect.top &&
-        e.clientY <= rect.bottom
-      ) {
-        mouse.x = e.clientX - rect.left;
-        mouse.y = e.clientY - rect.top;
-      } else {
-        mouse.x = null;
-        mouse.y = null;
-      }
-    };
-
-    window.addEventListener('resize', resize);
-    window.addEventListener('mousemove', handleMouseMove);
-
-    resize();
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [theme]);
+  const activeVision = visionList[activeVisionIdx] || visionList[0];
 
   return (
     <section className="section hero-section" id="hero">
-      {/* Interactive Constellation / Circuit Background Canvas */}
-      <div className="hero-canvas-container" aria-hidden="true">
-        <canvas id="hero-canvas" ref={canvasRef} />
-      </div>
 
-      {/* Glowing Ambient Background Orbs (Modern Mode) */}
+      {/* Glowing Ambient Background Orbs */}
       <div className="hero-glow-orb" aria-hidden="true" />
       <div className="hero-glow-orb-secondary" aria-hidden="true" />
-      <div className="scanline-effect" aria-hidden="true" />
 
       <div className="container hero-content">
         <div style={{ maxWidth: '860px', margin: '0 auto', textAlign: 'center' }}>
-          {/* Location Pill */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <div className="location-pill">
-              <span>📍 U Ş A K</span>
-              <span style={{ opacity: 0.4 }}>|</span>
-              <span style={{ fontSize: '0.8rem', color: 'var(--accent-primary)' }}>
-                {hero?.cityCoordinates || '38.6823° N, 29.4082° E'}
-              </span>
+          {/* Topluluk Logosu Rozeti */}
+          <div style={{ marginBottom: '1.75rem', display: 'flex', justifyContent: 'center' }}>
+            <div className="hero-logo-emblem" aria-label="Localhost Uşak Topluluk Logosu">
+              <img
+                src="/logo.png"
+                alt="Localhost Uşak"
+                className="hero-logo-emblem-img"
+                width={76}
+                height={76}
+              />
             </div>
           </div>
 
@@ -194,21 +80,27 @@ export const HeroSection: React.FC = () => {
               letterSpacing: '-0.03em',
             }}
           >
-            {hero?.title || "Uşak'ın Teknoloji ve"} <br />
-            <span className="gradient-text">{hero?.titleHighlight || 'Tasarım Topluluğu'}</span>
+            {hero?.title || "Uşak'ta Teknoloji"} <br />
+            <span className="gradient-text">{hero?.titleHighlight || 'Etrafında Buluş'}</span>
           </h1>
 
-          {/* Terminal Prompt Subtitle */}
-          <div
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 'clamp(0.95rem, 2vw, 1.2rem)',
-              color: 'var(--text-code)',
-              marginBottom: '1.5rem',
-            }}
-          >
-            <span>&gt;_ {hero?.subtitle || 'connect • build • collaborate • grow'}</span>
-            <span className="terminal-cursor" />
+          {/* Section Tag Subtitle */}
+          <div style={{ marginBottom: '1.25rem' }}>
+            <span
+              className="badge"
+              style={{
+                background: 'rgba(227, 93, 20, 0.1)',
+                color: 'var(--accent-primary)',
+                border: '1px solid rgba(227, 93, 20, 0.25)',
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                fontSize: '0.8rem',
+                padding: '0.4rem 1rem',
+              }}
+            >
+              {hero?.subtitle || 'CONNECT • BUILD • COLLABORATE • GROW'}
+            </span>
           </div>
 
           {/* Hero Description Quote */}
@@ -222,11 +114,12 @@ export const HeroSection: React.FC = () => {
             }}
           >
             {hero?.description ||
-              'Kahveni al, laptopunu getir, aramıza katıl. Deneyimli olmak şart değil; merakın ve öğrenme isteğin varsa masada sana da yer var.'}
+              "Kahveni al, laptopunu getir, masada yerini al. Uşak'ın yerel teknoloji ekosistemini birlikte büyütüyoruz."}
           </p>
 
           {/* Primary Hero Actions */}
           <div
+            className="hero-actions"
             style={{
               display: 'flex',
               flexWrap: 'wrap',
@@ -246,15 +139,13 @@ export const HeroSection: React.FC = () => {
                 openWhatsAppWithRules(links.whatsappGeneral, 'Genel Topluluk Grubu');
               }}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.159.57 4.185 1.564 5.938l-1.564 5.719 5.873-1.541c1.707.95 3.666 1.484 5.727 1.484 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z" />
-              </svg>
+              <WhatsAppIcon size={20} />
               <span>WhatsApp Topluluğuna Katıl</span>
             </a>}
 
-            <Link to="/etkinlikler" className="btn btn-lg btn-primary" id="hero-btn-events">
+            <Link to="/etkinlikler" className="btn btn-lg btn-primary" id="hero-btn-events" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem' }}>
               <span>Sıradaki Buluşma</span>
-              <span>📅</span>
+              <Calendar size={18} />
             </Link>
 
             {links.instagram && <a
@@ -263,41 +154,44 @@ export const HeroSection: React.FC = () => {
               rel="noopener noreferrer"
               className="btn btn-lg btn-secondary"
               id="hero-btn-instagram"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem' }}
             >
-              <span>📷 @localhostusak</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#E1306C' }}>
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+              </svg>
+              <span>@localhostusak</span>
             </a>}
           </div>
 
-          {/* Reference Community Motto Pill Preview */}
-          <div>
-            <div
-              className="card card-glass circuit-border"
-              style={{
-                padding: '1.25rem 1.75rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '1.5rem',
-                maxWidth: '600px',
-              }}
-            >
-              <span className="circuit-node" />
-              <div style={{ textAlign: 'left', fontSize: '0.9rem' }}>
-                <div
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    color: 'var(--accent-primary)',
-                    fontWeight: 700,
-                    fontSize: '0.8rem',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  // TOPLULUK MOTOSU
+          {/* Topluluk Vizyonu Kartı (Dinamik Dönen Mesajlar - Boyut Değişimini Önleyen Stabil Alan) */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div className="hero-vision-card" aria-live="polite">
+              <div className="hero-vision-icon" aria-hidden="true">
+                ✦
+              </div>
+              <div className="hero-vision-body">
+                <div className="hero-vision-tag">
+                  {activeVision.tag || 'TOPLULUK VİZYONU'}
                 </div>
-                <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
-                  "Resmiyetten uzak, samimi bir masa. Good Code, Better People."
+                <div key={activeVisionIdx} className="hero-vision-quote">
+                  "{activeVision.quote}"
                 </div>
               </div>
-              <span className="circuit-node node-blue" />
+            </div>
+          </div>
+
+          {/* Uşak ve Koordinat Kartı (Topluluk Vizyonu ile Manifesto Arasında) */}
+          <div style={{ marginTop: '1.75rem', display: 'flex', justifyContent: 'center' }}>
+            <div className="location-pill">
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                <MapPin size={14} style={{ color: 'var(--accent-primary)' }} /> U Ş A K
+              </span>
+              <span style={{ opacity: 0.4 }}>|</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--accent-primary)' }}>
+                {hero?.cityCoordinates || '38.6823° N, 29.4082° E'}
+              </span>
             </div>
           </div>
         </div>
